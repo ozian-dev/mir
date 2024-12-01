@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+<meta name="google" content="notranslate">
+<title>{{ app['name'] }}</title>
+<style>
+{{ css["common"]|safe }}
+{{ css["device"]|safe }}
+{{ css["os"]|safe }}
+{{ css["custom"]|safe }}
+
+</style>
+</head>
+<script>
+function isSafari() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+if (isSafari()) {
+  const style = document.createElement("style");
+  style.textContent = ".att-input-select {appearance: none;}";
+  document.head.appendChild(style);
+}
+</script>
+<body>
+    <div class="container">
+        <div class="col1" id="col1">
+            <div class="row1 gl" id="gl"></div>
+            <div class="row2 gm" id="gm">
+                <div class="group"></div>
+                <div class="menu"></div>
+            </div>
+        </div>
+        <div class="col2">
+            <div class="row1 gh" id="gh">
+                <div class="item"><a href="#" class="fold fnc-side-fold"></a></div>
+                <div class="item"><a class="title att-text-size-auto"></a></div>
+                <div class="item"><a class="id"></a></div>
+                <div class="item"><a href="#" class="att-icon att-icon-logout" target="_win"></a></div>
+            </div>
+            <div class="row2 gw" id="gw"></div>
+    </div>
+
+    <div class="modal-layer" id="ml"></div>
+    <div class="pop" id="pop1">
+        <div class="progress"><div class="mover"></div></div>
+        <div class="head">
+            <div class="title">title</div>
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop1-close"></a>
+        </div>
+        <div class="space"></div>
+        <div class="foot"></div>
+    </div>
+    <div class="pop" id="pop2">
+        <div class="head">
+            <div class="title">title</div>
+            <a href="#" data-entity="pop2" data-mode="align" class="att-icon fnc-link att-icon-align" title="align"></a>
+            <a href="#" data-entity="pop2" data-mode="copy"  class="att-icon fnc-link att-icon-copy"  title="copy"></a>
+            <a href="#" data-entity="pop2" data-mode="apply" class="att-icon fnc-link att-icon-save"  title="apply"></a>
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop2-close"></a>
+        </div>
+        <div class="space"></div>
+        <div class="foot"></div>
+    </div>
+    <div class="pop" id="pop3">
+        <div class="head">
+            <div class="console"><div class="tools"><a href="#" class="att-icon att-icon-close fnc-close-btn" title="console-close"></a></div><pre>success</pre></div>
+            <div class="title">title</div>
+            <a href="#" data-entity="pop3" data-mode="align" class="att-icon fnc-link att-icon-align" title="align"></a>
+            <a href="#" data-entity="pop3" data-mode="copy"  class="att-icon fnc-link att-icon-copy"  title="copy"></a>
+            <a href="#" data-entity="pop3" data-mode="apply" class="att-icon fnc-link att-icon-save"  title="apply"></a>
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop3-close"></a>
+        </div>
+        <div class="space"></div>
+        <div class="foot"></div>
+    </div>
+    <div class="pop" id="pop4">
+        <div class="head">
+            <div class="title">test</div>
+        </div>
+        <div class="space">
+            <div class="formbox">
+                <div class="body"></div>
+                <div class="tail">
+                    <div><span>DATA_SOURCE</span><input class="att-input att-input-text required" type="text" data-name="datasource"></div>
+                    <a></a>
+                </div>
+            </div>
+        </div>
+        <div class="foot"></div>
+    </div>
+    <div class="pop" id="pop5">
+        <div class="head">
+            <div class="title">☺ Panel starting tool</div>
+            <span>DATA_SOURCE</span><input type="text" data-name="datasource" class="att-input-text att-width-70" placeholder="input id">
+            <a href="#" data-entity="pop5" data-mode="run" data-type="tool" data-post="1" class="att-icon fnc-link att-icon-run" title="run"></a>
+            <a href="#" data-entity="pop5" data-mode="align"  class="att-icon fnc-link att-icon-align" title="align" style="display:none;""></a>
+            <a href="#" data-entity="pop5" data-mode="apply" class="att-icon fnc-link att-icon-save" title="apply"></a>
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop5-close"></a>
+        </div>
+        <div class="space">
+            <div class="query"><textarea class="att-input-text" data-name="query" placeholder="input query"></textarea></div>
+            <div class="json"><pre class="context"></pre></div>
+        </div>
+        <div class="foot"></div>
+    </div>
+    <div class="pop" id="pop6">
+        <div class="head">
+            <div class="title">View</div>
+            <a href="#" class="att-icon att-icon-edit-row fnc-view-edit" title="pop6-view-edit"></a>
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop6-close"></a>
+        </div>
+        <div class="space"></div>
+        <div class="foot"></div>
+    </div>
+
+</body>
+</html>
+
+<script src="/static/ext/jquery.3.6.0.min.js"></script>
+<script src="/static/ext/jquery.cookie.1.4.1.min.js"></script>
+<script src="/static/ext/jquery.ui.1.13.2.js"></script>
+<script src="/static/ext/ace.1.32.7.min.js"></script>
+<script src="/static/ext/sql.formatter.15.3.0.min.js"></script>
+<script src="/static/ext/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<script>
+
+
+// utility function
+////////////////////////////////////////////////////////////////////
+var _p = {
+    "const": {
+        "root": "/",
+        "group": "/api/group",
+        "menu": "/rest/menu",
+        "workplace": "/rest/workplace",
+        "view": "/rest/view",
+        "panel": "/rest/panel",
+        "execute": "/rest/execute",
+        "search": "/rest/search",
+        "uploadExcel": "/file/excel",
+        "uploadFile": "/file/upload",
+        "downloadFile": "/file/download?.g=",
+        "downloadImage": "/file/image?.g=",
+        "user": "/user/check",
+        "datasource": "/check/datasource?i=",
+        "query": "/check/query",
+        "tool": "/check/tool",
+        "userChpwd": "/user/chpwd",
+        "pathDelimiter": "#",
+        "paramDelimiter": ";",
+        "apiHost": "",
+    },
+    "menu0": "",
+    "menu1": "",
+    "user": "",
+    "mode": "load",
+    "group": 1,
+    "title": "{{ app['name'] }}",
+    "version": "{{ app['ver'] }}",
+    "p":{"size":0, "i":{}},
+    "tableEditType" : ["table", "arrange", "select"],
+    "transParam" : {
+        "@grp":".g", 
+        "@idx":".i", 
+        "@type":".t", 
+        "@date":".d"
+    },
+    "chartObj": {},
+    "scrollObj": {},
+    "actionTask": {}
+};
+
+_p["transParamRev"] = Object.fromEntries(Object.entries(_p["transParam"]).map(([key, value]) => [value, key]));
+_p["device"] = "{{ device }}";
+
+var _l = "en";
+var _m = {};
+_m["en"] = {
+    "welcome": "welcome ^^ !!",
+    "ok": "ok",
+    "confirm": "do proceed?",
+    "nochange": "there are no changes.",
+    "noselect": "there are no selected item.",
+    "noquery": "please enter query",
+    "required": "this field is required.",
+    "fromto": "please enter the 'from' and 'to' values.",
+    "copy": "copied !",
+    "apply": "applied !",
+    "align": "formatted !",
+    "dbclicksql": "double-click on the sql statement to activate the sql editor.",
+    "queryrollback": "the query rolls back.",
+    "duplicated": "the value already exists.",
+    "updated": "last updated",
+    "bulk": "bulk upload",
+    "excelsample": "download sample excel file",
+    "excelcode": "download code excel file",
+    "nofile": "empty file",
+    "write": "write form",
+    "starttoolempty": "datasource or query is empty.",
+    "starttoolinvalidnumber": "datasource is not number.",
+    "starttoolemptyjson": "json is empty.",
+    "dynamicchartempty": "chart attributes are empty.",
+    "upload": "file upload",
+
+}
+
+// init
+var queryParams = getQueryParams();
+if (queryParams[".g"]) _p["group"] = queryParams[".g"];
+_p["user"] = decodeURIComponent($.cookie("{{ cookie }}."+_p["group"]+".i"));
+var webSocketIo;
+
+$(document).ready(function() {
+
+    modal(_m[_l]["welcome"]);
+
+    $("#gh .id").html(_p["user"])
+
+    callAjax(_p["const"]["group"], renderLogo);
+    callAjax(_p["const"]["menu"] + "?.g=" + _p["group"], renderMenu);
+
+    $("#gh .att-icon-logout").attr("href", "/auth/logout?.g="+ _p["group"]+"&u=" + encodeURIComponent("/?.g=" + _p["group"]));
+
+    var url = _p["const"]["user"] + "?.g=" + _p["group"];
+    callAjax(url, function(obj) {
+        if (obj["data"]["chpwd"]) {
+            $("#gh .id").addClass("fnc-user-edit").attr("href","#");
+        }
+    });
+
+    webSocketIo = WebSocketIO();
+
+    //setTimeout(function(){$(".level-2").show();alert("d")}, 1000);
+});
+
+function modal(msg, isHide = true) {
+
+    var time = $("<span>").addClass("time").html("[" + getFormatTime() + "]")
+    var modalId = getUniqueId();
+
+    var obj = $(_htmls["modal"]);
+    $(obj).find(".context .msg").html(time).append(msg);
+    $(obj).attr("id", modalId);
+
+    $("#ml").append(obj);
+    if ( isHide ) setTimeout(function() {$("#" + modalId).slideUp();}, 2000);
+
+    $(".progress").hide();
+
+    return false;
+}
+
+
+function putHistory(url) {
+
+    var stateObj = { 
+        "title" : _p["title"],
+        "url"   : _p["const"]["pathDelimiter"] 
+                  + url 
+    };
+    history.pushState(stateObj, stateObj["title"], stateObj["url"]);
+    //document.title = _p["title"];
+}
+
+function getQueryParams(url="") {
+    // URL에서 쿼리 파라미터 부분을 추출합니다.
+
+    if (url=="") url = document.URL;
+
+    var queryString = url.split('?')[1];
+    if (!queryString) return {};
+
+    queryString = queryString.split(_p["const"]["pathDelimiter"])[0];
+    if (!queryString) return {};
+
+    var queryParams = queryString.split('&');
+    var paramsObject = {};
+
+    queryParams.forEach(function(param) {
+        var keyValue = param.split('=');
+        var key = decodeURIComponent(keyValue[0]);
+        var value = decodeURIComponent(keyValue[1]);
+        paramsObject[key] = value;
+    });
+
+    return paramsObject;
+}
+
+
+function getPath(url="") {
+
+    if (url=="") url = document.URL;
+
+    var path = url.split(_p["const"]["pathDelimiter"])[1];
+    if (!path) return "";
+
+    path = path.split(_p["const"]["paramDelimiter"])[0];
+    if (!path) return "";
+
+    return path;
+}
+
+function getPathParams(url="") {
+
+    if (url=="") url = document.URL;
+
+    var path = url.split(_p["const"]["pathDelimiter"])[1];
+    if (!path) return {};
+
+    path = path.split(_p["const"]["paramDelimiter"])[0];
+    if (!path) return {};
+
+    return getQueryParams(path);
+}
+
+function getHashParams(url="") {
+
+    if (url=="") url = document.URL;
+
+    var resArr = [];
+    var resArr = new Array(_p["p"] ["size"]).fill("");
+
+    var path = url.split(_p["const"]["pathDelimiter"])[1];
+    if (!path) return resArr ;
+
+    paramArr = path.split(_p["const"]["paramDelimiter"]);
+    if (!paramArr) return resArr;
+
+    for (var i=0; i<_p["p"]["size"]; i++ ) {
+        if (paramArr[i+1]) resArr[i] = paramArr[i+1];
+    }
+
+    return resArr;
+}
+
+function setHashParam(seq, queryStr) {
+
+    seq = parseInt(seq);
+    
+    var paramArr = getHashParams();
+    var path = getPath();
+    
+    paramArr[seq] = queryStr ;
+    var queryStr = paramArr.join(_p["const"]["paramDelimiter"]);
+
+    var url = path 
+            + _p["const"]["paramDelimiter"]
+            + queryStr;
+
+    putHistory (url);
+}
+
+function getHashParamValue(pid, name) {
+    try {
+        paramArr = getHashParams();
+        var paramStr = new URLSearchParams(paramArr[parseInt($(pid).attr("data-seq"))]);
+        var res = queryToObj(paramStr)[name];
+        if (!res || res == "") return "" ;
+        else return res;
+    } catch(e) {return ""; }
+}
+
+function queryToObj(queryString) {
+
+    var params = new URLSearchParams(queryString);
+    var obj = {};
+
+    params.forEach(function(value, key) {
+        obj[key] = value;
+    });
+    return obj;
+}
+
+function getUniqueId () {
+    
+    return "id" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+}
+
+///////////////////// old functions start
+
+
+function setParam(order,param) {
+    var paramStr = "" ;
+    $('.wp-body-panel').each(function(idx,obj) {
+        var thisParam = "" ;
+        if ( $(obj).attr('param') ) thisParam =  $(obj).attr('param')
+        paramStr += _p.const.paramDelimiter + thisParam ;
+    });
+
+
+    var stateObj = { title: $('#_wp_title').text(), 
+                        url: _p.const.root + 
+                            _p.const.pathDelimiter + 
+                            getPath() + 
+                            paramStr };
+    history.pushState(stateObj, stateObj.title, stateObj.url);
+
+}
+
+function getParam(order=-1) {
+
+    if ( document.URL.indexOf(_p.const.paramDelimiter) === -1 ) return "" ;
+
+    if ( order === -1 ) {
+        return document.URL.substr(document.URL.indexOf(_p.const.paramDelimiter)+1);
+    } else {
+
+        var paramStr = document.URL.substr(document.URL.indexOf(_p.const.paramDelimiter)+1);
+        var paramArr = paramStr.split(_p.const.paramDelimiter);
+
+        if (paramArr[order]) return paramArr[order];
+        else return "" ;
+    }
+}
+/////////////// old functions end
+
+// window global function
+////////////////////////////////////////////////////////////////////
+
+$(window)
+.on ("hashchange", function() {
+    callPage();
+});
+
+function callPage() {
+    
+    var qpParam = getQueryParams();
+    if (qpParam["g"] && _p["group"] != qpParam["g"] ) {
+        location.href = document.URL;
+    } else {
+        actMenu();
+    }
+}
+
+function actMenu() {
+
+    _p["mode"] = "load";
+
+    var pathParam = getPathParams();
+    
+    if (pathParam[".g"] && pathParam[".i"]) {
+        var tarObj = $("#gm .menu a[data-g='"+pathParam[".g"]+"'][data-i='"+pathParam[".i"]+"']");
+        $(tarObj).parent().prev().click();
+        $(tarObj).click();
+    } else {
+        if ( $("#gl .title").attr("data-start") && $("#gl .title").attr("data-start") != "") {
+            var tarObj = $("#gm .menu a[data-i='"+ $("#gl .title").attr("data-start") + "']");
+            $(tarObj).click();
+        }
+    }
+    
+    _p["mode"] = "click";
+}
+
+
+
+// call function
+////////////////////////////////////////////////////////////////////
+
+function callPanel(panelObj) {
+    callPanelCustom(panelObj, renderPanel);
+}
+
+function callPanelCustom(panelObj, callback, extraParams = null ) {
+
+    url = getPanelUrl(panelObj, extraParams);
+    callAjax(url, callback);
+}
+
+function getPanelUrl( panelObj, extraParams = null ) {
+
+    var url = _p["const"]["panel"] 
+            + "?.g=" + $(panelObj).attr("data-g")
+            + "&.i=" + $(panelObj).attr("data-i");
+    
+    var queryStr = getHashParams()[parseInt($(panelObj).attr("data-seq"))];
+    if ( queryStr != "" ) url += "&" + queryStr ;
+
+    if (extraParams) {
+        $.each(extraParams, function(k,v){
+            url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(v)
+        });
+    }
+
+    if ( $(panelObj).find(".head .tools .att-tool-reload").attr("data-clear") == "1" ) {
+        url += "&.c=1";
+       $(panelObj).find(".head .tools .att-tool-reload").removeAttr("data-clear");
+    }
+
+    return url;
+}
+
+var _htmls = {};
+_htmls["panel"] = `
+<div class="panel">
+    <div class="pidx fnc-pidxinfo"></div>
+    <div class="pidxinfo">
+        <div class="row">
+            <span class="key">panel id</span><span class="val"></span>
+        </div>
+        <div class="row">
+            <a href="#" class="key fnc-cache-clear">cache clear</a>
+        </div>
+    </div>
+    <div class="progress"><div class="mover"></div></div>
+    <div class="head">
+        <div class="title"></div>
+        <div class="update"></div>
+        <div class="tools"></div>
+    </div>
+    <div class="widget"></div>
+    <div class="search">
+        <div class="basis">
+            <div class="item"><span class="value"><input type="text" class="att-input att-input-text fnc-data-find" data-value="" placeholder="search"/></span></div>
+        </div>
+        <div class="custom"></div>
+        <div class="m-buttons">
+            <a href="#" class="m-icon m-icon-search fnc-link-mobile" data-target="search"></a>
+            <a href="#" class="m-icon m-icon-reload fnc-link-mobile" data-target="reload"></a>
+        </div>
+    </div>
+    <div class="chart"></div>
+    <div class="note"></div>
+    <div class="action"></div>
+    <div class="form">
+    <div class="info"></div>
+    <div class="body"></div>
+    <div class="result"></div>
+    </div>
+</div>
+`;
+
+_htmls["date-pick"] = `
+<div class="date-pick">
+    <div class="head">
+        Date pick
+        <a href="#" class="att-icon att-icon-close fnc-close-btn" title="date-pick-close"></a>
+    </div>
+    <div class="body">
+        <div class="defined">
+            <a href="#" class="fnc-date-pick-value" data-value="Today">Today</a>
+            <a href="#" class="fnc-date-pick-value" data-value="Yesterday">Yesterday</a>
+            <a href="#" class="fnc-date-pick-value" data-value="2_days_ago">2_days_ago</a>
+        </div>
+        <div class="defined">
+            <a href="#" class="fnc-date-pick-value" data-value="Last_7_days">Last_7_days</a>
+            <a href="#" class="fnc-date-pick-value" data-value="Last_30_days">Last_30_days</a>
+            <a href="#" class="fnc-date-pick-value" data-value="Last_90_days">Last_90_days</a>
+        </div>
+        <div class="defined">
+            <a href="#" class="fnc-date-pick-value" data-value="This_year">This_year</a>
+            <a href="#" class="fnc-date-pick-value" data-value="This_month">This_month</a>
+        </div>
+        <div class="defined">
+            <a href="#" class="fnc-date-pick-value" data-value="Last_year">Last_year</a>
+            <a href="#" class="fnc-date-pick-value" data-value="Last_month">Last_month</a>
+            <a href="#" class="fnc-date-pick-value" data-value="Last_3_months">Last_3_months</a>
+        </div>
+        <div class="custom">
+            <div class="title">Custom</div>
+            <div>
+                <span class="label">From</span>
+                <input type="date" class="att-input att-input-date" name="att-from" required pattern="\d{4}-\d{2}-\d{2}" value></input>
+            </div>
+            <div>
+                <span class="label">To</span>
+                <input type="date" class="att-input att-input-date" name="att-to" required pattern="\d{4}-\d{2}-\d{2}" value></input>
+            </div>
+            <div>
+                <a href="#" class="att-btn fnc-date-pick-value" data-value="none">cancel</a>
+                <a href="#" class="att-btn fnc-date-pick-value" data-value="custom">apply</a>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
+
+_htmls["draw-chart"] = `
+<div class="draw-chart">
+    <div class="dac-head">
+        Dynamic Chart
+        <a href="#" class="att-icon att-icon-close fnc-close-btn" title="draw-chart-close"></a>
+    </div>
+    <div class="dac-body">
+        <div class="dac-custom">
+            <div class="dac-title">custom</div>
+            <div class="dac-axis">
+                <div class="dac-label">X axis</div>
+                <div class="fnc-selects" data-name="x"></div>
+            </div>
+            <div class="dac-axis">
+                <div class="dac-label">Y axis</div>
+                <div class="fnc-selects" data-name="y"></div>
+            </div>
+        </div>
+        <div class="dac-defined">
+            <div class="dac-title">defined</div>
+            <select class="att-input-select" data-name="defined" name="defined" data-value="">
+                <option value="">select defined chart</option>
+            </select>
+            <div class="dac-title">chart type</div>
+            <select class="att-input-select" data-name="type" name="type" data-value="line">
+                <option value="line">line</option>
+                <option value="bar">bar</option>
+            </select>
+            <div class="dac-title">sort the values on the x-axis</div>
+            <div class="dac-box fnc-selects">
+                <a href="#" class="fnc-select-one" data-name="xsort" data-value="1">yes</a>
+                <a href="#" class="fnc-select-one att-selected-item" data-name="xsort" data-value="0">no</a>
+            </div>
+            <div class="dac-footer">
+                <a href="#" class="fnc-link att-btn" title="draw" data-entity="chart" data-mode="table" data-target="" data-type="draw">Draw</a>
+                <a href="#" class="fnc-close-btn att-btn" title="draw-chart-close">cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
+_htmls["chpwd"] = `
+<div class="formbox">
+    <div class="body">
+        <div class="row" style="height:60px;">
+            <div class="label require-mark">current password</div>
+            <div class="edit"><input class="att-input att-input-text required" type="password" data-name="cur_pwd" data-alias="current password" autocomplete="new-password"></div>
+        </div>
+        <div class="row" style="height:60px;">
+            <div class="label require-mark">new password</div>
+            <div class="edit"><input class="att-input att-input-text required" type="password" data-name="new_pwd1" data-alias="new password" autocomplete="new-password"></div>
+        </div>
+        <div class="row" style="height:60px;">
+            <div class="label require-mark">confirm new password</div>
+            <div class="edit"><input class="att-input att-input-text required" type="password" data-name="new_pwd2" data-alias="confirm new password" autocomplete="new-password"></div>
+        </div>
+    </div>
+    <div class="tail"><a class="fnc-link att-btn att-width-140" data-entity="header" data-mode="chpwd" data-type data-post="1" href="#">save</a></div>
+</div>
+`;
+
+_htmls["highlight-row"] = `
+<div class="att-highlight-row"></div>
+`;
+
+_htmls["modal"] = `
+<div class="modal">
+        <div class="context">
+            <a href="#" class="att-icon att-icon-close fnc-close-btn" title="modal-close"></a>
+            <div class="title">message</div>
+            <div class="msg">copied!</div>
+        </div>
+    </div>
+`;
+
+_htmls["widget"] = `
+<div class="wcard">
+    <div class="header"><a></a></div>
+    <div class="body">
+        <div class="index">&nbsp;</div>
+        <div class="cap"><span class="diff"></span><span class="rate"></span><span class="base"></span></div>
+    </div>
+    <div class="footer"><span class="comment fnc-wcard-index"></span></div>
+    <div class="chart-area"></div>
+</div>
+`;
+
+
+_htmls["widget-list"] = `
+<div class="wcard">
+    <div class="header gray"><a></a></div>
+    <table class="list"></table>
+</div>
+`;
+
+_htmls["widget-noti"] = `
+<div class="widget-noti">
+    <div><span class="name">red</span><span class="value"></span></div>
+    <div><span class="name">yellow</span><span class="value"></span></div>
+</div>
+`;
+
+
+{{ js_obj["init"]|safe }}
+{{ js_obj["event"]|safe }}
+{{ js_obj["play"]|safe }}
+{{ js_obj["post"]|safe }}
+{{ js_obj["form"]|safe }}
+{{ js_obj["render"]|safe }}
+{{ js_obj["table"]|safe }}
+{{ js_obj["util"]|safe }}
+{{ js_obj["mobile"]|safe }}
+
+</script>
+
+<script>
+
+function WebSocketIO() {
+
+    var wsProtocol = (window.location.protocol === 'https:') ? 'wss' : 'ws';
+    var sUrl = wsProtocol + "://" + window.location.host + "/ws/" + encodeURIComponent(_p["user"]);
+    var ws = new WebSocket(sUrl);
+    var cid = "";
+
+    ws.onopen = function(event) {
+        console.log("ws.onopen: connected");
+    };
+
+    ws.onclose = function(event) {
+        setTimeout(function() {
+            window.webSocketIo = WebSocketIO();
+        }, 1000);
+    };
+
+    ws.onerror = function(event) {
+        console.log("ws.onerror: websocket error:", event);
+    };
+
+    ws.onmessage = function(ws) {
+
+        try {
+
+            msgObj = JSON.parse(event.data);
+            msgStr = msgObj["msg"];
+            if (  msgObj["task_name"] &&  msgObj["task_name"] != "" ) {
+                if ( _p["actionTask"][msgObj["task_name"]] ) {
+
+                    msgStr =  "**" + msgObj["task_alias"] + "** " + msgStr;
+                    if (msgObj["status"] == "ok") {
+                       modal (msgStr, false);
+
+                    } else if (msgObj["status"] == "error") {
+                        modal("Error.<hr>" + msgStr, false);
+                    }
+                    delete (_p["actionTask"][msgObj["task_name"]]);
+                }
+            } else {
+                if (msgObj["status"] == "hello") cid = msgObj["cid"];
+            }
+        } catch (e) {};
+    };
+
+    function sendMsg(event) {
+        if (ws.readyState !== WebSocket.OPEN) {
+            return false;
+        } else {
+            ws.send("hello");
+            event.preventDefault();
+        }
+        return false;
+    }
+
+    return {
+        sendMsg: function(event) {
+            return sendMsg(event);
+        }
+    }
+}
+
+</script>
+
+<script>
+function handleGlobalError(message, source, lineno, colno, error) {
+    console.error("Global Error Handler:");
+    console.error("Message:", message);
+    console.error("Source:", source);
+    console.error("Line:", lineno);
+    console.error("Column:", colno);
+    console.error("Error Object:", error);
+    modal ("[line:"+lineno+"] " + message, false);
+    return true;
+}
+window.onerror = handleGlobalError;
+</script>

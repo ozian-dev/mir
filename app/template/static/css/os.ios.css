@@ -1,0 +1,4 @@
+/* os ios */
+
+.att-icon-logout::before {content:"↦";font-size:17px;padding-bottom:5px;}
+.att-input-select {appearance:none;}

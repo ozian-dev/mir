@@ -1,0 +1,124 @@
+<html lang="ko">
+<head>
+<title>{{ app['name'] }}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+<style>
+* {margin:0;padding:0;word-break:keep-all;box-sizing:border-box !important;list-style:none;font-size:13px;font-family:Arial;line-height:150%;text-decoration:none;color:#333;-webkit-text-size-adjust:100%;}
+
+.login {width:320px;padding:60px 20px 20px 20px;position:fixed;top:0;left:calc(50% - 160px);}
+.login .lg-head {font-size:35px;color:{{ color }};font-weight:bold;text-align:center;font-family:'Arial Black';line-height:100%;}
+.login .lg-msg {color:{{ color }};text-align:center;font-weight:normal;}
+.login .lg-body {margin-top:20px;}
+.login .lg-body .lg-input {width:100%;font-size:17px;padding:5px 20px;margin-top:20px;border-radius:10px;border:1px solid dimgray;}
+.login .lg-body .lg-submit {width:100%;font-size:17px;padding:5px 20px;margin-top:30px;border:none;border-radius:10px;background-color:{{ color }};color:white;cursor:hand;}
+.login .lg-footer{margin-top:40px;text-align:center;font-size:11px;}
+
+.login .lg-body .lg-group {text-align:left;margin-top:15px;margin-left:30px;}
+.login .lg-body .lg-group .lg-radio {margin-right:5px;accent-color:{{ color }};}
+.login .lg-body .lg-group span {display:inline-block;padding:10px;margin-right:20px;line-height:90%;}
+.login .lg-body .lg-group span:last-child {margin-right:0;}
+
+.item {display:flex;align-items:center;}
+
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="login">
+        <div class="lg-head">{{ app['name'] }}</div>
+        <div class="lg-body">
+            <form method="post" action="/auth/login">
+                <input class="lg-input" type="text" name="id" placeholder="user id" id="lg-i">
+                <input class="lg-input" type="password" name="pwd" placeholder="password"  id="lg-p">
+                <div class="lg-group" id="lg-group"></div>
+                <input type="hidden" name="u" id="lg-u">
+                <input class="lg-submit" type="submit" value="login">
+            </form>
+        </div>
+        <div class="lg-footer">{{ app['name'] }} {{ app['ver'] }}</div>
+    </div>
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+$(document).ready(function() {
+
+    var setGroup = $.cookie("{{ cookie }}.l.g");
+
+    var url = new URL(window.location.href);
+
+    // URLSearchParams 객체 생성
+    var searchParams = new URLSearchParams(url.search);
+    var gParam = searchParams.get(".g");
+
+    if (gParam != setGroup) setGroup = gParam;
+
+    $("#lg-u").val(searchParams.get('u'));
+
+    callAjax("/api/group", function(res){
+        var groupList = $("#lg-group");
+        $(res.data).each(function(i,o){
+
+            var item = $("<div class='item'>");
+
+            o.idx = o.idx + ""
+            var input = $("<input>").addClass("lg-radio")
+                                    .attr("type", "radio")
+                                    .attr("name", "grp")
+                                    .attr("value", o.idx);
+            if(setGroup == "" && o.start==1) {
+                $(input).prop("checked", true);
+                setGroup = o.idx;
+            } else if ( setGroup == o.idx ) $(input).prop("checked", true);
+            
+            $(item).append(input);
+            $(item).append($("<span>").html(o.name));
+            $(groupList).append(item);
+        })
+
+        $("#lg-i").val ($.cookie("{{ cookie }}."+setGroup+".i"));
+    })
+});
+
+function callAjax(url, callback) {
+    $.ajax({
+        type : 'GET',
+        url : url,
+        headers: {'Content-type': 'application/json'},
+        cache: false,
+        success : function(res){
+            if (res.detail) res = res.detail
+            if(res.status == "ok") {
+                callback(res);
+            }
+        },
+        error : function(XMLHttpRequest, textStatus, errorThrown){
+            alert("API call error")
+        }
+    });
+}
+
+$("body")
+.on ("change", "input[name='grp']", function(){ 
+	var grp = $("input[name='grp']:checked").val();
+	$("#lg-i").val ($.cookie("{{ cookie }}."+grp+".i"));	
+})
+.on ("click", ".lg-submit", function(){ 
+
+    var i = $("#lg-i").val();
+    var p = $("#lg-p").val();
+    var g = $('input[name="grp"]:checked').val();
+    
+    if ( !i ) { alert("input user id"); return false; }
+    if ( !p ) { alert("input password"); return false; }
+    if ( !g ) { alert("select group"); return false; }
+
+    return true;
+})
+
+;
+</script>

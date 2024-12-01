@@ -1,0 +1,19 @@
+/* device pc */
+
+.date-pick {position:absolute;top:-1px;right:0;padding:5px 10px;background-color:white;border:1px solid #aaa;border-bottom-left-radius:10px;display:none;z-index:10;}
+.date-pick .head {color:dodgerblue;padding:0 5px 3px 5px !important;position:relative;border-bottom:1px solid gray;font-weight:bold;font-size:15px;}
+.date-pick .head a {position:absolute;right:0;top:4px;}
+.date-pick .body {display:grid;grid-gap:5px;grid-template-columns:100px 100px 100px 100px 230px;}
+.date-pick .body > div {vertical-align:top;padding:5px;}
+.date-pick .body > div > a {display:block !important;}
+.date-pick .body .defined {padding-top:27px;}
+.date-pick .body .defined a:hover {color:dodgerblue;}
+
+.date-pick .body .custom .title {color:dodgerblue;}
+.date-pick .body .custom > div {display:block;width:100%;padding-left:10px;}
+.date-pick .body .custom > div:last-child {padding-top:10px;}
+.date-pick .body .custom > div .label {display:inline-block;width:40px;color:gray !important;}
+.date-pick .body .custom > div input {height:24px;padding-left:5px;width:120px;}
+.date-pick .body .custom > div a {margin:0;margin-right:8px;}
+
+.m-buttons {display:none;}
