@@ -1,0 +1,231 @@
+DROP TABLE IF EXISTS grp;
+CREATE TABLE grp (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(50) NOT NULL COMMENT 'group name',
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  arrange int(2) NOT NULL DEFAULT 1,
+  auth varchar(1024) DEFAULT NULL COMMENT 'login info,json format',
+  start int(11) DEFAULT NULL COMMENT 'The menu idx that is initially called upon login',
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (idx),
+  UNIQUE KEY name (name),
+  KEY list_01 (live,name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS source;
+CREATE TABLE source (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  type varchar(50) DEFAULT NULL COMMENT 'mysql,bigquery,etc. all lower character',
+  name varchar(50) DEFAULT NULL COMMENT 'db name',
+  timezone varchar(50) DEFAULT NULL COMMENT 'timezone',
+  charset  varchar(50) DEFAULT NULL COMMENT 'charset',
+  collation varchar(50) DEFAULT NULL COMMENT 'collation',
+  host varchar(50) DEFAULT NULL COMMENT 'db host',
+  port int(11) DEFAULT NULL COMMENT 'db port',
+  user varchar(50) DEFAULT NULL COMMENT 'user id',
+  pwd varchar(50) DEFAULT NULL COMMENT 'user password',
+  db varchar(50) DEFAULT NULL COMMENT 'database',
+  permit varchar(15) NOT NULL COMMENT 'permit: read-only,read-write',
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (idx),
+  KEY list_01 (live,idx)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS menu;
+CREATE TABLE menu (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  grp int(11) NOT NULL,
+  menu1 varchar(50) NOT NULL COMMENT 'menu level 1',
+  menu2 varchar(50) NOT NULL COMMENT 'menu level 2',
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  arrange int(11) NOT NULL DEFAULT 1,
+  levelv varchar(5) DEFAULT '0150' COMMENT 'view permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  levelu varchar(5) DEFAULT '0150' COMMENT 'update/new permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  link varchar(200) DEFAULT NULL,
+  share int(1) DEFAULT 0,
+  updated timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (idx),
+  UNIQUE KEY menu1 (menu1,menu2),
+  KEY list_01 (share,grp,arrange),
+  KEY list_02 (live,share,grp,arrange)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS panel;
+CREATE TABLE panel (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  grp int(11) NOT NULL,
+  midx int(11) NOT NULL COMMENT 'menu idx',
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  title varchar(50) DEFAULT NULL COMMENT 'panel title',
+  arrange int(11) NOT NULL DEFAULT 1,
+  levelv varchar(4) DEFAULT '0150' COMMENT 'view permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  levelu varchar(4) DEFAULT '0150' COMMENT 'update/new permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  share int(1) DEFAULT 0,
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  json_panel_value text DEFAULT NULL,
+  PRIMARY KEY (idx),
+  UNIQUE KEY grp (grp,midx,title),
+  KEY list_01 (grp,midx,arrange),
+  KEY list_02 (grp,live,midx,arrange)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS view;
+CREATE TABLE view (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  grp int(11) NOT NULL,
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  title varchar(50) DEFAULT NULL COMMENT 'view title',
+  levelv varchar(4) DEFAULT '0150' COMMENT 'view permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  levelu varchar(4) DEFAULT '0150' COMMENT 'update/new permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  share int(1) DEFAULT 0,
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  json_view_value text DEFAULT NULL,
+  PRIMARY KEY (idx),
+  UNIQUE KEY grp (grp,title)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS code;
+CREATE TABLE code (
+  code1 varchar(2) NOT NULL,
+  code2 varchar(2) NOT NULL,
+  name varchar(100) DEFAULT NULL,
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (code1,code2)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  grp int(11) NOT NULL DEFAULT 1 COMMENT 'group id',
+  id varchar(64) NOT NULL COMMENT 'user id',
+  token varchar(40) COMMENT 'user api token',
+  pwd varchar(128) NOT NULL COMMENT 'user password',
+  level varchar(4) NOT NULL COMMENT 'user permit level,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
+  live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (idx),
+  UNIQUE KEY id (grp, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS notice;
+CREATE TABLE notice (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  grp int(11) NOT NULL COMMENT 'group id',
+  uid varchar(64) NOT NULL COMMENT 'user id',
+  author varchar(64) NOT NULL COMMENT 'wirter name',
+  title varchar(256) NOT NULL COMMENT 'title',
+  context text NOT NULL COMMENT 'contents',
+  img_server varchar(1024) DEFAULT NULL COMMENT 'server image url',
+  img_cloud varchar(1024) DEFAULT NULL COMMENT 'cloud image url',
+  file_server text DEFAULT NULL COMMENT 'server file path. [,] seperated',
+  file_cloud text DEFAULT NULL COMMENT 'cloud file url. [,] seperated',
+  status int(1) DEFAULT 1 COMMENT '0:deleted, 1:live',
+  created timestamp NOT NULL DEFAULT current_timestamp(),
+  updated timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (idx),
+  KEY list_01 (grp,idx),
+  KEY list_02 (grp,uid,idx)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+INSERT INTO code(code1,code2,name) VALUES('01','10','super');
+INSERT INTO code(code1,code2,name) VALUES('01','20','admin');
+INSERT INTO code(code1,code2,name) VALUES('01','30','manager');
+INSERT INTO code(code1,code2,name) VALUES('01','40','operator');
+INSERT INTO code(code1,code2,name) VALUES('01','50','viewer');
+INSERT INTO code(code1,code2,name) VALUES('01','70','partner');
+INSERT INTO code(code1,code2,name) VALUES('01','90','guest');
+
+INSERT INTO code(code1,code2,name) VALUES('02','01','mariadb');
+INSERT INTO code(code1,code2,name) VALUES('02','02','mysql');
+INSERT INTO code(code1,code2,name) VALUES('02','03','biqguery');
+
+INSERT INTO code(code1,code2,name) VALUES('03','01','read-only');
+INSERT INTO code(code1,code2,name) VALUES('03','02','read-write');
+
+INSERT INTO code(code1,code2,name) VALUES('04','01','create issue');
+INSERT INTO code(code1,code2,name) VALUES('04','02','assign');
+INSERT INTO code(code1,code2,name) VALUES('04','03','work in progress');
+INSERT INTO code(code1,code2,name) VALUES('04','04','review');
+INSERT INTO code(code1,code2,name) VALUES('04','05','test');
+INSERT INTO code(code1,code2,name) VALUES('04','06','done');
+INSERT INTO code(code1,code2,name) VALUES('04','07','cancel');
+INSERT INTO code(code1,code2,name) VALUES('04','08','reopen');
+
+INSERT INTO user(id,pwd,level) VALUES('super','$2a$10$8gI6I3.T135bnywGDukBj.D3p4G4u1IfJIJKhrhEZpzZlgIO.R/e2','0110');
+INSERT INTO user(id,pwd,level) VALUES('admin','$2a$10$FceK.UTYakrtB/NtElaxQ.l8MZASE9BLtKd7yh7Ltm/IgIKErESE2','0120');
+INSERT INTO user(id,pwd,level) VALUES('manager','$2a$10$1Vh2DKVhzt0EjtC79VSktOvzMmKmzNgO4Fkk8zZ4NyOh/GpDsPhdq','0130');
+INSERT INTO user(id,pwd,level) VALUES('operator','$2a$10$3fyLXB6yudB59cxd2lcSqeGf5h5tg.tUsTL6FjESxDmWu11ykceCS','0140');
+INSERT INTO user(id,pwd,level) VALUES('viewer','$2a$10$T2enFQ3tL9EBZRaHbqG/9uPlpq028ChCVhCT46Czcdxyj0eMRcXkG','0150');
+INSERT INTO user(id,pwd,level) VALUES('partner','$2a$10$dQkBL5D6zcA8TNQvLZsod.QG4jVsDAW6l.xpuQxERmiHphS6aJhSa','0170');
+INSERT INTO user(id,pwd,level) VALUES('guest','$2a$10$A54maqevCUKzxcDNjpSv1u8m0rXqLRNXwcQnbneD1/WCHdp9ZEnVa','0190');
+
+INSERT INTO grp (name,start,arrange,auth) VALUES('<<<<APP>>>>',0,1000000000,
+'{"datasource":1,"type":"generic","login_check":{"query":"select id,pwd,level,idx as uid from user where grp=1 and  id=#{id}"},"change_pwd":{"query":"update user set pwd=#{pwd} where grp=1 and id=#{id}"},"encryption":"bcrypt","validation":{"id":{"general":["alphabet"],"custom":"","match":"only","length":{"min":2,"max":10}},"pwd":{"general":["alphabet","capital","number"],"custom":"!@#$%^&*.","match":"all","length":{"min":5,"max":15}}}}');
+
+INSERT INTO notice (grp,uid,author,title,context) VALUES 
+(1, "admin", 'admin', 'sample notice title 1', '# Markdown Example\n## Highlight (Bold and Italic)\nTo emphasize text, you can make it **bold** or *italic*.\n\nTo combine both: **_bold and italic_**\n\n## Lists\n### Unordered List\n- Item 1\n- Item 2\n  - Subitem 1\n  - Subitem 2\n\n### Ordered List\n1. First item\n2. Second item\n   1. Subitem 1\n   2. Subitem 2\n\n## Links\nThis is a [simple link](https://example.com).\n\nOr, use a reference-style link:\n[Visit Example][example-link]\n\n[example-link]: https://example.com\n\n\n## Image\n\nBelow is an example of an image:\n\n![Sample Image](/favicon.png "Image Title")\n'),
+(1, "admin", 'admin', 'sample notice title 2', 'sample notice context 2'),
+(1, "admin", 'admin', 'sample notice title 3', 'sample notice context 3');
+
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (10,1, 'Admin',         'Menu',            10,'0120','0120',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (20,1, 'Admin',         'View',            20,'0120','0120',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (30,1, 'Admin',         'User',            30,'0120','0120',0) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (40,1, 'Commons',       'Notice',          40,'0190','0120',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (50,1, 'Commons Admin', 'Menu',            50,'0110','0110',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (60,1, 'Commons Admin', 'View',            60,'0110','0110',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (70,1, 'Commons Admin', 'Data Source',     70,'0110','0110',1) ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (80,1, 'Commons Admin', 'Notice Admin',    80,'0120','0120',1) ;
+
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu) VALUES (90, 1, 'Service', 'Group',   10,'0110','0110') ;
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu) VALUES (100,1, 'Service', 'Welcome', 20,'0120','0120') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,10,1,'Menu List',10,'0120','0120',1,
+'{"datasource":1,"chart":{"type":"table","query":["select idx as pkey,idx as midx,menu1,menu2,arrange,live,levelv,levelu,link,DATE_FORMAT(updated,\'%Y-%m-%d %H:%m\') as updated from menu where grp=#{@grp} and share = 0 [[[ and live = #{live} ]]] order by arrange"],"defaults":{"live":"Y"},"conditions":{"live":{"display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}}},"heads":[{"name":"midx","alias":"id","type":"int","link":{"type":"panel","rule":[[3,["midx"],["midx"]]]}},{"name":"menu1","type":"string","summary":"cnt"},{"name":"menu2","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"link","alias":"out link","type":"string","default":null},{"name":"updated","type":"string"},{"name":"pkey","type":"int","display":"key"}],"operate":[{"name":"reorder","type":"arrange","keys":["pkey"],"query":["update menu set arrange=#{@sys_seq} where idx=#{pkey}"],"datasource":1},{"name":"live","type":"select","keys":["pkey"],"act":[{"name":"activate","alias":"liveToY","query":["update menu set live=\'Y\' where idx=#{pkey}"]},{"name":"deactivate","alias":"liveToN","query":["update menu set live=\'N\' where idx=#{pkey}"]}]},{"name":"edit","type":"table","columns":[{"name":"menu1","input":"required"},{"name":"menu2","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"link","input":"optional"}],"query":["update menu set menu1=#{menu1},menu2=#{menu2},live=#{live},levelv=#{levelv},levelu=#{levelu},link=#{link},updated=now() where idx=#{pkey}"]}],"execute":[{"name":"edit on pop","type":"row","columns":[{"name":"menu1","input":"required"},{"name":"menu2","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"link","input":"optional"}],"query":["update menu set menu1=#{menu1},menu2=#{menu2},live=#{live},levelv=#{levelv},levelu=#{levelu},link=#{link},updated=now() where idx=#{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"menu1","input":"required"},{"name":"menu2","input":"required"},{"name":"live","input":"required","default":"Y"},{"name":"levelv","input":"required","default":"0140"},{"name":"levelu","input":"required","default":"0140"},{"name":"link","input":"optional"}],"query":["INSERT INTO menu(grp,menu1,menu2,levelv,levelu,link) values(#{@grp},#{menu1},#{menu2},#{levelv},#{levelu},#{link})"],"bulk":false}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,10,3,'Panel List',20,'0120','0120',1,
+'{"datasource":1,"chart":{"type":"table","query":["select idx as pkey,idx,midx,title,live,levelu,levelv,json_panel_value from panel where midx=#{midx} order by arrange"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"midx","alias":"menu id","type":"int"},{"name":"title","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"json_panel_value","type":"string","display":"json","space":"pre-wrap"},{"name":"pkey","type":"int","display":"key"}],"dependency":["midx"],"conditions":{"midx":{"alias":"menu id","default":null}},"operate":[{"name":"reorder","type":"arrange","keys":["pkey"],"query":["update panel set arrange=#{@sys_seq} where idx=#{pkey}"]}],"execute":[{"name":"edit","type":"row","columns":[{"name":"midx","input":"required"},{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_panel_value","input":"required"}],"query":["update panel set midx=#{midx},title=#{title},live=#{live},levelv=#{levelv},levelu=#{levelu},json_panel_value=#{json_panel_value} where idx=#{pkey}"]}],"insert":[{"name":"new","wizard":true,"columns":[{"name":"midx","input":"required"},{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_panel_value","input":"required"}],"init":["midx"],"bulk":false,"query":["INSERT INTO panel(grp,midx,title,levelu,levelv,json_panel_value) values(#{@grp},#{midx},#{title},#{levelv},#{levelu},#{json_panel_value})"]}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,20,5,'View List',10,'0120','0120',1,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT idx AS pkey, idx, title, live, levelu, levelv, json_view_value FROM view WHERE grp = #{@grp} and share = 0 ORDER BY idx DESC"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"title","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"json_view_value","type":"string","display":"json","space":"pre-wrap"},{"name":"pkey","type":"int","display":"key"}],"operate":[],"execute":[{"name":"edit","type":"row","columns":[{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_view_value","input":"required"}],"query":["UPDATE view SET title = #{title}, live = #{live}, levelv = #{levelv}, levelu = #{levelu}, json_view_value = #{json_view_value} WHERE idx = #{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_view_value","input":"required"}],"bulk":false,"query":["INSERT INTO view (grp, title, levelu, levelv, json_view_value) VALUES ( #{@grp}, #{title}, #{levelv}, #{levelu}, #{json_view_value})"]}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,30,7,'User List',10,'0120','0120',0,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT idx AS pkey, idx, id, token, level, live FROM user WHERE grp = 1 ORDER BY idx DESC"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"id","type":"string"},{"name":"level","alias":"user level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"token","type":"string"},{"name":"pkey","type":"int","display":"key"}],"operate":[],"execute":[{"name":"edit","type":"row","columns":[{"name":"id","input":"required"},{"name":"level","input":"required"},{"name":"live","input":"required"},{"name":"token"}],"query":["UPDATE user SET id = #{id}, level = #{level}, live = #{live}, token = #{token} WHERE idx = #{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"id","input":"required"},{"name":"level","input":"required"},{"name":"token"}],"bulk":false,"query":["INSERT INTO user (id, level, token, pwd) VALUES (#{id}, #{level}, #{token}, \'$2a$10$dE.tZLX9i5YvRqPSsP7dpez0U9tGJXMNnDLEdAp0e.aI5yARyfY/.\')"]}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,40,9,'Notice List',10,'0190','0120',1,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT grp, idx, idx as pkey, uid, author, title, context, status, created, img_server, img_cloud, file_server, file_cloud FROM notice WHERE grp = #{@grp} and status = 1 order by idx desc"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"grp","alias":"grp","type":"int","display":"key"},{"name":"author","alias":"author","type":"string"},{"name":"title","alias":"title","type":"string","link":{"type":"view","rule":{"id":1,"key":{"idx":"idx"}}}},{"name":"context","alias":"context","type":"string","display":"text"},{"name":"status","alias":"status","type":"int","display":"hide"},{"name":"created","alias":"created","type":"string"},{"name":"img_server","alias":"server image","type":"string","display":"image_server"},{"name":"img_cloud","alias":"cloud image","type":"string","display":"image"},{"name":"file_server","alias":"server attached","type":"string","display":"files_server"},{"name":"file_cloud","alias":"cloud attached","type":"string","display":"files"},{"name":"pkey","type":"int","display":"key"}]}}');
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,50,11,'Menu List',10,'0110','0110',1,
+'{"datasource":1,"chart":{"type":"table","query":["select idx as pkey,idx as midx,menu1,menu2,arrange,live,levelv,levelu,link,DATE_FORMAT(updated,\'%Y-%m-%d %H:%m\') as updated from menu where share=1 [[[ and live = #{live} ]]] order by arrange"],"defaults":{"live":"Y"},"conditions":{"live":{"display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}}},"heads":[{"name":"midx","alias":"id","type":"int","link":{"type":"panel","rule":[[13,["midx"],["midx"]]]}},{"name":"menu1","type":"string","summary":"cnt"},{"name":"menu2","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"link","alias":"out link","type":"string","default":null},{"name":"updated","type":"string"},{"name":"pkey","type":"int","display":"key"}],"operate":[{"name":"reorder","type":"arrange","keys":["pkey"],"query":["update menu set arrange=#{@sys_seq} where idx=#{pkey}"],"datasource":1},{"name":"live","type":"select","keys":["pkey"],"act":[{"name":"activate","alias":"liveToY","query":["update menu set live=\'Y\' where idx=#{pkey}"]},{"name":"deactivate","alias":"liveToN","query":["update menu set live=\'N\' where idx=#{pkey}"]}]},{"name":"edit","type":"table","columns":[{"name":"menu1","input":"required"},{"name":"menu2","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"link","input":"optional"}],"query":["update menu set menu1=#{menu1},menu2=#{menu2},live=#{live},levelv=#{levelv},levelu=#{levelu},link=#{link},updated=now() where idx=#{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"menu1","input":"required"},{"name":"menu2","input":"required"},{"name":"live","input":"required","default":"Y"},{"name":"levelv","input":"required","default":"0140"},{"name":"levelu","input":"required","default":"0140"},{"name":"link","input":"optional"}],"query":["INSERT INTO menu(grp,menu1,menu2,levelv,levelu,link) values(#{@grp},#{menu1},#{menu2},#{levelv},#{levelu},#{link})"],"bulk":false}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,50,13,'Panel List',20,'0110','0110',1,
+'{"datasource":1,"chart":{"type":"table","query":["select idx as pkey,idx,midx,title,live,levelu,levelv,json_panel_value from panel where midx=#{midx} order by arrange"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"midx","alias":"menu id","type":"int"},{"name":"title","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"json_panel_value","type":"string","display":"json","space":"pre-wrap"},{"name":"pkey","type":"int","display":"key"}],"dependency":["midx"],"conditions":{"midx":{"alias":"menu id","default":null}},"operate":[{"name":"reorder","type":"arrange","keys":["pkey"],"query":["update panel set arrange=#{@sys_seq} where idx=#{pkey}"]}],"execute":[{"name":"edit","type":"row","columns":[{"name":"midx","input":"required"},{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_panel_value","input":"required"}],"query":["update panel set midx=#{midx},title=#{title},live=#{live},levelv=#{levelv},levelu=#{levelu},json_panel_value=#{json_panel_value} where idx=#{pkey}"]}],"insert":[{"name":"new","wizard":true,"columns":[{"name":"midx","input":"required"},{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_panel_value","input":"required"}],"init":["midx"],"bulk":false,"query":["INSERT INTO panel(grp,midx,title,levelu,levelv,json_panel_value) values(#{@grp},#{midx},#{title},#{levelv},#{levelu},#{json_panel_value})"]}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,60,15,'View List',10,'0110','0110',1,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT idx AS pkey, idx, title, live, levelu, levelv, json_view_value FROM view WHERE share = 1 ORDER BY idx DESC"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"title","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"levelv","alias":"view level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"levelu","alias":"update level","type":"string","display":"choice","default":"0130","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'01\' order by 2"}},{"name":"json_view_value","type":"string","display":"json","space":"pre-wrap"},{"name":"pkey","type":"int","display":"key"}],"operate":[],"execute":[{"name":"edit","type":"row","columns":[{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_view_value","input":"required"}],"query":["UPDATE view SET title = #{title}, live = #{live}, levelv = #{levelv}, levelu = #{levelu}, json_view_value = #{json_view_value} WHERE idx = #{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"title","input":"required"},{"name":"live","input":"required"},{"name":"levelv","input":"required"},{"name":"levelu","input":"required"},{"name":"json_view_value","input":"required"}],"bulk":false,"query":["INSERT INTO view (grp, title, levelu, levelv, json_view_value) VALUES ( #{@grp}, #{title}, #{levelv}, #{levelu}, #{json_view_value})"]}]}}') ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,70,16,'Data Source List',10,'0110','0110',1,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT idx AS pkey, idx, timezone, charset, collation, name, type, host, port, user, pwd, db, permit FROM source"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"name","type":"string"},{"name":"db","alias":"database name","type":"string"},{"name":"timezone","type":"string"},{"name":"charset","type":"string"},{"name":"collation","type":"string"},{"name":"type","type":"string","display":"choice","default":"0201","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'02\' order by 1"}},{"name":"host","type":"string"},{"name":"port","type":"int","point":-1},{"name":"user","type":"string"},{"name":"pwd","alias":"password","type":"string","display":"blind","action":{"name":"change","target":"password","condition":{"column":"type","operand":"eq","value":"0201"}}},{"name":"permit","type":"string","display":"choice","default":"0301","values":{"query":"select name as k, concat(code1,code2) as v from code where code1=\'03\' order by 1"}},{"name":"pkey","type":"int","display":"key"}],"operate":[{"name":"edit","type":"table","columns":[{"name":"name","input":"required"},{"name":"timezone","input":"required"},{"name":"charset","input":"required"},{"name":"collation","input":"required"},{"name":"type","input":"required"},{"name":"host","input":"required"},{"name":"port","input":"required"},{"name":"user","input":"required"},{"name":"db","input":"required"},{"name":"permit","input":"required"}],"query":["UPDATE source SET name = #{name}, timezone = #{timezone}, charset = #{charset}, collation = #{collation}, type = #{type}, host = #{host}, port = $ (port) s, user = #{user}, db = #{db}, permit = #{permit} WHERE idx = $ (pkey) s"]}],"execute":[{"name":"password","type":"row","display":"hide","columns":[{"name":"pwd","input":"required"}],"query":["update source set pwd=#{pwd} where idx=#{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"name","input":"required"},{"name":"timezone","input":"required"},{"name":"charset","type":"string"},{"name":"collation","type":"string"},{"name":"type","input":"required"},{"name":"host","input":"required"},{"name":"port","input":"required"},{"name":"user","input":"required"},{"name":"db","input":"required"},{"name":"pwd","input":"required"},{"name":"permit","input":"required"}],"query":["INSERT INTO source(name,timezone,charset,collation,type,host,port,user,pwd,db,permit) values(#{name},#{timezone},#{charset},#{collation},#{type},#{host},#{port},#{user},#{pwd},#{db},#{permit})"],"bulk":false}]}}');
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,80,19,'Notice Admin',10,'0120','0120',1,
+'{"datasource":1,"chart":{"type":"table","query":["SELECT grp, idx, idx as pkey, uid, author, title, context, status, created, updated, img_server, img_cloud, file_server, file_cloud FROM notice n WHERE n.grp = #{@grp} ORDER BY idx DESC"],"heads":[{"name":"idx","alias":"id","type":"int"},{"name":"author","type":"string"},{"name":"title","type":"string","link":{"type":"view","rule":{"id":1,"key":{"idx":"idx"}}}},{"name":"context","type":"string","display":"text"},{"name":"status","type":"int","display":"choice","default":1,"values":{"data":{"live":1,"deleted":0}}},{"name":"created","alias":"created","type":"string"},{"name":"updated","alias":"updated","type":"string","display":"hide"},{"name":"img_server","alias":"sever image","type":"string","display":"image_server"},{"name":"img_cloud","alias":"cloud image","type":"string","display":"image"},{"name":"file_server","alias":"server attached","type":"string","display":"files_server"},{"name":"file_cloud","alias":"cloud attached","type":"string","display":"files"},{"name":"grp","type":"int","display":"key"},{"name":"pkey","type":"int","display":"key"}],"execute":[{"name":"edit","type":"row","columns":[{"name":"author","input":"required"},{"name":"title","input":"required"},{"name":"status","input":"required"},{"name":"context","input":"required"},{"name":"img_server"},{"name":"img_cloud"},{"name":"file_server"},{"name":"file_cloud"}],"query":["UPDATE notice SET author = #{author}, title = #{title}, context = #{context}, img_server = #{img_server}, img_cloud = #{img_cloud}, file_server = #{file_server}, file_cloud = #{file_cloud}, status = #{status}, updated = now() WHERE idx = #{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"author","input":"required"},{"name":"title","input":"required"},{"name":"context","input":"required"},{"name":"img_server"},{"name":"img_cloud"},{"name":"file_server"},{"name":"file_cloud"}],"query":["INSERT INTO notice(grp,uid,author,title,context,img_server, img_cloud, file_server, file_cloud) values ( #{@grp},#{@id},#{author},#{title},#{context},#{img_server},#{img_cloud},#{file_server},#{file_cloud} )"],"bulk":false}],"uploads":{"img_server":{"type":"server","accept":".jpg,.jpeg,.png,.webp"},"img_cloud":{"type":"gcs","accept":".jpg,.jpeg,.png,.webp","return":"url","filename":"banner1.jpg","bucket":"image.example.com","path_cloud":"test/mir","path_url":"https://image.example.com/test/mir"},"file_server":{"type":"server"},"file_cloud":{"type":"gcs","return":"url","bucket":"image.example.com","path_cloud":"test/mir","path_url":"https://image.example.com/test/mir"}}}}');
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,json_panel_value) VALUES (1,90,21,'Group List',10,'0110','0110',
+'{"datasource":1,"info":"Register, retrieve, and update service groups.","chart":{"type":"table","query":["select idx as pkey,idx,name,live,start,auth as json_auth from grp order by arrange"],"heads":[{"name":"pkey","type":"int","display":"key"},{"name":"idx","alias":"id","type":"int"},{"name":"name","type":"string"},{"name":"live","type":"string","display":"choice","default":"Y","values":{"data":{"yes":"Y","no":"N"}}},{"name":"start","alias":"welcome menu id","type":"int"},{"name":"json_auth","alias":"config","type":"string","display":"json"}],"operate":[{"name":"reorder","type":"arrange","keys":["pkey"],"query":["update grp set arrange=#{@sys_seq} where idx=#{pkey}"]}],"execute":[{"name":"edit","type":"row","columns":[{"name":"name","input":"required"},{"name":"live","input":"required"},{"name":"start"},{"name":"json_auth","input":"required"}],"query":["update grp set name=#{name},start=#{start},live=#{live},auth=#{json_auth},updated=now() where idx=#{pkey}"]}],"insert":[{"name":"new","columns":[{"name":"name","input":"required"},{"name":"live","input":"required"},{"name":"start"},{"name":"json_auth","input":"required"}],"query":["INSERT INTO grp (name, live, start, auth) VALUES ( #{name}, #{live}, #{start}, #{json_auth} )"],"bulk":false}]}}');
+
+INSERT INTO view(idx,grp,title,levelv,levelu,share,json_view_value) VALUES (1,1,'Notice','0120','0120',1,
+'{"datasource":1,"chart":{"query":["SELECT idx, author, title, context, status, created, updated, img_server, img_cloud, file_server, file_cloud FROM notice WHERE idx = #{idx}"],"heads":[{"name":"idx","alias":"notice id","type":"int"},{"name":"author","type":"string"},{"name":"title","type":"string"},{"name":"context","type":"string","parse":true},{"name":"created","type":"string"},{"name":"img_server","alias":"server image","type":"string","display":"image_server"},{"name":"img_cloud","alias":"cloud image","type":"string","display":"image"},{"name":"file_server","alias":"server attached file","type":"string","display":"files_server"},{"name":"file_cloud","alias":"cloud attached file","type":"string","display":"files"}]}}');
+
+alter table grp auto_increment = 500 ;
+alter table menu auto_increment = 500 ;
+alter table panel auto_increment = 500 ;
+alter table view auto_increment = 500 ;
