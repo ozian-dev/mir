@@ -26,7 +26,7 @@ STYLE = {
     "blue"  : { "main" : "#4A58C0", "sub" : "#6070E0" },
     "red"   : { "main" : "#E54F49", "sub" : "#F46548" },
     "green" : { "main" : "#109D69", "sub" : "#1FBD68" },
-    "black" : { "main" : "#444444", "sub" : "#777777" },
+    "black" : { "main" : "#000000", "sub" : "#555555" },
 }
 
 CONF = {}
