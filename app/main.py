@@ -81,7 +81,7 @@ async def add_process_prework(request: Request, call_next):
 @app.get("/index.html")
 async def root(request: Request):
     device = "m" if util_library.is_mobile(request) else "p"
-    css_obj = util_library.get_css(request)
+    css_obj = util_library.get_css(request, device)
     js_obj = util_library.get_js(request)
     return template.TemplateResponse("index.html",{"app":const.CONF["app"], "cookie":const.APP_NAME, "request":request, "device":device, "css":css_obj, "js_obj":js_obj})
 

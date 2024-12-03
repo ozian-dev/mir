@@ -173,10 +173,10 @@ def get_css_os (request: Request) :
         os = "ios" 
     return f"{const.PATH_TEMPLATE_STATIC}/css/os.{os}.css"
 
-def get_css (request: Request) :
+def get_css (request: Request, device) :
 
     css_common_file = f"{const.PATH_TEMPLATE_STATIC}/css/common.css"
-    css_device_file = f"{const.PATH_TEMPLATE_STATIC}/css/device.p.css" 
+    css_device_file = f"{const.PATH_TEMPLATE_STATIC}/css/device.{device}.css"
     css_customs = []
 
     if len(const.CONF["style"]["css"]) > 0 : 
