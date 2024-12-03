@@ -12,7 +12,7 @@ The mir project is designed to provide an admin tool based on **MySQL** or **Mar
 - Support integration with external APIs (e.g., file uploads to GCP, AWS, etc.).
 
 ## Quick Start  
-In advance, create a database user to be used during the setup process.
+In advance, **create a database user** to be used during the setup process.
 ```bash
     % python3 -m venv env_mir
 
