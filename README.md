@@ -12,7 +12,8 @@ The mir project is designed to provide an admin tool based on **MySQL** or **Mar
 - Support integration with external APIs (e.g., file uploads to GCP, AWS, etc.).
 
 ## Quick Start  
-In advance, **create a database user** to be used during the setup process.
+- In advance, **create a database user** to be used during the setup process.
+- python_version >= 3.12
 ```bash
     % python3 -m venv env_mir
 
@@ -37,7 +38,7 @@ In advance, **create a database user** to be used during the setup process.
     Input 'mir DB' user (ex: user, default:root): 
     Input 'mir DB' password (ex: password, default:test): 
     Input 'mir DB' database name (ex: mir, default:mir_db_[random 6-characters]): 
-    Input your time zone (ex: Asia/Seoul, default:Asia/Seoul): 
+    Input your timezone (ex: Asia/Seoul, default:Asia/Seoul): 
     Input your charset (ex: utf8mb4, default:utf8mb4): 
     Input your collation (ex: utf8mb4_general_ci, default:utf8mb4_general_ci): 
     Input main color css (ex: blue/red/green/black, default:'blue'): 

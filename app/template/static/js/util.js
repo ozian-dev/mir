@@ -18,10 +18,10 @@ function callAjax(url, callback, method="GET", data=null) {
                 if (res["status"] == "ok") {
                     callback(res);
                 } else {
-                    if (res["msg"].indexOf("auth err.") >= 0 ) {
+                    if (res["msg"].indexOf("auth error") >= 0 ) {
                         location.href = "/login";
                     } else { 
-                        modal("server err.<hr>" + res["msg"], false);
+                        modal("server error<hr>" + res["msg"], false);
                     }
                 }
             //} catch (exception_var) {
@@ -614,7 +614,6 @@ function callSqlEditor(target, sql, info) {
 
 function escapeSqlFormater (mode, sql) {
     if ( mode == "encode") {
-
 
         sql = sql.split("[[[").join("___square_start___");
         sql = sql.split("]]]").join("___square_end___");

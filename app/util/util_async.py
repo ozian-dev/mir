@@ -51,4 +51,6 @@ async def callback(info, params: object=None, res_arr: object=None) :
             "task_name": f"action.{info["name"]}",
             "msg": info["completed"],
         }
+
+        if "forward" in info : res_obj["forward"] = info["forward"]
         await const.WS_USER[info["@id"]][cid].send_text(json.dumps(res_obj))

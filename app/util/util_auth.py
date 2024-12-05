@@ -120,7 +120,17 @@ def is_login ( group: int, cookies: object = None) :
     if f"{const.APP_NAME}.{group}.l" not in cookies : return False
 
     try:
+        required_keys = ["id", "uid", "level", "grp"]
         obj = util_cipher.decrypt_json(cookies[f"{const.APP_NAME}.{group}.e"])
+
+        missing_or_invalid_keys = [
+            key for key in required_keys 
+            if key not in obj or obj[key] in ("", None)
+        ]
+
+        if missing_or_invalid_keys:
+            return False
+
     except :
         return False
 

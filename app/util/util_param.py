@@ -6,7 +6,7 @@ from fastapi import Request
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
 from app.conf import const
-from app.util import util_library, util_panel, util_cipher
+from app.util import util_library, util_panel, util_cipher, util_db
 
 def get_init_info ( request:Request, post:object = None, only_params:bool = False ) : 
 
@@ -30,7 +30,23 @@ def get_init_info ( request:Request, post:object = None, only_params:bool = Fals
             if "defaults" in panel_json["chart"] :
                 for key, val in panel_json["chart"]["defaults"].items() :
                     if key == "@date" : key = ".date"
-                    if key not in params or params[key] == "" : params[key] = val
+                    if key not in params or params[key] == "" : 
+                        params[key] = val
+                        if isinstance(val, str) and len(val) > 0 and val[0] == "@" :
+                            default_query = panel_json["chart"]["conditions"][key]["values"]["query"]
+                            default_datasource = panel_json["datasource"]
+                            if "datasource" in panel_json["chart"]["conditions"][key]["values"] : 
+                                default_datasource = panel_json["chart"]["conditions"][key]["values"]["datasource"]
+                            default_values = util_db.select_db(default_datasource, default_query, params)["data"]
+                            
+                            if val == "@first" : 
+                                val_key = list(default_values[0])
+                                val = default_values[0][val_key[-1]]
+                            elif val == "@last" : 
+                                val_key = list(default_values[-1])
+                                val = default_values[-1][val_key[-1]]
+
+                            params[key] = val
 
         params = get_predefined_time_params(params)
 

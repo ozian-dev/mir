@@ -2,7 +2,9 @@
 import json
 import math
 
+from collections import defaultdict
 from collections.abc import Iterable
+
 from app.conf import const
 from app.util import util_db, util_param, util_response, util_library, util_async, util_file
 
@@ -215,7 +217,6 @@ def get_panel_chart (panel_json:object, params:object) :
             if "prework" in item : del item["prework"]
             if "post" in item : del item["post"]
             if "image" in item : del item["image"]
-
             if "type" in item and item["type"] == "excel" :
                 del item["ecolumns"]
 
@@ -328,13 +329,22 @@ def get_panel_chart (panel_json:object, params:object) :
 
         if "list" in res and res["list"]["type"] == "group" : 
             
-            cols_index = []
+            group_index = []
             for item in res["list"]["columns"]:
                 seq = util_library.get_index_array(res["heads"], "name", item)
-                if seq == -1 : raise Exception(f"invalid list column : '{item}' is not existed")
-                cols_index.append(seq)
+                if seq == -1 : raise Exception(f"invalid group column : '{item}' is not existed")
+                group_index.append(seq)
 
-            res["values"] = sorted(res["values"], key=lambda x: tuple(x[i] for i in cols_index))
+            sort = [] if "sort" not in res["list"] else res["list"]["sort"]
+            sort_index = []
+            for item in sort:
+                seq = util_library.get_index_array(res["heads"], "name", item)
+                if seq == -1 : raise Exception(f"invalid sort column : '{item}' is not existed")
+                sort_index.append(seq)
+
+            res["values"] = group_sort(res["values"], group_index, sort_index)
+
+            #print (json.dumps(res["values"],indent=4))
 
     if "query" in res : del res["query"]
 
@@ -349,6 +359,49 @@ def get_panel_chart (panel_json:object, params:object) :
 
     return res
 
+def group_sort(data, group, sort=None) :
+
+    res = []
+
+    if sort is None :
+        res = sorted (data, key=lambda x: tuple(x[i] for i in group))
+    else :
+        res = group_and_sort(data, group, sort)
+
+    return res
+
+def group_and_sort(data, group_indices, sort_indices):
+
+    def group_data(data, group_indices):
+        """Recursive function to group data based on group indices."""
+        if not group_indices:
+            return data
+        
+        grouped = defaultdict(list)
+        for row in data:
+            key = tuple(row[i] for i in group_indices[:1])  # Group by the first index
+            grouped[key].append(row)
+        
+        return {key: group_data(value, group_indices[1:]) for key, value in grouped.items()}
+
+    def flatten_tree(tree):
+        """Flatten the grouped tree structure into a sorted array."""
+        if not isinstance(tree, dict):
+            return tree
+        flat = []
+        for key in sorted(tree.keys()):  # Sort keys lexicographically
+            flat.extend(flatten_tree(tree[key]))
+        return flat
+
+    def sort_leaf(data, sort_indices):
+        """Sort a flat list of rows by sort indices."""
+        return sorted(data, key=lambda x: tuple(x[i] for i in sort_indices))
+
+    # Perform grouping
+    grouped_tree = group_data(data, group_indices)
+    # Flatten and sort the grouped data
+    flat_data = flatten_tree(grouped_tree)
+    return sort_leaf(flat_data, sort_indices)
 
 
 def get_view (params:object) :
@@ -437,6 +490,7 @@ async def execute_panel (panel_json:object, params:object, logger):
 
         data = params["@data"]["new"]
         target_obj = util_library.get_obj_array(panel_json["action"], "name", params["target"])
+        if "forward" in target_obj : params["forward"] = target_obj["forward"]
         if "async" in target_obj and target_obj["async"] == True : is_async = True
 
     run_type = True
@@ -446,7 +500,6 @@ async def execute_panel (panel_json:object, params:object, logger):
     if is_async == False :
         query_arr = target_obj["query"]
         res_arr = util_db.execute_db(data_source, query_arr, data, run_type, split)
-
         util_library.log(logger, params)
 
     else :
@@ -474,7 +527,7 @@ async def execute_panel (panel_json:object, params:object, logger):
     final_res["execute"] = pkeys
     final_res["ext"] = res_arr
     final_res["run"] = "real" if run_type else "test"
-
+ 
     if "forward" in params : final_res["forward"] = params["forward"]
     if params["entity"]  == "action" : final_res["msg"] = target_obj["return"]
 
@@ -584,7 +637,7 @@ def gen_json (post, data:object) :
     res["chart"]["execute"] = []
     res["chart"]["insert"] = []
     res["chart"]["chart"] = []
-    res["chart"]["search"] = []
+    res["chart"]["search"] = {}
 
     res["action"] = []
 
@@ -694,7 +747,7 @@ def is_valid_post(panel_json, params, data) :
             elif "code" in define_obj[k] :
                 for name, code in define_obj[k]["code"].items() :
 
-                    if name == "range" :
+                    if name == "case" :
                         v_str = f"{v}"
                         code = code.replace ("${"+k+"}",v_str)        
                         if eval(code) == False : raise Exception(f"invalid data : {name} of '{define_obj[k]['alias']}'")

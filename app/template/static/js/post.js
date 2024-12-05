@@ -342,6 +342,12 @@ var postFnc = {
 
             modal(resObj["msg"]);
             _p["actionTask"][resObj["entity"] + "." + resObj["target"]] = new Date();
+
+            if ( "forward" in resObj ) {
+                var panelObj = $("#pan" + resObj["forward"]);
+                $(panelObj).find(".head .tools .att-tool-reload").click();
+            }
+
             $(panelObj).find(".progress").hide();
 
         }, 'POST', JSON.stringify(postData));

@@ -1494,16 +1494,64 @@ function renderDataUpdate (panelObj, obj) {
     });
 }
 
+function convertPythonToJsCondition(pythonCondition) {
+    // Mapping of Python operators to JavaScript operators
+    const operatorMap = {
+        "and": "&&",
+        "or": "||",
+        "==": "===",
+        "!=": "!==",
+        "None": "null",
+    };
+
+    // Regular expression to identify string literals (single/double quotes)
+    const stringLiteralPattern = /(['"])(?:\\.|[^\\])*?\1/g;
+
+    // Find all string literals and store them
+    const stringLiterals = [];
+    pythonCondition = pythonCondition.replace(stringLiteralPattern, (match) => {
+        const placeholder = `__STRING_LITERAL_${stringLiterals.length}__`;
+        stringLiterals.push(match);
+        return placeholder;
+    });
+
+    // Replace Python operators with JavaScript operators
+    for (const [pyOp, jsOp] of Object.entries(operatorMap)) {
+        const regex = new RegExp(`\\b${pyOp}\\b`, "g");
+        pythonCondition = pythonCondition.replace(regex, jsOp);
+    }
+
+    // Restore string literals
+    stringLiterals.forEach((literal, idx) => {
+        const placeholder = `__STRING_LITERAL_${idx}__`;
+        pythonCondition = pythonCondition.replace(placeholder, literal);
+    });
+
+    return pythonCondition;
+}
+
 function isActionCondition (colsInfo, actionInfo, values) {
 
-    if (!actionInfo["condition"]) return false;
+    if (!actionInfo["condition"]) return true;
+
+    // "condition":{"case":"...."}
+    if ( "case" in actionInfo["condition"] ) {
+        var caseStr = actionInfo["condition"]["case"];
+        for (var i in colsInfo["heads_orders"]) {
+            var item = colsInfo["heads_orders"][i];
+            item = "${" + item + "}"
+            caseStr = caseStr.replace(item, values[i]);
+        }
+        caseStr = convertPythonToJsCondition(caseStr);
+        return eval(caseStr);
+    }
 
     // "condition":{"column":"type","operand":"eq","value":"0201"}
     var column = actionInfo["condition"]["column"] ? actionInfo["condition"]["column"] : "" ;
     var operand = actionInfo["condition"]["operand"] ? actionInfo["condition"]["operand"] : "eq" ;
     var tarVal = actionInfo["condition"]["value"] ? actionInfo["condition"]["value"] : "" ;
     
-    if ( column == "" ) return false;
+    if ( column == "" || operand == "" || !tarVal ) return false;
    
     var index = colsInfo["heads_orders"].indexOf(column);
     var realVal = values[index];
@@ -1927,6 +1975,10 @@ var renderFnc = {
 
                 } else {
 
+
+                    //columns = startObj["chart"][$(obj).attr("data-mode")][$(obj).attr("data-target")]["columns"];            
+                    //var heads = startObj["chart"]["heads"];
+          
                     var inputType = "text";
                     if (v["type"] == "number" ) inputType = "number";
                     
@@ -1935,7 +1987,11 @@ var renderFnc = {
                         for ( var scnt=0; scnt<v["point"]; scnt++ ) step *= 10;
                         step = 1/step;
                     }
-                    
+
+                    if (!value && $(obj).attr("data-mode") == "insert" ) {
+                        if ("default" in v) value = v["defalut"];
+                    }
+
                     var tmp = $("<input>")
                         .addClass("att-input att-input-text")
                         .attr("type", inputType)

@@ -43,9 +43,7 @@ async def login( request: Request,
     enc_info_str = util_cipher.encrypt_json(login_res)
     host_name = request.base_url.hostname
 
-    response = RedirectResponse(url=request_info['u'], status_code=303)     
-
-    print ( f"{const.APP_NAME}.{request_info['grp']}.i")
+    response = RedirectResponse(url=request_info['u'], status_code=303)
     
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.i", value=quote(login_res['id']), domain=host_name, httponly=False)
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.l", value=login_res['level'], domain=host_name, httponly=False)

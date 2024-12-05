@@ -724,6 +724,7 @@ function WebSocketIO() {
 
             msgObj = JSON.parse(event.data);
             msgStr = msgObj["msg"];
+
             if (  msgObj["task_name"] &&  msgObj["task_name"] != "" ) {
                 if ( _p["actionTask"][msgObj["task_name"]] ) {
 
@@ -731,8 +732,13 @@ function WebSocketIO() {
                     if (msgObj["status"] == "ok") {
                        modal (msgStr, false);
 
+                       if ( "forward" in msgObj ) {
+                            var panelObj = $("#pan" + msgObj["forward"]);
+                            $(panelObj).find(".head .tools .att-tool-reload").click();
+                       }
+
                     } else if (msgObj["status"] == "error") {
-                        modal("Error.<hr>" + msgStr, false);
+                        modal("server error<hr>" + msgStr, false);
                     }
                     delete (_p["actionTask"][msgObj["task_name"]]);
                 }
