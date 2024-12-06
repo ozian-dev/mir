@@ -1992,7 +1992,7 @@ var renderFnc = {
                     }
 
                     if (!value && $(obj).attr("data-mode") == "insert" ) {
-                        if ("default" in v) value = v["defalut"];
+                        if ("default" in v) value = v["default"];
                     }
 
                     var tmp = $("<input>")
