@@ -441,11 +441,13 @@ async def execute_panel (panel_json:object, params:object, logger):
     is_async = False
     pk_arr = list( get_chart_keys (panel_json).keys() )
 
-    if "old" in params["@data"] : 
-        check_data = diff_data(pk_arr, params["@data"])
-        if len(check_data) == 0 : return util_response.error("no changing data")
-
-    is_valid_post(panel_json, params, params["@data"]["new"])
+    if "entity" in params and "mode" in params and params["entity"] == "action" and params["mode"] == "execute":
+        pass
+    else :
+        if "old" in params["@data"] : 
+            check_data = diff_data(pk_arr, params["@data"])
+            if len(check_data) == 0 : return util_response.error("no changing data")
+            is_valid_post(panel_json, params, params["@data"]["new"])
 
     data = []
     split = None

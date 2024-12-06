@@ -214,12 +214,12 @@ function renderPop1 (btnObj, mode="info") {
             }
 
         }
-        if (insertObj["init"]) {
+        if (insertObj["conditions"]) {
             
             var customSearchObj = $(panelObj).find(".search .custom");
             var formObj = $("#pop1 .space .form .formbox .body");
-            for ( var i=0; i<insertObj["init"].length; i++ ) {                
-                var k = insertObj["init"][i];
+            for ( var i=0; i<insertObj["conditions"].length; i++ ) {                
+                var k = insertObj["conditions"][i];
                 var v = $(customSearchObj).find(".item .value .att-input[data-name='"+k+"']").attr("data-value");
                 $(formObj).find(".row .edit .att-input[data-name='"+k+"']").attr("data-value", v).val(v);
             }
@@ -1549,9 +1549,11 @@ function isActionCondition (colsInfo, actionInfo, values) {
     // "condition":{"column":"type","operand":"eq","value":"0201"}
     var column = actionInfo["condition"]["column"] ? actionInfo["condition"]["column"] : "" ;
     var operand = actionInfo["condition"]["operand"] ? actionInfo["condition"]["operand"] : "eq" ;
-    var tarVal = actionInfo["condition"]["value"] ? actionInfo["condition"]["value"] : "" ;
+    var tarVal = null;
+    if ( "value" in actionInfo["condition"] && actionInfo["condition"] != null ) 
+        tarVal = actionInfo["condition"]["value"];
     
-    if ( column == "" || operand == "" || !tarVal ) return false;
+    if ( column == "" || operand == "" || tarVal == null ) return false;
    
     var index = colsInfo["heads_orders"].indexOf(column);
     var realVal = values[index];
@@ -1746,11 +1748,12 @@ var renderFnc = {
         }
 
         var lines = $("<div>");
+
         $.each(columns, function(k, v) {
             
             var row = $("<div>").addClass("row");
-
             var value = null;
+
             if("data-org" in v) {
                 $(row).attr("data-org", v["data-org"]);
                 value = v["data-org"];
