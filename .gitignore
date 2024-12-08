@@ -167,4 +167,5 @@ _conf
 _data
 app/template/backup
 
+change.sh
 .DS_Store
