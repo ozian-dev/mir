@@ -60,7 +60,7 @@ CREATE TABLE panel (
   grp int(11) NOT NULL,
   midx int(11) NOT NULL COMMENT 'menu idx',
   live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
-  title varchar(50) DEFAULT NULL COMMENT 'panel title',
+  title varchar(100) DEFAULT NULL COMMENT 'panel title',
   arrange int(11) NOT NULL DEFAULT 1,
   levelv varchar(4) DEFAULT '0150' COMMENT 'view permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
   levelu varchar(4) DEFAULT '0150' COMMENT 'update/new permit,0110:super,0120:admin,0130:manager,0140:operator,0150:viewer,0180:partner',
@@ -148,6 +148,7 @@ INSERT INTO code(code1,code2,name) VALUES('01','90','guest');
 INSERT INTO code(code1,code2,name) VALUES('02','01','mariadb');
 INSERT INTO code(code1,code2,name) VALUES('02','02','mysql');
 INSERT INTO code(code1,code2,name) VALUES('02','03','biqguery');
+INSERT INTO code(code1,code2,name) VALUES('02','04','elasticsearch');
 
 INSERT INTO code(code1,code2,name) VALUES('03','01','read-only');
 INSERT INTO code(code1,code2,name) VALUES('03','02','read-write');

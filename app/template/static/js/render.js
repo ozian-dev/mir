@@ -2338,6 +2338,8 @@ var renderFnc = {
 
             tmpObj["borderWidth"] = 1;
             tmpObj["pointRadius"] = 2;
+            if ( dataArr.length > 0 && dataArr[0].length > 50 ) tmpObj["pointRadius"] = 0;
+
             tmpObj["cubicInterpolationMode"] = "monotone";
             tmpObj["tension"] = 0.1;
             

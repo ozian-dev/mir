@@ -1,5 +1,5 @@
 
-INSERT INTO grp (idx,name,start,arrange,auth) VALUES (2,'zetetic',0,10,
+INSERT INTO grp (idx,name,start,arrange,auth) VALUES (2,'zetetic',0,999999999,
 '{"type":"custom","url_login":"http://example.com:7000/api/sample_login","validation":{"id":{"general":["alphabet","number"],"custom":".","match":"only","length":{"min":5,"max":15}},"pwd":{"general":["alphabet","capital","number"],"custom":"!@#$%^&*.","match":"all","length":{"min":5,"max":20}}}}');
 
 INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (200,1,'Commons Admin','Zetetic Company',110,'0120','0120',1) ;
