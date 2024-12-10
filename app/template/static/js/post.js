@@ -417,7 +417,7 @@ var postFnc = {
             var tableHtml = "";
 
             if ( res["r_code"] == 200 ) {
-                if (res["data"]) {
+                if (res["data"] && res["data"].length > 0 ) {
                     tableHtml = getTableFromJson(res["data"])
                 }
                 else context += res["msg"];

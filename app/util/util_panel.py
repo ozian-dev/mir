@@ -99,7 +99,6 @@ def get_panel (panel:object, panel_json:object, params:object) :
                         if "point" not in head : head["point"] = 0 
                     head["type"] = "number"
 
-
         return final_res
 
 
@@ -272,36 +271,6 @@ def get_panel_chart (panel_json:object, params:object) :
 
         data = res_db["data"]
         res["last_update"] = res_db["last_update"]
-
-        if "pivot" in res :
-
-            unit = ""
-            if "unit" in res["pivot"] : unit = res["pivot"]["unit"]
-
-            tmp_obj = {}
-            sum_obj = {}
-            for row in data :
-                if f"{row['x']}" not in tmp_obj : tmp_obj[f"{row['x']}"] = {}
-                tmp_obj[f"{row['x']}"][f"{row['k']}"] = row["v"]
-
-                if f"{row['k']}" not in sum_obj : sum_obj[f"{row['k']}"] = row["v"]
-                else : sum_obj[f"{row['k']}"] += row["v"]
-
-            tmp_arr = []
-            for k, v in tmp_obj.items() : 
-                v["x"] = k
-                tmp_arr.append(v)
-
-            k_arr = sorted(sum_obj, key=sum_obj.get, reverse=True)
-
-            res["heads"] = [{ "name":"x", "type":"string" }]
-            for k in k_arr :
-
-                head_obj = { "name":f"{k}", "type":"float" }
-                if unit != "" : head_obj["unit"]= unit 
-                res["heads"].append(head_obj)
-           
-            data = tmp_arr
         
         if "join" in res :
 
@@ -325,6 +294,42 @@ def get_panel_chart (panel_json:object, params:object) :
 
                 del join["query"]
 
+        if "pivot" in res :
+
+            unit = ""
+            if "unit" in res["pivot"] : unit = res["pivot"]["unit"]
+
+            tmp_obj = {}
+            sum_obj = {}
+
+            for row in data :
+                if "k" not in row:
+                    row['k'] = row['col']
+                    row['v'] = row['val'] if row['val'] is not None else 0
+                    if isinstance(row['v'], str) : row['v'] = float(row['v'])
+
+                if f"{row['x']}" not in tmp_obj : tmp_obj[f"{row['x']}"] = {}
+                tmp_obj[f"{row['x']}"][f"{row['k']}"] = row["v"]
+
+                if f"{row['k']}" not in sum_obj : sum_obj[f"{row['k']}"] = row["v"]
+                else : sum_obj[f"{row['k']}"] += row["v"]
+
+            tmp_arr = []
+            for k, v in tmp_obj.items() : 
+                v["x"] = k
+                tmp_arr.append(v)
+
+            k_arr = sorted(sum_obj, key=sum_obj.get, reverse=True)
+
+            res["heads"] = [{ "name":"x", "type":"string" }]
+            for k in k_arr :
+
+                head_obj = { "name":f"{k}", "type":"float" }
+                if unit != "" : head_obj["unit"]= unit 
+                res["heads"].append(head_obj)
+           
+            data = tmp_arr
+
         res["values"] = json_adjust_type (res["heads"], data)
 
         if "list" in res and res["list"]["type"] == "group" : 
@@ -343,7 +348,6 @@ def get_panel_chart (panel_json:object, params:object) :
                 sort_index.append(seq)
 
             res["values"] = group_sort(res["values"], group_index, sort_index)
-
             #print (json.dumps(res["values"],indent=4))
 
     if "query" in res : del res["query"]

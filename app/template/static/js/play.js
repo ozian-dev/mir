@@ -430,7 +430,6 @@ var playFnc = {
                 var tr = $(panelObj).find(".chart .chart-table .table tr.row");
                 $(tr).each (function(j, row) {
                     var val = $(row).find("td").eq(idx).attr("data-org");
-                    if ( heads[name]["point"] ) val = numberFormat(val, heads[name]["point"]);
                     tmpRow.push(val);
                 });
                 values.push(tmpRow);
@@ -446,7 +445,6 @@ var playFnc = {
                     return a[0].localeCompare(b[0]);
                 });
             }
-
 
             var chartInfo = {
                 "title" : data["name"],

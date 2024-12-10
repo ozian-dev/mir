@@ -61,13 +61,17 @@ async def check_query(request: Request, post: object):
 
     data_source = int(post["datasource"])
 
+    """
     execute_mode = "exec"
     checked_query = post["query"].strip().lower()
     if checked_query.startswith("select") :  execute_mode = "select"
+    """
+    execute_mode = "select"
 
     data_arr = []
     if len(post["@data"]["new"]) > 0 : 
         data_arr = util_panel.get_exec_data (post["@data"]["new"], params)
+
 
     final_res = {}
     try :
@@ -93,6 +97,7 @@ async def check_query(request: Request, post: object):
             final_res["status"] = "ok"
             final_res["r_code"] = 200
             final_res["msg"] = "success"
+            final_res["data"] = db_res["data"]
 
     except Exception as e:
         final_res = util_response.error_notify(str(e), 500)

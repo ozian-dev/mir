@@ -52,7 +52,7 @@ PREDEFINED_PARAMS = {
     ".c" : { "type": "string", "values":["1"] },
     ".m" : { "type": "string", "values":["view"] }, #just for view
     ".n" : { "type": "string" }, #just for view
-    ".o" : { "type": "int", "default":0 }, #just for pagenation offset
+    ".o" : { "type": "int", "default":0 }, #just for pagination offset
     ".date" : { "type": "string" },
 }
 
@@ -78,7 +78,7 @@ SQLS["panel_update"] = """
     select midx, idx, title, json_panel_value from panel where idx=${idx} and levelu >= ${level} and (grp=${grp} or share=1)
     """
 SQLS["menu"] = """
-    select idx, case when share = 1 then #{grp} else grp end as grp, menu1, menu2, link 
+    select idx, case when share = 1 then #{grp} else grp end as grp, menu1, menu2, link, share
     from menu 
     where live='Y' and (grp = #{grp} or share=1) and (levelv >= #{level} or levelu >= #{level}) order by share, arrange
     """

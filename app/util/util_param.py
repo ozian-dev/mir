@@ -132,6 +132,10 @@ def parse_date_period ( date_str ) :
             start_date = yesterday
             end_date = yesterday
 
+        elif date_str == "2_days_ago":
+            start_date = (util_library.get_time() - timedelta(days=2)).strftime("%Y-%m-%d")
+            end_date = (util_library.get_time() - timedelta(days=2)).strftime("%Y-%m-%d")
+
         elif date_str == "Last_7_days":
             start_date = (util_library.get_time() - timedelta(days=7)).strftime("%Y-%m-%d")
             end_date = yesterday

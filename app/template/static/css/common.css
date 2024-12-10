@@ -44,6 +44,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .gm .menu {flex-grow:1;width:100%;height:calc(100% - 55px);padding:10px;padding-top:0;overflow-x:hidden;overflow-y:auto;}
 .gm .menu a {line-height:34px;}
 .gm .menu .level-1 .fnc-menu-1 {display:block;padding:0 3px;}
+.gm .menu .level-1 .att-menu-common {color:{{{background_color_logo}}};}
 .gm .menu .level-1 .level-2 {display:none;}
 .gm .menu .level-1 .level-2 .fnc-menu-2 {display:block;padding-left:13px;padding-right:3px;background-color:rgba(255,255,255,0.8);}
 .gm .foot {height:30px;width:100%;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0 15px;color:whitesmoke;background-color:{{{background_color_logo}}};}
@@ -55,7 +56,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .gw .panel .pidxinfo > .row .val {color:dodgerblue;}
 
 .gw .panel .head {width:100%;display:flex;align-items:center;border-bottom:1px solid lightgray;gap:10px;}
-.gw .panel .head .title {display:flex;align-items:center;padding-bottom:5px;font-size:17px;color:{{{background_color_logo}}};font-weight:bold;}
+.gw .panel .head .title {display:flex;align-items:center;padding-bottom:5px;font-size:17px;color:{{{background_color_logo}}};}
 .gw .panel .head .update {display:flex;align-items:center;white-space:nowrap;flex-grow:1;font-size:11px;color:silver;}
 .gw .panel .head .tools {display:flex;align-items:center;padding-bottom:5px;white-space:nowrap;}
 
@@ -63,13 +64,15 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 
 .gw .panel .search {display:none;width:100%;padding:5px 0;position:relative;gap:10px;}
 .gw .panel .search .basis {display:flex;align-self:flex-end;}
+.gw .panel .search .basis .item .value .att-input {border-bottom:1px dotted lightgray;}
 .gw .panel .search .custom {display:flex;align-items:center;justify-content:right;flex-grow:1;flex-wrap:wrap;padding-right:15px;}
 .gw .panel .search .custom .item {margin-left:10px;display:flex;align-items:center}
-.gw .panel .search .custom .item .label {font-size:13px;color:silver;white-space:nowrap;}
+.gw .panel .search .custom .item .label {font-size:13px;color:gray;white-space:nowrap;}
 .gw .panel .search .custom .item .date {margin-right:5px;}
 .gw .panel .search .custom .item .date::before {content:"◷";font-size:17px;}
 .gw .panel .search .custom .item .value .att-input-select {width:100%;}
 .gw .panel .search .custom .item .value * {font-size:13px;color:dodgerblue;}
+.gw .panel .search .custom .item .value .att-input {border-bottom:1px dotted lightgray;}
 .gw .panel .search .act {position:absolute;top:2px;left:0;padding:5px 0;background-color:white;min-width:160px;}
 .gw .panel .search .act span::before {content:"✔"; margin-right:5px;}
 .gw .panel .action {display:none;width:100%;padding:5px 0;position:relative;margin-bottom:10px;}
@@ -86,7 +89,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .chart > .page .num {margin-right:12px;}
 .chart > .page .num:hover {color:dodgerblue;}
 
-.chart-table {overflow:auto;max-height:500px;border-left:1px solid lightgray;border-top:1px solid lightgray;}
+.chart-table {overflow:auto;max-height:400px;border-left:1px solid lightgray;border-top:1px solid lightgray;}
 .chart-table * {line-height:140%;}
 .chart-table .table {width:100%;border-spacing:0;}
 .chart-table .table tr {position:relative;}

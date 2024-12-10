@@ -51,6 +51,7 @@ function renderMenu(obj) {
             level1 = $("<div>").addClass("level-1");
 
             var tmpObj = $("<a>").addClass("fnc-menu-1 att-text-size-auto").attr("href", "#").html(item["menu1"])
+            if (item["share"] == 1) $(tmpObj).addClass("att-menu-common");
             $(level1).append(tmpObj);
 
             level2 = $("<div>").addClass("level-2");
@@ -1863,7 +1864,11 @@ var renderFnc = {
                     if ( valArrOrg == "" ) valArr[0] = null ;
                     else {
                         $.each(valArrOrg, function(kk,vv) {
-                            valArr[kk] = v["values"]["data_rev"][vv].join(" > ");
+                            if ( vv in v["values"]["data_rev"] )
+                                valArr[kk] = v["values"]["data_rev"][vv].join(" > ");
+                            else {
+                                valArr[kk] = [vv].join(" > ");
+                            }
                         })
                     }
 

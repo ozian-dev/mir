@@ -307,7 +307,6 @@ def get_parsed_query (query: str, params: object = None) :
         if match_str in params : 
             query = query.replace(f"${{{match_str}}}", get_trans_value(params[match_str]))
 
-
     ptrn_final = r"\#\{(.*?)\}"
     match_final = re.findall(ptrn_final, query)
 
