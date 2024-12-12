@@ -80,7 +80,7 @@ def trans_type_predefined_params (params) :
 
     for k, v in const.PREDEFINED_PARAMS.items() :
         if k in params :
-            if v["type"] == "number" : 
+            if v["type"] == "number" :
                 params[k] = float( params[k] )
             elif v["type"] == "int" : 
                 params[k] = int( params[k] )

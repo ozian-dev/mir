@@ -211,7 +211,7 @@ var postFnc = {
         
         callAjax(url, function(resObj){
             closePop1(resObj);
-            $("#pan" + resObj["pid"]).find(".head .tools a[data-mode=execute][data-target='" + resObj["target"] + "']")
+            $("#pan" + resObj["pid"]).find(".head .tools a[data-mode=execute]")
                 .removeClass("att-selected-item")
                 .addClass("att-disable");
         }, 'POST', JSON.stringify(postData));

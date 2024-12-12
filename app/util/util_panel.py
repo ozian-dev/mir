@@ -111,18 +111,18 @@ def get_panel_form (panel_json:object, params:object) :
         for item in res["execute"] :
             if "query" in item : del item["query"]
     
-    for item in res["heads"] :
+    if "heads" in res :
+        for item in res["heads"] :
 
-        if "default" in item :
-            if item["default"] is None : item["default"] = None
-            elif isinstance(item["default"], str) and len(item["default"]) > 0 :
-                if item["default"][0] == "@" : item["default"] = util_param.parse_date_define(item["default"])
+            if "default" in item :
+                if item["default"] is None : item["default"] = None
+                elif isinstance(item["default"], str) and len(item["default"]) > 0 :
+                    if item["default"][0] == "@" : item["default"] = util_param.parse_date_define(item["default"])
+                    else : item["default"] = item["default"]
                 else : item["default"] = item["default"]
-            else : item["default"] = item["default"]
-        
-        
-        if "values" in item and "query" in item["values"] :
-            set_query_values( panel_json, item["values"], params )
+
+            if "values" in item and "query" in item["values"] :
+                set_query_values( panel_json, item["values"], params )
 
     return res
 
@@ -448,10 +448,15 @@ async def execute_panel (panel_json:object, params:object, logger):
     if "entity" in params and "mode" in params and params["entity"] == "action" and params["mode"] == "execute":
         pass
     else :
-        if "old" in params["@data"] : 
-            check_data = diff_data(pk_arr, params["@data"])
-            if len(check_data) == 0 : return util_response.error("no changing data")
-            is_valid_post(panel_json, params, params["@data"]["new"])
+        if "old" in params["@data"] :
+
+            if params["mode"] == "operate" or params["mode"] == "execute" :
+                target_obj = util_library.get_obj_array (panel_json["chart"][params["mode"]], "name", params["target"])
+
+                if "force" not in target_obj or target_obj["force"] == False :  
+                    if is_different(params["@data"]["old"], params["@data"]["new"]) == False :
+                        return util_response.error("no changing data")
+                is_valid_post(panel_json, params, params["@data"]["new"])
 
     data = []
     split = None
@@ -461,8 +466,8 @@ async def execute_panel (panel_json:object, params:object, logger):
         if params["mode"] == "operate" or params["mode"] == "execute" : 
 
             data = params["@data"]["new"]
-            
             data = get_exec_data (data, params)
+
             target_obj = util_library.get_obj_array (panel_json["chart"][params["mode"]], "name", params["target"])
             if "target-sub" in params :
                 target_obj = util_library.get_obj_array (target_obj["act"], "name", params["target-sub"])
@@ -539,31 +544,15 @@ async def execute_panel (panel_json:object, params:object, logger):
 
     return final_res
 
-def diff_data (pkeyArr, post) : 
 
-    old_data = {}
-    new_data = {}
+def is_different (data1, data2) : 
 
-    for val in post['old']:
-        key = ""
-        for pk in pkeyArr:
-            if pk in val : key += f"[{val[pk]}]"
-        old_data[key] = val
+    local_cnt = 0 
+    for data in data1:
+        if data != data2[local_cnt] : return True
+        local_cnt += 1
 
-    for val in post['new']:
-        key = ""
-        for pk in pkeyArr:
-            if pk in val : key += f"[{val[pk]}]"
-        new_data[key] = val
-    
-    diff_arr = []
-    for k1, v1 in new_data.items():
-        for k2, v2 in v1.items():
-            if k2 not in v2 or v2 != old_data[k1][k2]:
-                diff_arr.append(v1)
-                break
-
-    return diff_arr
+    return False
 
 def get_exec_data (data, params) :
 
@@ -694,7 +683,7 @@ def get_values(panel_json:object, params:object):
 
 
 def is_valid_post(panel_json, params, data) :
-
+    
     define_obj = {}
 
     entity = params["entity"]
@@ -724,7 +713,7 @@ def is_valid_post(panel_json, params, data) :
     for row in data :
         for k, v in row.items() :
 
-            if define_obj[k]["type"] == "int" or  define_obj[k]["type"] == "float" : 
+            if define_obj[k]["type"] == "int" or  define_obj[k]["type"] == "float" or  define_obj[k]["type"] == "number" : 
                 data[row_cnt][k] = data[row_cnt][k].replace(",", "")
                 v = v.replace(",", "")
                 if v != "" :
@@ -733,7 +722,7 @@ def is_valid_post(panel_json, params, data) :
                             v = int(v)
                             row[k] = v
                             
-                        if define_obj[k]["type"] == "float" : 
+                        if define_obj[k]["type"] == "float" or define_obj[k]["type"] == "number" : 
                             v = float(v)
                             row[k] = v
                         

@@ -34,7 +34,6 @@ function callAjax(url, callback, method="GET", data=null) {
     });
 }
 
-
 function getPanelObj(obj) {
 
     if ($(obj).length == 0) return null;
@@ -95,7 +94,7 @@ function getPostData ( mainObj, btnObj, dataObj, diffOnly=true, row="" ) {
     postData["target"] = $(btnObj).attr("data-target");
     postData["run"] = $(btnObj).attr("data-run"); // real, test
     postData["forward"] = $(btnObj).attr("data-forward");
-    postData["@data"] = collectData(dataObj, diffOnly, row); // data["new"], data["old"], data["sql"]
+    postData["@data"] = collectData(dataObj, diffOnly, row, $(btnObj).attr("data-force")); // data["new"], data["old"], data["sql"]
 
     postData["@custom"] = {}
     $.each($(mainObj).find(".search .custom .item .value .att-input"), function(i, item){
@@ -118,7 +117,7 @@ function getPostData ( mainObj, btnObj, dataObj, diffOnly=true, row="" ) {
     return postData;
 }
 
-function collectData(obj, diffOnly=true, row="" ) {
+function collectData(obj, diffOnly=true, row="", force) {
 
     var tarObj = (row == "" ? obj : $(obj).find(row)) ;
     var newArr = [];
@@ -175,20 +174,20 @@ function collectData(obj, diffOnly=true, row="" ) {
         if ( !isValid ) return;
         
         var dataKeyObj = $(row).find(".att-key");
-
         $(dataKeyObj).each(function(i, item) {
             thisNew[$(item).attr("data-name")] = $(item).attr("data-org") ? $(item).attr("data-org") : "";
             thisOld[$(item).attr("data-name")] = thisNew[$(item).attr("data-name")];
         });
 
-        if ( !diffOnly || !isSame ) {
+        if ( force === "1" || (!diffOnly || !isSame) ) {
             newArr.push(thisNew); 
             oldArr.push(thisOld); 
-        }
+        } 
     })
-
+    
     if ( !isValid ) return null;
-    if ( valCnt == 0 ) return {"new":[], "old":[]};
+    if ( valCnt == 0 && force !== "1") return {"new":[], "old":[]};
+
     if ( newArr.length == 0 ) {
         modal(_m[_l]["nochange"]);
         return null;
@@ -275,24 +274,29 @@ function getFormatTime() {
     return timeString;
 }
 
-function numberFormat(number, decimals=null, thousands_sep=",", dec_point="." ) {
-
-    if ( !decimals ) decimals = 0;
-    else if ( decimals == -1 ) {
+function numberFormat(number, decimals = null, thousands_sep = ",", dec_point = ".") {
+    
+    if (decimals === -1) {
         thousands_sep = "";
         decimals = 0;
     }
 
     number = parseFloat(number);
 
-    if (!isFinite(number) || !number && number !== 0) {
+    if (!isFinite(number) || (!number && number !== 0)) {
         return '';
     }
 
-    var stringifiedNumber = Math.abs(number).toFixed(decimals);
+    var stringifiedNumber;
+    if (decimals === null) {
+        stringifiedNumber = Math.abs(number).toString();
+    } else {
+        stringifiedNumber = Math.abs(number).toFixed(decimals);
+    }
+
     var parts = stringifiedNumber.split('.');
     var integerPart = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + thousands_sep);
-    var decimalPart = decimals ? dec_point + parts[1] || '' : '';
+    var decimalPart = parts[1] !== undefined ? dec_point + parts[1] : '';
 
     return (number < 0 ? '-' : '') + integerPart + decimalPart;
 }

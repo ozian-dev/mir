@@ -162,6 +162,9 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
 
                     else :
                         sql = get_parsed_query(sql, param)
+                        print(sql)
+                        print(param)
+                        
                         cursor.execute(sql, param)
                         db_id = cursor.lastrowid
                         db_cnt = cursor.rowcount

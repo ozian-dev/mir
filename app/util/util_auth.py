@@ -27,7 +27,6 @@ async def check_login ( group: int, params: object) :
             login_res = await check_login_generic ( login_info, params)
 
         elif login_info["type"] == "custom" :
-
             login_res = await check_login_custom (login_info, params)
 
         else : return False
@@ -127,11 +126,11 @@ def is_login ( group: int, cookies: object = None) :
             key for key in required_keys 
             if key not in obj or obj[key] in ("", None)
         ]
-
+        
         if missing_or_invalid_keys:
             return False
 
-    except :
+    except Exception as e:
         return False
 
     if obj["id"] != cookies[f"{const.APP_NAME}.{group}.i"] or obj["level"] != cookies[f"{const.APP_NAME}.{group}.l"] : 
@@ -162,9 +161,10 @@ def check_patten (info, target, str) :
                 special_chars = info["validation"][target]["custom"]
                 type_arr.extend(info["validation"][target]["general"])
 
-            if info["validation"][target]["match"] == "only" : return check_only_patten (type_arr, str, special_chars)
-            elif info["validation"][target]["match"] == "all" : return check_all_patten (type_arr, str, special_chars)
-            else : return False
+            if "match" in info["validation"][target] : 
+                if info["validation"][target]["match"] == "any" : return check_any_patten (type_arr, str, special_chars)
+                elif info["validation"][target]["match"] == "all" : return check_all_patten (type_arr, str, special_chars)
+                else : return False
 
     return True
 
@@ -184,7 +184,7 @@ def check_all_patten (type_arr:object, str, special_chars="") :
     return True
 
 
-def check_only_patten (type_arr:object, str, special_chars="") : 
+def check_any_patten (type_arr:object, str, special_chars="") : 
 
     cloned_str = copy.copy(str)
 

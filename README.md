@@ -60,6 +60,3 @@ This project is licensed under the MIT License
 
 ## Hashtags
 #mir #AdminTool #MySQL #MariaDB #CRUD #JSON #Dashboard #DataVisualization #RegistrationForms #APIs #Integration #GCP #AWS
-
-## Acknowledgments
-For a list of libraries used in this project, please see the [CONTRIBUTORS.md](CONTRIBUTORS.md) file.

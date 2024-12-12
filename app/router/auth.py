@@ -45,7 +45,7 @@ async def login( request: Request,
 
     response = RedirectResponse(url=request_info['u'], status_code=303)
     
-    response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.i", value=quote(login_res['id']), domain=host_name, httponly=False)
+    response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.i", value=quote(login_res['id'], safe="@"), domain=host_name, httponly=False)
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.l", value=login_res['level'], domain=host_name, httponly=False)
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.n", value=quote(login_res['grp_name']), domain=host_name, httponly=False)
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.e", value=quote(enc_info_str), domain=host_name, httponly=True)

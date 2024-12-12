@@ -97,11 +97,17 @@ function renderPop1 (btnObj, mode="info") {
         var panelObj = getPanelObj(btnObj);
         var lines = renderFnc["formLine"](panelObj, btnObj);
 
+        var btnAlias = "save";
+        if ($(btnObj).attr("data-button-label")) btnAlias = $(btnObj).attr("data-button-label");
+
+        var postData = {"post":"1"};
+        if ($(btnObj).attr("data-force") == "1") postData["force"] = 1;
+
         var btn1 = getLinkObj( btnObj, "btn", 
             $(btnObj).attr("data-entity"), 
             $(btnObj).attr("data-mode"),
             $(btnObj).attr("data-target"),
-            "", "save", "att-width-140", {"post":"1"} );
+            "", btnAlias, "att-width-140", postData);
 
         var body = $("<div>").addClass("body").html(lines);
         var tail = $("<div>").addClass("tail").html(btn1);
@@ -509,28 +515,7 @@ function renderPop6 (btnObj, mode="view") {
     var tdObj = $(btnObj).parent().parent();
     var trObj = $(tdObj).parent();
 
-    /*
-    var vInfo = _p["p"]["i"][$(panelObj).attr("data-i")]["chart"]["view"];
-
-    if ( vInfo["execute"] && vInfo["execute"] != "" ) {
-        var keyObj = {};
-        $(trObj).find("td.att-key").each(function(i, item){
-            keyObj[$(item).attr("data-name")] = $(item).attr("data-org");
-        });
-
-        $("#pop6 .head .fnc-view-edit")
-            .attr("data-execute", vInfo["execute"])
-            .attr("data-keys", JSON.stringify(keyObj))
-            .attr("data-i", $(panelObj).attr("data-i"))
-            .show()
-    }
-    else {
-        $("#pop6 .head .fnc-view-edit").hide();
-    }
-    */
     $("#pop6 .head .fnc-view-edit").hide();
-
-
 
     var queryStr = "" ;
     var url = "";
@@ -762,6 +747,7 @@ function renderPanel(obj) {
             
             btn = getLinkObj(panelObj, "tool", "chart", "execute", item["name"], item["type"], alias, "att-tool-custom att-disable");
             if (item["button_label"]) $(btn).attr("data-button-label", item["button_label"]);
+            if (item["force"]) $(btn).attr("data-force", "1");
             if(item["display"] === "hide") btn.addClass("att-hidden");
 
             $(toolObj).append(btn);
@@ -779,9 +765,8 @@ function renderPanel(obj) {
             if (!item["type"]) item["type"] = "";
             
             btn = getLinkObj(panelObj, "tool", "chart", "insert", item["name"], item["type"], alias, "att-tool-new");
-            if (item["button_label"]) {
-                $(btn).attr("data-button-label", item["button_label"]);
-            }
+            if (item["button_label"]) $(btn).attr("data-button-label", item["button_label"]);
+
             $(toolObj).append(btn);
         });
     }
@@ -937,7 +922,9 @@ function renderPanelChart(panelObj, obj) {
         "heads_orders" : cinfo["heads_orders"],
         "heads" : cinfo["heads"],
         "values" : obj["chart"]["values"],
-        "stack": cinfo["chart"]["stack"] ? cinfo["chart"]["stack"] : null
+        "stack": cinfo["chart"]["stack"] ? cinfo["chart"]["stack"] : null,
+        "pivot" : obj["chart"]["pivot"] ? obj["chart"]["pivot"] : null,
+        
     }
 
     renderFnc["renderChart"](panelObj, chartInfo);
@@ -1393,7 +1380,6 @@ function renderDataUpdate (panelObj, obj) {
 
     callPanelCustom (panelObj, function(dataObj) {
 
-        
         var panelObj = $("#pan" + dataObj["pid"]);
         var rows = $(panelObj).find(".chart .chart-table .table .row");
 
@@ -1459,7 +1445,6 @@ function renderDataUpdate (panelObj, obj) {
         }
 
         $.each(usedExecute, function(k,v){
-
             item = _p["p"]["i"][obj["pid"]]["chart"]["just_execute"][k]
             var selectorArr = [];
             $.each(item, function(k, v) {
@@ -1477,18 +1462,6 @@ function renderDataUpdate (panelObj, obj) {
                 }
                 if ( isMatched ) removeEffectRow($(o));
             });
-
-
-            /* 
-            // origin code
-            var target = $(rows).find(selectorArr[0]).parent();
-            if ( selectorArr.length > 0 ) {
-                for (var j=1; j>selectorArr.length; j++) {
-                    target = $(target).find(selectorArr[j]).parent();
-                }
-            }
-            removeEffectRow($(target));
-            */
         })
 
         delete(_p["p"]["i"][obj["pid"]]["chart"]["just_execute"]);
@@ -1568,7 +1541,6 @@ function isActionCondition (colsInfo, actionInfo, values) {
     return false;
 }
 
-
 function highlightEffectRow(obj) {
 
     $(obj).append(_htmls["highlight-row"])
@@ -1586,8 +1558,6 @@ function removeEffectRow(obj) {
         $(obj).remove();
     });
 }
-
-
 
 function toHtml(str) {
 
@@ -1680,7 +1650,7 @@ var renderFnc = {
             var viewCnt = $(trObj).length;
 
             var cols = {}
-            
+
             $(tableObj).find('tr.summary td').each(function(i,e) {
 
                 if ( !$(e).attr("data-summary-calc") ) {
@@ -1699,6 +1669,7 @@ var renderFnc = {
 
                         var printVal;
                         if ($(e).attr("data-summary") == "sum") {
+                            
                             printVal = renderFnc["numberT"](headsArr, headsObj[$(e).attr("title")], {}, [], sum);  
                             cols[$(e).attr("title")] = sum; 
                         } else {
@@ -2088,7 +2059,14 @@ var renderFnc = {
             });
         }
 
-        val = "<span>" + valArr.join("</span><span>") + "</span>";
+        var styleItemStr = "";
+        if ("style_item" in info) {
+            for (const [k, v] of Object.entries(info["style_item"])) {
+                styleItemStr += `${k}:${v};`;
+            }
+            styleItemStr = `style='${styleItemStr}'`;
+        }
+        val = "<span "+styleItemStr+">" + valArr.join("</span><span "+styleItemStr+">") + "</span>";
         return val;
     },
     stringTimage: function(head, info, td, row, val) {
@@ -2210,7 +2188,7 @@ var renderFnc = {
 
         if (info["type"] && info["type"] == "number") {
             $(td).find(".value").addClass("att-align-right");
-            if (info["point"]) {
+            if ( "point" in info ) {
                 val= numberFormat(val, info["point"]);
             } else {
                 if (val !== null) val = numberFormat(val);
@@ -2218,6 +2196,7 @@ var renderFnc = {
         }
 
         val = renderFnc["allTlink"](head, info, td, row, val);
+
         return val;
     },
     numberTchoice: function(head, info, td, row, val) {
@@ -2323,12 +2302,21 @@ var renderFnc = {
                 chart_stack[ chartInfo["stack"][j] ] = true;
             }
         }
-        
+
         var dataSet = [];
         for ( var i=0; i<dataArr.length; i++ ) {
 
             var chart_type = ( chartInfo["heads"][dataLabel[i]]["chart"] && chartInfo["heads"][dataLabel[i]]["chart"]["type"] 
                                 ? chartInfo["heads"][dataLabel[i]]["chart"]["type"] : "bar" );
+                                
+            if ( chartInfo["pivot"] && chartInfo["pivot"]["chart"] && chartInfo["pivot"]["chart"]["type"] ) {
+
+                if ( chartInfo["pivot"]["chart"]["type"] != "" ) {
+                    chart_type = chartInfo["pivot"]["chart"]["type"] ;
+                }
+            }
+
+            
             var chart_y = ( chartInfo["heads"][dataLabel[i]]["chart"] && chartInfo["heads"][dataLabel[i]]["chart"]["y"] 
                                 ? chartInfo["heads"][dataLabel[i]]["chart"]["y"] : "y" );
 

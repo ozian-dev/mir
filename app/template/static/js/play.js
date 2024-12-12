@@ -1,6 +1,7 @@
 
 function closePop1(obj) {
 
+    var targetObj = $("#pop1 .space .form .formbox .tail .fnc-link[data-target='"+obj["target"]+"']");
     var panelObj = $("#pan" + obj["pid"]);
 
     if ( obj["run"] && obj["run"] == "test" ) {
@@ -19,6 +20,8 @@ function closePop1(obj) {
         $(panelObj).find(".head .tools  a[data-type=reload]").click();
     } else {
         if (_p["p"]["i"][obj["pid"]]["chart"]["list"] && _p["p"]["i"][obj["pid"]]["chart"]["list"]["type"] == "scroll" ) {
+            $(panelObj).find(".head .tools  a[data-type=reload]").click();
+        } else if ($(targetObj).attr("data-force") === "1" ) {
             $(panelObj).find(".head .tools  a[data-type=reload]").click();
         } else {
             renderDataUpdate (panelObj, obj);

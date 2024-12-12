@@ -1,3 +1,15 @@
+### [1.0.5] 2024.12.12
+- [added] when display is set to 'multi', apply the style attribute
+- [added] apply the pivot chart type attribute (line, bar)
+- [added] button label in the edit popup layer
+- [added] add .att-color-darkgreen CSS property
+- [added] add execute force attribute
+- [changed] widget chart position
+- [changed] change login pattern check option (only -> any)
+- [changed] number format logic
+- [changed] change the padding of the label in the edit popup layer
+- [changed] change diff_data function to is_different function
+
 ### [1.0.4] 2024.12.10
 - [added] add date keyword(2_days_ago)
 - [changed] change color of common menu 
