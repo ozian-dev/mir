@@ -42,3 +42,4 @@ This project uses several open-source libraries. Below is the information about 
 
 ## Acknowledgments
 Thanks to the developers and contributors of these open-source libraries. Your efforts enable us to build on your tools. We appreciate your contributions to open-source software!
+
