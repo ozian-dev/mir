@@ -667,6 +667,9 @@ $("body")
 // panel function
 ////////////////////////////////////////////////////////////////////
 .on ("click", ".fnc-pidxinfo", function() {
+    
+    if ( !$(this).next().find(".row .val").html() ) return false;
+
     $(this).next().toggle();
     var idStr = $(this).next().attr("id");
     setTimeout( function(){ $("#" + idStr).hide(); }, 2000 );

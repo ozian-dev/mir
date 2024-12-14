@@ -1,3 +1,10 @@
+### [1.0.6] 2024.12.14
+- [added] info attribute editing
+- [added] alignment for input boxes within table cells.
+- [changed] adjusted form box label width.
+- [changed] Y-axis values formatted as 1B, 1M, 1K.
+- [changed] panel ID hidden when data is not loaded.
+
 ### [1.0.5] 2024.12.12
 - [added] when display is set to 'multi', apply the style attribute
 - [added] apply the pivot chart type attribute (line, bar)

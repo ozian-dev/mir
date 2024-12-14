@@ -302,7 +302,7 @@ function renderPop2 (obj) {
 
     } else if ( mode == "json" ) {  
         
-        $(pop2).find(".foot").html("* " + _m[_l]["dbclicksql"]);    
+        $(pop2).find(".foot").html("* " + _m[_l]["dbclickmsg"]);    
         var jsonStr = $(obj).next().find("textarea").val();
         if (jsonStr == "") jsonStr = "{}";
         jsonStr = getHtmlEntity(jsonStr);
@@ -434,16 +434,31 @@ function renderPop2 (obj) {
 
 }
 
-function renderPop3 (sql, mode="sql", info) {
-
+function renderPop3 (data, mode="sql", info) {
+    
+    var title = mode;
+    if ( title == "markdown" ) title = "text (Markdown format)";
+    
     $('#pop3').hide();
-    $("#pop3 .head .title").html("sql editor");     
+    $('#pop3').attr("data-mode", mode);
+    $("#pop3 .head .title").html(title + " editor");
+    $("#pop3 .head a").show();
+    
     if ( mode == "sql" ) {
         $("#pop3").attr("data-mode", mode).attr("data-type", info["type"]).attr("data-source", info["idx"]);  
-        sql = getHtmlEntity(sql);      
+        sql = getHtmlEntity(data);      
         $("#pop3 .space").html($("<div>").attr("id", "editsql").html(sql));
         callSqlEditor("editsql", sql, info);
+
+    } else if ( mode = "markdown" ) {
+        $("#pop3 .head a.att-icon-align").hide();
+        var textarea = $("<textarea>")
+                .addClass("att-input att-input-textarea att-width-100p att-height-95p att-padding-top-bottom-10 att-border-lightgray")
+                .attr("data-info", JSON.stringify(info))
+                .val(data) ;
+        $("#pop3 .space").html(textarea);
     }
+
     $("#pop3").toggle("slide", {direction:"right"}, 350);
     $("#pop3 .space").scrollTop(0);
 
@@ -2316,12 +2331,10 @@ var renderFnc = {
                 }
             }
 
-            
             var chart_y = ( chartInfo["heads"][dataLabel[i]]["chart"] && chartInfo["heads"][dataLabel[i]]["chart"]["y"] 
                                 ? chartInfo["heads"][dataLabel[i]]["chart"]["y"] : "y" );
 
             var tmpObj = {};
-
             tmpObj["label"] = chartInfo["heads"][dataLabel[i]]["alias"] ? chartInfo["heads"][dataLabel[i]]["alias"] : dataLabel[i];
             if ( chartInfo["heads"][dataLabel[i]]["unit"] ) tmpObj["label"] +=  " (" + chartInfo["heads"][dataLabel[i]]["unit"] + ")";
 
@@ -2366,12 +2379,19 @@ var renderFnc = {
                 },
                 scales: {
                     x: { stacked: chart_stack["x"] },
-                    y: { stacked: chart_stack["left"], display:!isEmptyLeft },
+                    y: { stacked: chart_stack["left"], display:!isEmptyLeft,
+                        ticks: {
+                            callback: formatYAxisTicks
+                        }
+                    },
                     right :{
                         display: !isEmptyRight,
                         position: 'right',
                         grid: { drawOnChartArea: false },
-                        stacked: chart_stack["right"]
+                        stacked: chart_stack["right"],
+                        ticks: {
+                            callback: formatYAxisTicks
+                        }
                     }
                 }
             }
@@ -2380,6 +2400,25 @@ var renderFnc = {
         var canvas = document.getElementById(chartId);
         var ctx = canvas.getContext("2d");
         _p["chartObj"][chartId] = new Chart(ctx, config);
+
+
+
+        function getAxisNum(val) {
+            if (val%1 == 0) return val;
+            else {
+                var a = val.toString();
+                var b = a.split(".")[1].length;
+                if(b>=4) return parseFloat(val.toFixed(4)) ;
+                else return val;
+            }
+        }
+        function formatYAxisTicks(value) {
+            var vv = Math.abs (value) ;
+            if ( vv >= 1000 && vv < 1000000) return getAxisNum(value / 1000) + ' K';
+            else if ( vv >= 1000000 && vv < 1000000000) return getAxisNum(value / 1000000) + ' M';
+            else if ( vv >= 1000000000 ) return getAxisNum(value / 1000000000) + ' B';
+            else return getAxisNum(value);
+        }
 
         function createCustomLegend(chart) {
 
@@ -2454,7 +2493,4 @@ var renderFnc = {
         }
         createCustomLegend(_p["chartObj"][chartId]);        
     }
-
-
-
 };

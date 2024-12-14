@@ -526,16 +526,23 @@ function callJsonEditor(target) {
         var line = editorJson.session.getLine(pos.row).trim();
         if (line.charAt(line.length - 1) === ',') line = line.slice(0, -1);
 
+        var jsonObj = null;
         try {
             str = "[" + line + "]";
-            var jsonObj = JSON.parse(str);
+            jsonObj = JSON.parse(str);
             candidate = jsonObj[0];
         } catch (e1) {
             try {
                 str = "{" + line + "}";
-                var jsonObj = JSON.parse(str);
+                jsonObj = JSON.parse(str);
                 candidate = jsonObj[Object.keys(jsonObj)[0]];
             } catch (e2) {}
+        }
+        if( jsonObj && "info" in jsonObj ) {
+
+            var info = { "pos": pos, "line": line };
+            renderPop3(jsonObj["info"], "markdown", info);
+            return ;
         }
     
         if ( candidate != "" ) {

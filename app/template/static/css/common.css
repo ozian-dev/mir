@@ -75,7 +75,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .gw .panel .search .custom .item .value .att-input {border-bottom:1px dotted lightgray;}
 .gw .panel .search .act {position:absolute;top:2px;left:0;padding:5px 0;background-color:white;min-width:160px;}
 .gw .panel .search .act span::before {content:"✔"; margin-right:5px;}
-.gw .panel .action {display:none;width:100%;padding:5px 0;position:relative;margin-bottom:10px;}
+.gw .panel .action {display:none;width:100%;padding:5px 0;position:relative;margin-top:10px;margin-bottom:10px;}
 
 .gw .panel .chart {display:none;width:100%;padding:5px 0;position:relative;margin-bottom:10px;}
 
@@ -194,7 +194,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .formbox .body .row {margin-bottom:10px;display:flex;position:relative;}
 .formbox .body .row .require-mark {position:relative;}
 .formbox .body .row .require-mark::before {content:"*";color:crimson;position:absolute;top:0;right:2px;}
-.formbox .body .row .label {width:140px;min-width:140px;padding:5px 7px;display:flex;align-items:center;background-color:whitesmoke;border:1px solid lightgray;border-left:none; word-break:break-all;}
+.formbox .body .row .label {width:145px;min-width:140px;padding:5px 7px;display:flex;align-items:center;background-color:whitesmoke;border:1px solid lightgray;border-left:none; word-break:break-all;}
 .formbox .body .row .edit {flex-grow:1;border:1px solid lightgray;border-left:none;border-right:none;display:flex;align-items:center;justify-content:center;flex-direction:column;}
 .formbox .body .row .edit .att-input-text {display:block;width:100%;height:30px;border:none;}
 .formbox .body .row .edit .att-input-select {display:block;width:100%;height:30px;margin-left:-10px;}
@@ -250,7 +250,6 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-input-text[type="number"]::-webkit-outer-spin-button,
 .att-input-text[type="number"]::-webkit-inner-spin-button {-webkit-appearance:none;}
   
-
 .att-btn {display:inline-block;min-width:90px;height:25px;line-height:22px;text-align:center;margin-right:8px;cursor:pointer;background-color:whitesmoke;color:gray;border-radius:5px;border:1px solid lightgray;white-space:nowrap;}
 .att-btn:hover {background-color:dodgerblue;color:whitesmoke;border:1px solid dodgerblue;}
 
@@ -318,6 +317,8 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-margin-bottom-10 {margin-bottom:10px;}
 .att-margin-left-10 {margin-left:10px;}
 .att-margin-right-10 {margin-right:10px;}
+
+.att-padding-top-bottom-10 {padding-top:10px;padding-bottom:10px;}
 
 .att-div {display:block;}
 

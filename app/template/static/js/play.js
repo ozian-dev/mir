@@ -147,6 +147,11 @@ var playFnc = {
                                             .attr("data-value", $(tarCol).attr("data-org"))
                                             .val($(tarCol).attr("data-org"));
 
+                        if ( "align" in info ) {
+                            $(inObj).addClass("att-align-"+info["align"]);
+                        } else if (info["type"] == "number") {
+                            $(inObj).addClass("att-align-right");
+                        }
                     }
                     
                     $(edit).html(inObj);
@@ -648,25 +653,51 @@ var playFnc = {
         modal(_m[_l]["copy"]);
 
     },  
-    pop3Tapply: function(obj){
+    pop3Tapply: function(obj) {
 
-        var sql = editorSql.getValue();
-        format = getFormattedSql (sql, $("#pop3").attr("data-type"));
+        var mode = $("#pop3").attr("data-mode");
 
-        for(var i=20; i>0; i-=2) {
-            var str = "\n";
-            for(var j=0;j<i; j++) str += " ";
-            format = format.split(str).join("\n");
+        if ( mode == "sql" ) {
+
+            var sql = editorSql.getValue();
+            format = getFormattedSql (sql, $("#pop3").attr("data-type"));
+
+            for(var i=20; i>0; i-=2) {
+                var str = "\n";
+                for(var j=0;j<i; j++) str += " ";
+                format = format.split(str).join("\n");
+            }
+            format = format.split("\n").join(" ").trim();
+
+            var lineContent = editorJson.session.getLine(sqlEditLineNum);
+            var newLineContent = lineContent.replace(sqlEditQueryOrg, format);
+            editorJson.session.replace(
+                new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length), 
+                newLineContent);
+
+        } else if ( mode == "markdown" ) {
+
+            var text = $("#pop3 .space .att-input-textarea").val().replace("\n", "\\n");
+            var info = JSON.parse($("#pop3 .space .att-input-textarea").attr("data-info"));
+
+            var lineNumber = info["pos"]["row"];
+            var lineText = editorJson.session.getLine(lineNumber);
+            
+            var start = lineText.indexOf("\"");
+            start = lineText.indexOf("\"", start+1);
+            start = lineText.indexOf("\"", start+1);
+            start ++;
+
+            var length = lineText.lastIndexOf("\"");
+
+            editorJson.session.replace(
+                new ace.Range(lineNumber, start, lineNumber, length),
+                text.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
+            );
         }
-        format = format.split("\n").join(" ").trim();
 
-        var lineContent = editorJson.session.getLine(sqlEditLineNum);
-        var newLineContent = lineContent.replace(sqlEditQueryOrg, format);
-        editorJson.session.replace(new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length), newLineContent);
-        
         $(obj).parent().find(".fnc-close-btn").click();
         modal(_m[_l]["apply"]);
-
         highlightEffectRow($("#editjson"));
     },
 
