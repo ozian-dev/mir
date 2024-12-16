@@ -182,7 +182,6 @@ $("body")
 // unified button funtion
 ////////////////////////////////////////////////////////////////////
 
-
 .on ("click", ".fnc-link", function() {
     
     if( $(this).hasClass("att-disable") ) return;
@@ -192,8 +191,11 @@ $("body")
         if ( $(this).attr("data-post")) {
             fncName = $(this).attr("data-entity") + "T" + $(this).attr("data-mode") + "T" + $(this).attr("data-type");
             if ( $(this).attr("data-method") == "form") {
-                formFnc[fncName]($(this));
-                $("#pop1 .progress").show();
+                if ( formFnc[fncName]($(this)) ) {
+                    $("#pop1 .progress").show();
+                } else {
+                    $("#pop1 .progress").hide();
+                }
             } else {
                 postFnc[fncName]($(this));
             }

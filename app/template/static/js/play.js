@@ -482,6 +482,11 @@ var playFnc = {
         renderPop2(obj);
 
     },
+
+    pop1Tmarkdown: function(obj){
+        renderPop2(obj);
+
+    },
     pop1Tmulti: function(obj){
         renderPop2(obj);
 
@@ -522,16 +527,16 @@ var playFnc = {
     },  
     pop2Tapply: function(obj){
 
-        var dataMode = $("#pop2").attr("data-mode");
+        var mode = $("#pop2").attr("data-mode");
         var target =  $("#pop2").attr("data-target");
 
-        if ( dataMode == "text") {
+        if ( mode == "text" || mode == "markdown" ) {
 
             var textStr = $("#pop2 .space .att-input-textarea").val();
             $("#pop1 .space .form .formbox .body .row .edit textarea[data-name='"+target+"']").val(textStr);
             $("#pop1 .space .form .formbox .body .row .edit textarea[data-name='"+target+"']").attr("data-value", textStr);
 
-        } else if ( dataMode == "json") {
+        } else if ( mode == "json") {
 
             var jsonStr = editorJson.getValue();
             jsonStr = JSON.stringify(JSON.parse(jsonStr)).trim();
@@ -539,7 +544,7 @@ var playFnc = {
             $("#pop1 .space .form .formbox .body .row .edit textarea[data-name='"+target+"']").val(jsonStr);
             $("#pop1 .space .form .formbox .body .row .edit textarea[data-name='"+target+"']").attr("data-value", jsonStr);
 
-        } else if ( dataMode == "multi" || dataMode == "search" ) {
+        } else if ( mode == "multi" || mode == "search" ) {
 
             var div;
             var vals = [];

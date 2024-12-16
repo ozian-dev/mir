@@ -1,3 +1,7 @@
+### [1.0.7] 2024.12.16
+- [added] add validation logic, when an Excel file is uploaded.
+- [added] markdown display support added, parsed attribute removed.
+
 ### [1.0.6] 2024.12.14
 - [added] info attribute editing
 - [added] alignment for input boxes within table cells.

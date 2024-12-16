@@ -101,8 +101,6 @@ var formFnc = {
             if (!$(inputObj).attr("data-value") || $(inputObj).attr("data-value") == "") $(inputObj).attr("data-value", values);
             else $(inputObj).attr("data-value", $(inputObj).attr("data-value") + "," + values);
 
-            console.log($(inputObj).attr("data-value"))
-
             $(inputObj).attr("data-change", 1);
 
             $("#pop1 .progress").hide();
@@ -113,10 +111,10 @@ var formFnc = {
     chartTinsertTexcel : function(obj){
 
         if ( $(obj).attr("data-target-sub") == "bulk" ) {
-
             if (!$(obj).prev()[0].files[0]) {
                 modal( _m[_l]["nofile"], false);
-                return;
+                $("#pop1").find(".progress").hide();
+                return false;
             }
     
             var grp = $(obj).attr("data-g");
@@ -145,7 +143,7 @@ var formFnc = {
 
             var data = getPostData ( null, obj, $("#pop1 .space .formbox"), false );
 
-            if ( !data ) return;
+            if ( !data ) return false ;
 
             var formData = new FormData();
             formData.append("g", data["g"]);
@@ -168,6 +166,7 @@ var formFnc = {
 
             callAjax(url, closePop1, 'POST', formData);
         }
+        return true;
     }
 };
 

@@ -280,7 +280,7 @@ function renderPop2 (obj) {
 
     $(pop2).find(".head a[data-entity=pop2]").hide();
 
-    if ( mode == "text" ) {
+    if ( mode == "text" || mode == "markdown" ) {  
         $(pop2).find(".head a[data-mode=apply]").show();
 
     } else if ( mode == "json" ){
@@ -293,7 +293,7 @@ function renderPop2 (obj) {
         $(pop2).find(".head a[data-mode=apply]").show();
     }
 
-    if ( mode == "text" ) {  
+    if ( mode == "text" || mode == "markdown" ) {  
 
         var textStr = $(obj).next().find("textarea").val();
         var textarea = $("<textarea>").addClass("att-input att-input-textarea att-width-100p att-height-95p att-border-lightgray").val(textStr);
@@ -575,7 +575,7 @@ function renderPop6 (btnObj, mode="view") {
                         var name = info["alias"] ? info["alias"] : info["name"];
                         if(info["unit"]) name += " (" + info["unit"] + ")";
                         var valHtml = renderFnc[fncName](head, info, $("<td>"),resObj["chart"]["values"][0], val) ;
-                        if ( info["parse"] ) valHtml = toHtml(val);
+                        //if ( info["parse"] ) valHtml = toHtml(val);
                     } catch(e) {
                         console.log(e);
                         modal( "no function or function error : " + fncName, false );
@@ -1769,7 +1769,7 @@ var renderFnc = {
                     var div = $("<div>").addClass("att-input att-input-view").attr("data-alias", labelName).attr("data-name", v["name"]).attr("data-value", value).html(value);
                     $(edit).append(div);
 
-                } else if ( v["display"] && v["display"] == "text" ) {
+                } else if ( v["display"] && (v["display"] == "text" || v["display"] == "markdown")) {
 
                     var tmp = $("<textarea>").addClass("att-input att-input-textarea").attr("data-alias", labelName).attr("data-name", v["name"]).attr("data-value", value).val(value)
                     if (v["input"] && v["input"] == "required" ) $(tmp).addClass("required");
@@ -1805,7 +1805,13 @@ var renderFnc = {
                         }
                     }
 
-                    if (v["values"]["data_rev"] && v["values"]["data_rev"][valStr]) valArr = v["values"]["data_rev"][valStr];
+                    var isExists = valArr.some(value => v["values"]["data_rev"].hasOwnProperty(value));
+                    if (v["values"]["data_rev"] && v["values"]["data_rev"][valStr]) {
+                        valArr = v["values"]["data_rev"][valStr];
+                    } else {
+                        if ( !isExists ) valArr = new Array(v["values"]["length"]);
+                    }
+
                     var values = v["values"]["data"];
 
                     $.each(valArr, function(i, item) {
@@ -2028,7 +2034,7 @@ var renderFnc = {
         if (v["unit"]) alias += " (" + v["unit"] + ")";
 
         var label;
-        if ( v["display"] && ( v["display"] == "text" || v["display"] == "json" || v["display"] == "multi" || v["display"] == "search" ) ) {
+        if ( v["display"] && ( v["display"] == "text" || v["display"] == "markdown" || v["display"] == "json" || v["display"] == "multi" || v["display"] == "search" ) ) {
             label = getLinkObj($("#pop1"), "color-dodgerblue", "pop1", v["display"], v["name"], "", alias, "label" ); 
 
         } else {
@@ -2040,8 +2046,14 @@ var renderFnc = {
     },
 
     stringT: function(head, info, td, row, val) {
-        val =  getHtmlEntity(val);
+        val = getHtmlEntity(val);
         val = renderFnc["allTlink"](head, info, td, row, val);
+        return val;
+    },
+
+    stringTmarkdown: function(head, info, td, row, val) {
+        val = getHtmlEntity(val);
+        val = toHtml(val);
         return val;
     },
     stringTdate: function(head, info, td, row, val) {

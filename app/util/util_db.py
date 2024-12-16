@@ -149,7 +149,8 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
                         cloned_param = param.copy()
                         split_obj = {}
                         for column in split[f"{sql_cnt}"] :
-                            split_values = cloned_param[column].split(",")
+                            split_str = f"{cloned_param[column]}"
+                            split_values = split_str.split(",")
                             split_obj[column] = split_values
                             values_cnt = len(split_values)
 
@@ -162,9 +163,6 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
 
                     else :
                         sql = get_parsed_query(sql, param)
-                        print(sql)
-                        print(param)
-                        
                         cursor.execute(sql, param)
                         db_id = cursor.lastrowid
                         db_cnt = cursor.rowcount

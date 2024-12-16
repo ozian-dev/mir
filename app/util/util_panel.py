@@ -449,14 +449,13 @@ async def execute_panel (panel_json:object, params:object, logger):
         pass
     else :
         if "old" in params["@data"] :
-
             if params["mode"] == "operate" or params["mode"] == "execute" :
                 target_obj = util_library.get_obj_array (panel_json["chart"][params["mode"]], "name", params["target"])
-
                 if "force" not in target_obj or target_obj["force"] == False :  
                     if is_different(params["@data"]["old"], params["@data"]["new"]) == False :
                         return util_response.error("no changing data")
-                is_valid_post(panel_json, params, params["@data"]["new"])
+        
+        is_valid_post(panel_json, params, params["@data"]["new"])
 
     data = []
     split = None
@@ -690,7 +689,7 @@ def is_valid_post(panel_json, params, data) :
     if params["entity"] == "action" : entity = "chart"
 
     defined_values = get_values(panel_json, params)
-    
+
     for row in panel_json[entity]["heads"] :
 
         define_obj[row["name"]] = {}
@@ -714,19 +713,19 @@ def is_valid_post(panel_json, params, data) :
         for k, v in row.items() :
 
             if define_obj[k]["type"] == "int" or  define_obj[k]["type"] == "float" or  define_obj[k]["type"] == "number" : 
-                data[row_cnt][k] = data[row_cnt][k].replace(",", "")
-                v = v.replace(",", "")
-                if v != "" :
+                val = f"{v}"
+                val = val.replace(",", "")
+                val = val.replace(",", "")
+                if val != "" :
                     try : 
                         if define_obj[k]["type"] == "int" : 
-                            v = int(v)
-                            row[k] = v
+                            val = int(val)
+                            row[k] = val
                             
                         if define_obj[k]["type"] == "float" or define_obj[k]["type"] == "number" : 
-                            v = float(v)
-                            row[k] = v
-                        
-                    except Exception as e: raise Exception(f"invalid data : '{v}' is not a {define_obj[k]["type"]}")
+                            val = float(val)
+                            row[k] = val
+                    except Exception as e: raise Exception(f"invalid data : '{val}' is not a {define_obj[k]["type"]}")
             
             value_step_1 = True
             if "values" in define_obj[k] :
