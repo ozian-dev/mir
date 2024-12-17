@@ -152,7 +152,7 @@ async def websocket_endpoint(websocket: WebSocket, user: str = "anonymous"):
     client_id = f"{client_host}:{client_port}"
 
     if user in const.WS_USER and client_id in const.WS_USER[user]:
-        await websocket.close(code=1000)
+        await websocket.close(code=1008)
         return
 
     await websocket.accept()

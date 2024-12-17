@@ -709,6 +709,7 @@ function WebSocketIO() {
     };
 
     ws.onclose = function(event) {
+        if (event.code==1006) return;
         setTimeout(function() {
             window.webSocketIo = WebSocketIO();
         }, 1000);
