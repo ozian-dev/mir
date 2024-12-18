@@ -316,11 +316,12 @@ var postFnc = {
         var postData = getPostData(panelObj, obj);
 
         postData["@data"]["new"] = [];
-
+        
         var requiredArr = [];
-        if ( $(obj).attr("data-required") ) JSON.parse($(obj).attr("data-required"));
+        if ( $(obj).attr("data-required") ) requiredArr = JSON.parse($(obj).attr("data-required"));
         var cstObj = $(panelObj).find(".search .custom .item .value [data-name]:visible");
         var isValid = true;
+        if ($(cstObj).length>0) postData["@data"]["new"][0] = {};
         $(cstObj).each(function(i, item) {
             if (!isValid) return;
             var keyName = $(item).attr("data-name");

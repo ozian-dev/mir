@@ -31,6 +31,8 @@ async def call(info, params: object=None):
 
 async def callback(info, params: object=None, res_arr: object=None) :
 
+    if params is None or len(params) < 1 : params = [{}]
+
     params[0]["@ip"] = info["@ip"]
     params[0]["@id"] = info["@id"]
     params[0]["@level"] = info["@level"]

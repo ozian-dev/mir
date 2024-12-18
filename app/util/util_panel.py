@@ -459,7 +459,7 @@ async def execute_panel (panel_json:object, params:object, logger):
 
     data = []
     split = None
-
+    
     if  params["entity"]  == "chart" :
 
         if params["mode"] == "operate" or params["mode"] == "execute" : 
@@ -499,6 +499,7 @@ async def execute_panel (panel_json:object, params:object, logger):
     elif  params["entity"]  == "action" :
 
         data = params["@data"]["new"]
+        data = get_exec_data (data, params)
         target_obj = util_library.get_obj_array(panel_json["action"], "name", params["target"])
         if "forward" in target_obj : params["forward"] = target_obj["forward"]
         if "async" in target_obj and target_obj["async"] == True : is_async = True
@@ -518,6 +519,7 @@ async def execute_panel (panel_json:object, params:object, logger):
         target_obj["@ip"] = params["@ip"]
         target_obj["@id"] = params["@id"]
         target_obj["@level"] = params["@level"]
+
         await util_async.call(target_obj, data)
 
     pkeys = []
@@ -554,6 +556,8 @@ def is_different (data1, data2) :
     return False
 
 def get_exec_data (data, params) :
+
+    if data is None or len(data) < 1 : data=[{}]
 
     res_arr = []
     filtered_params = {k: v for k, v in params.items() if k != "@data" and k != "@custom"}

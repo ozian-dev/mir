@@ -123,7 +123,7 @@ def execute_db (i: int, sqls: object, params: object = None, commit: bool = True
 def execute_db_mysql (db_info: object, sqls: object, params: object = None, commit: bool = True, split: object = None, prework: object = None) :
 
     # table update 와 같은 경우, 여러 data 가 올수 있다. 즉, post 의 data 항목이 array 로 되어있다.
-    if params is None : params = [None]
+    if params is None : params = [{}]
 
     timezone_offset = util_library.get_timezone_offset(db_info["timezone"])
     conn = mysql.connector.connect(**{ "host": db_info["host"], "port": db_info["port"], "database": db_info["database"], "user":db_info["user"], "password":db_info["password"],"use_unicode":True, "charset":db_info["charset"], "collation":db_info["collation"], })
@@ -139,8 +139,8 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
 
         result_arr = []
         data_cnt = 0
+        
         for param in params:
-
             if param is not None : param["@sys_seq"] = data_cnt * 10 + 10
             sql_cnt = 0
             for sql in sqls :
@@ -177,6 +177,7 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
         else : conn.rollback()
 
     except Exception as e:
+        print(e)
         conn.rollback()
         raise Exception(e)
     
