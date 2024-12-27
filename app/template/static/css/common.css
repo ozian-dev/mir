@@ -460,7 +460,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .wcard .body {align-items:center;position:relative;}
 .wcard .body .index {flex-grow:1;font-size:32px;font-weight:bold;}
 .wcard .body div.red {color:crimson;}
-.wcard .body div.yellow {color:goldenrod;}
+.wcard .body div.yellow {color:#FBC02D;}
 .wcard .body div.green {color:mediumseagreen;}
 
 .wcard .body .cap .plus{color:green;}
@@ -493,7 +493,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .widget-noti * {font-size:11px;line-height:130%;}
 
 .widget-noti div:nth-child(1) * {color:crimson;}
-.widget-noti div:nth-child(2) * {color:goldenrod;}
+.widget-noti div:nth-child(2) * {color:#FBC02D;}
 .widget-noti .name {display:inline-block;width:35px;}
 .widget-noti .value {display:inline-block;width:35px;text-align:right;}
 
