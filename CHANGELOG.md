@@ -1,3 +1,6 @@
+### [1.0.9] 2025.01.03
+- [fixed] form parameter validation check bug
+
 ### [1.0.8] 2025.01.03
 - [changed] changed the yellow color in CSS.
 - [removed] removed the example of a scroll list.

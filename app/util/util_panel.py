@@ -445,8 +445,11 @@ async def execute_panel (panel_json:object, params:object, logger):
     is_async = False
     pk_arr = list( get_chart_keys (panel_json).keys() )
 
-    if "entity" in params and "mode" in params and params["entity"] == "action" and params["mode"] == "execute":
-        pass
+    if "entity" in params and "mode" in params :
+        if params["entity"] == "action" :
+            pass
+        elif params["entity"] == "form" :
+            pass
     else :
         if "old" in params["@data"] :
             if params["mode"] == "operate" or params["mode"] == "execute" :
