@@ -1,3 +1,8 @@
+### [1.0.8] 2025.01.03
+- [changed] changed the yellow color in CSS.
+- [removed] removed the example of a scroll list.
+- [added] numberTtext function
+
 ### [1.0.7] 2024.12.16
 - [added] add validation logic, when an Excel file is uploaded.
 - [added] markdown display support added, parsed attribute removed.
@@ -34,7 +39,7 @@
 - [changed] update DB data and add code values
 
 
-[added]
-[changed]
-[fixed]
-[removed]
+[added]: Feature added 
+[changed]: Feature changed 
+[fixed]: Bug fixed 
+[removed]: Feature removed

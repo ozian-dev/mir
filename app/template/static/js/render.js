@@ -2237,6 +2237,10 @@ var renderFnc = {
         return val;
     },
 
+    numberTtext: function(head, info, td, row, val) {
+        return renderFnc["stringTtext"](head, info, td, row, ""+val);
+    },
+
     opsTarrange: function(head, info, td, row, val) {
         val = "<span class='att-move'></span>"
         $(td).addClass("att-hidden");
