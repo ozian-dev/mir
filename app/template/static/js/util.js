@@ -104,14 +104,14 @@ function getPostData ( mainObj, btnObj, dataObj, diffOnly=true, row="" ) {
     if ( postData["@data"] == null ) return null;
 
     if (postData["@data"]["new"][0]) {
-        
         var keys = {} ;
         if( postData["entity"] == "chart" && postData["mode"] == "execute" ) {
             keys= _p["p"]["i"][postData["i"]]["chart"]["execute"][postData["target"]]["data-keys"];
         }
-
-        Object.assign(postData["@data"]["old"][0], keys); 
-        Object.assign(postData["@data"]["new"][0], keys);
+        if (keys) {
+            Object.assign(postData["@data"]["old"][0], keys); 
+            Object.assign(postData["@data"]["new"][0], keys);
+        }
     }
 
     return postData;
@@ -175,6 +175,7 @@ function collectData(obj, diffOnly=true, row="", force) {
         
         var dataKeyObj = $(row).find(".att-key");
         $(dataKeyObj).each(function(i, item) {
+
             thisNew[$(item).attr("data-name")] = $(item).attr("data-org") ? $(item).attr("data-org") : "";
             thisOld[$(item).attr("data-name")] = thisNew[$(item).attr("data-name")];
         });

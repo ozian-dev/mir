@@ -2373,6 +2373,7 @@ var renderFnc = {
 
         var isEmptyLeft = data.datasets.find(dataset => dataset.yAxisID === 'y' && dataset.data.length > 0) === undefined;
         var isEmptyRight = data.datasets.find(dataset => dataset.yAxisID === 'right' && dataset.data.length > 0) === undefined;
+        var customTooltip;
 
         var config = {
             data: data,
@@ -2383,14 +2384,20 @@ var renderFnc = {
                 plugins: {
                     legend: { display: false, onClick: null },
                     tooltip: {
+                        enabled: false,
+                        position: 'nearest',
+                        external: customTooltip
+                        /*
+                        position: 'nearest',
                         boxPadding: 5,
-                        caretPadding: 10,
+                        caretPadding: 0,
                         usePointStyle: true, 
                         callbacks: {
                             labelPointStyle: function(context) {
                                 return { pointStyle: "circle" };
                             }
                         }
+                        */
                     },
                 },
                 scales: {
@@ -2435,6 +2442,64 @@ var renderFnc = {
             else if ( vv >= 1000000000 ) return getAxisNum(value / 1000000000) + ' B';
             else return getAxisNum(value);
         }
+
+
+        function customTooltip(context) {
+            var {chart, tooltip} = context;
+            var tooltipObj = $("#tooltip");
+
+            // Hide if no tooltip
+            if (tooltip.opacity === 0) {
+                $(tooltipObj).hide();
+                return;
+            }
+
+            if ( tooltip.body ) {
+                
+                var title = tooltip.title;
+
+                $(tooltipObj).find(".title").html(title);
+                $(tooltipObj).find(".lists").html("");
+
+                for (var i=0; i<tooltip.body.length; i++ ) {
+
+                    var text = tooltip.body[i].lines[0];
+                    var bgColor = tooltip.labelColors[i].backgroundColor;
+                    var lineColor = tooltip.labelColors[i].borderColor;
+
+                    var color = $("<span>").addClass("color")
+                                .css("background-color", bgColor)
+                                .css("border", "1px solid " + lineColor)
+                                ;
+                    var context = $("<span>").addClass("context").html(text);
+
+                    $(tooltipObj).find(".lists").append($("<li>").append(color).append(context));
+                }
+            }
+
+            const {left: positionX, top: positionY} = $("#" + chartId).offset();
+
+            var pointGap = 10;
+            var pointRev = 15;
+            var pointTop = 40;
+            
+            var tooltipX = positionX + tooltip.caretX + pointGap;
+            if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - tooltip.width - pointRev - pointGap ;
+
+            var tooltipY  = positionY + (_p["chartObj"][chartId].height/2) - (tooltip.height/2) - pointTop ;
+            if ( tooltipY < pointTop ) tooltipY = pointTop;
+            if ( ($(window).height() - pointTop*2) < (tooltip.height + tooltipY) ) {
+
+                tooltipY = pointTop;
+            
+            }
+
+            $(tooltipObj).css("left", tooltipX);
+            $(tooltipObj).css("top", tooltipY);
+            $(tooltipObj).show();
+            
+          };
+
 
         function createCustomLegend(chart) {
 

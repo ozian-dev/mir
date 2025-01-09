@@ -10,7 +10,7 @@ margin : between module : margin-top:15px, between button : margin:0 10px;
 input : width:100%; height:100%;
 */
 
-html, body {height:100%;width:100%;}
+html, body {height:100%;width:100%;overflow-y:hidden;}
 input, select, textarea {outline:none;resize:none;}
 select {cursor:pointer;}
 canvas {width:100%;height:100%;}
@@ -518,3 +518,10 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 
 .markdown-body ul,ol,li,h1,h2,h3 {all:revert;}
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
+
+.tooltip { background: rgba(245,245,245,0.95); border-radius: 3px; color: white; display:none; pointer-events: none; position: absolute; transform: translate(0px, 0px); transition: 0.1s; padding:8px;left:0;top:0;border-radius:10px;border:1px solid lightgray;z-index:40;}
+.tooltip * {font-size:12px;}
+.tooltip .title {font-weight:bold;margin-bottom:5px;}
+.tooltip .lists li {display:flex;align-items:center;}
+.tooltip .lists .color {display:inline-block;width:10px;height:10px;border-radius:50%;}
+.tooltip .lists .context {padding-left:5px;white-space:nowrap;}

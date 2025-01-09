@@ -1,3 +1,7 @@
+### [1.0.10] 2025.01.09
+- [changed] chart tooltip ui
+- [changed] enhance check logic
+
 ### [1.0.9] 2025.01.03
 - [fixed] form parameter validation check bug
 
