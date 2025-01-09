@@ -2487,12 +2487,12 @@ var renderFnc = {
             if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - tooltip.width - pointRev - pointGap ;
 
             var tooltipY  = positionY + (_p["chartObj"][chartId].height/2) - (tooltip.height/2) - pointTop ;
+            /*
             if ( tooltipY < pointTop ) tooltipY = pointTop;
-            if ( ($(window).height() - pointTop ) < (tooltip.height + tooltipY) ) {
-
-                tooltipY = pointTop;
-            
+            if ( ($(window).height() - pointTop ) < (tooltip.height + tooltipY) ) tooltipY = pointTop;
             }
+            */
+            if ( tooltipY < 0 ) tooltipY = 0;
 
             $(tooltipObj).css("left", tooltipX);
             $(tooltipObj).css("top", tooltipY);

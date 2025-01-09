@@ -1,3 +1,6 @@
+### [1.0.12] 2025.01.09
+- [changed] remove the logic for aligning the tooltip to the top.
+
 ### [1.0.11] 2025.01.09
 - [fixed] adjust chart tooltip top position 
 
