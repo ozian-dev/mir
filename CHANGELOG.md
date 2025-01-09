@@ -1,3 +1,7 @@
+### [1.0.11] 2025.01.09
+- [fixed] adjust chart tooltip top position 
+
+
 ### [1.0.10] 2025.01.09
 - [changed] chart tooltip ui
 - [changed] enhance check logic

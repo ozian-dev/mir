@@ -2488,7 +2488,7 @@ var renderFnc = {
 
             var tooltipY  = positionY + (_p["chartObj"][chartId].height/2) - (tooltip.height/2) - pointTop ;
             if ( tooltipY < pointTop ) tooltipY = pointTop;
-            if ( ($(window).height() - pointTop*2) < (tooltip.height + tooltipY) ) {
+            if ( ($(window).height() - pointTop ) < (tooltip.height + tooltipY) ) {
 
                 tooltipY = pointTop;
             
