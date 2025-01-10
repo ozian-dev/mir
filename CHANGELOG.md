@@ -1,3 +1,8 @@
+### [1.0.13] 2025.01.10
+- [changed] adjust custom search att-input padding
+- [changed] adjust tooltip transparency
+- [changed] adjust menu border radius
+
 ### [1.0.12] 2025.01.09
 - [changed] remove the logic for aligning the tooltip to the top.
 
