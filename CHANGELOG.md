@@ -1,3 +1,6 @@
+### [1.0.14] 2025.01.13
+- [fixed] typo correction & duplicate removal
+
 ### [1.0.13] 2025.01.10
 - [changed] adjust custom search att-input padding
 - [changed] adjust tooltip transparency

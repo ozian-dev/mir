@@ -521,7 +521,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .markdown-body ul,ol,li,h1,h2,h3 {all:revert;}
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
 
-.tooltip { background:rgba(245,245,245,0.90);border-radius:3px;color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid lightgray;z-index:40;}
+.tooltip { background:rgba(245,245,245,0.90);color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid lightgray;z-index:40;}
 .tooltip * {font-size:12px;}
 .tooltip .title {font-weight:bold;margin-bottom:5px;}
 .tooltip .lists li {display:flex;align-items:center;}
