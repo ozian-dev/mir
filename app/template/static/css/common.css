@@ -75,6 +75,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .gw .panel .search .custom .item .value .att-input-select {width:100%;}
 .gw .panel .search .custom .item .value * {font-size:13px;color:dodgerblue;}
 .gw .panel .search .custom .item .value .att-input {border-bottom:1px dotted lightgray;padding:0 3px;}
+.gw .panel .search .custom .item .value .att-input-text {padding-left:8px;}
 .gw .panel .search .act {position:absolute;top:2px;left:0;padding:5px 0;background-color:white;min-width:160px;}
 .gw .panel .search .act span::before {content:"✔"; margin-right:5px;}
 .gw .panel .action {display:none;width:100%;padding:5px 0;position:relative;margin-top:10px;margin-bottom:10px;}

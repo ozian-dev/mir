@@ -34,6 +34,12 @@ function renderLogo(obj) {
                                 .html(title)
     );
 
+    if (title=="") {
+        modal( "invalid access", false );
+        return false;
+    }
+
+    return true;
 }
 
 function renderMenu(obj) {
@@ -1122,9 +1128,12 @@ function renderPanelAction(panelObj, obj) {
         var name = item["name"];
         if ( item["alias"] ) name = item["alias"];
 
+        var method = "sync";
+        if ( item["async"] ) method = "async"; 
+
         var btn = getLinkObj(panelObj, "btn", "action", "execute", item["name"], "", name, 
             "att-width-160 att-margin-bottom-10", 
-            { "post":1 } 
+            { "post":1, "method":method  } 
         );  
         if (item["conditions"]) {
 

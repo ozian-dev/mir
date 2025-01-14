@@ -186,6 +186,18 @@ $("body")
     
     if( $(this).hasClass("att-disable") ) return;
 
+    var panelObj = getPanelObj($(this));
+    if ($(panelObj).find(".progress").is(":visible")) {
+        modal( _m[_l]["run"] );
+        return;
+    }
+
+    var taskName = $(this).attr("data-entity") + "." + $(this).attr("data-target")
+    if ( taskName in _p["actionTask"] ) {
+        modal( _m[_l]["run"] );
+        return;
+    }
+
     var fncName;
     try {
         if ( $(this).attr("data-post")) {

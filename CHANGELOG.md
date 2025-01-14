@@ -1,3 +1,7 @@
+### [1.0.15] 2025.01.14
+- [added] check invalid group id
+- [added] duplicate execution prevention logic in the action.
+
 ### [1.0.14] 2025.01.13
 - [fixed] typo correction & duplicate removal
 

@@ -204,6 +204,7 @@ _m["en"] = {
     "starttoolemptyjson": "json is empty.",
     "dynamicchartempty": "chart attributes are empty.",
     "upload": "file upload",
+    "run":"in progress"
 
 }
 
@@ -215,23 +216,25 @@ var webSocketIo;
 
 $(document).ready(function() {
 
-    modal(_m[_l]["welcome"]);
+    callAjax(_p["const"]["group"], function(obj) {
+        var isValid = renderLogo(obj);
+        if (isValid) {
 
-    $("#gh .id").html(_p["user"])
+            modal(_m[_l]["welcome"]);
+            $("#gh .id").html(_p["user"])
 
-    callAjax(_p["const"]["group"], renderLogo);
-    callAjax(_p["const"]["menu"] + "?.g=" + _p["group"], renderMenu);
+            callAjax(_p["const"]["menu"] + "?.g=" + _p["group"], renderMenu);
+            $("#gh .att-icon-logout").attr("href", "/auth/logout?.g="+ _p["group"]+"&u=" + encodeURIComponent("/?.g=" + _p["group"]));
 
-    $("#gh .att-icon-logout").attr("href", "/auth/logout?.g="+ _p["group"]+"&u=" + encodeURIComponent("/?.g=" + _p["group"]));
-
-    var url = _p["const"]["user"] + "?.g=" + _p["group"];
-    callAjax(url, function(obj) {
-        if (obj["data"]["chpwd"]) {
-            $("#gh .id").addClass("fnc-user-edit").attr("href","#");
+            var url = _p["const"]["user"] + "?.g=" + _p["group"];
+            callAjax(url, function(obj) {
+                if (obj["data"]["chpwd"]) {
+                    $("#gh .id").addClass("fnc-user-edit").attr("href","#");
+                }
+            });
+            webSocketIo = WebSocketIO();
         }
     });
-
-    webSocketIo = WebSocketIO();
 
     //setTimeout(function(){$(".level-2").show();alert("d")}, 1000);
 });
