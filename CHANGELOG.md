@@ -1,3 +1,6 @@
+### [1.0.16] 2025.01.14
+- [changed] adjust the timing of actionTask registration.
+
 ### [1.0.15] 2025.01.14
 - [added] check invalid group id
 - [added] duplicate execution prevention logic in the action.

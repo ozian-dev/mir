@@ -339,19 +339,16 @@ var postFnc = {
         if (!isValid) return;
         
         $(panelObj).find(".progress").show();
+        
         var url = _p["const"]["execute"];
+        _p["actionTask"][postData["entity"] + "." + postData["target"]] = new Date();
         callAjax(url, function(resObj) {
-
             modal(resObj["msg"]);
-            _p["actionTask"][resObj["entity"] + "." + resObj["target"]] = new Date();
-
             if ( "forward" in resObj ) {
                 var panelObj = $("#pan" + resObj["forward"]);
                 $(panelObj).find(".head .tools .att-tool-reload").click();
             }
-
-            $(panelObj).find(".progress").hide();
-
+            $(panelObj).find(".progress").hide()
         }, 'POST', JSON.stringify(postData));
     },
 
