@@ -1,3 +1,4 @@
+### [1.0.17] 2025.01.15
 ### [1.0.16] 2025.01.14
 - [changed] adjust the timing of actionTask registration.
 
