@@ -1,4 +1,6 @@
 ### [1.0.17] 2025.01.15
+- [fixed] fix a bug in the graph chart where "show all" does not work when the custom search key is cleared (value is "")
+
 ### [1.0.16] 2025.01.14
 - [changed] adjust the timing of actionTask registration.
 

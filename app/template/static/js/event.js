@@ -303,10 +303,20 @@ $("body")
             renderFnc["tableSummary"](panelObj);
         }
     } else if ( $(panelObj).attr("data-type") == "chart" ) {
-        var chartLegendObj = $(panelObj).find(".chart .chart-legend .items .item");
+
+        if (seed == "") {
+            var showAllObj = $(panelObj).find(".chart .chart-legend .btns .btn")[0];
+            var clickEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            showAllObj.dispatchEvent(clickEvent);
         
-        $(chartLegendObj).each(function(i, item) {
-            if (seed != "") {
+        } else {
+
+            var chartLegendObj = $(panelObj).find(".chart .chart-legend .items .item");
+            $(chartLegendObj).each(function(i, item) {
                 if ( $(item).text().toLowerCase().indexOf(seed) != -1 ) {
                     if ($(item).hasClass("hidden")) {
 
@@ -328,8 +338,8 @@ $("body")
                         item.dispatchEvent(clickEvent);
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }) 
 .on ("click", ".chart-table .table tr.row", function(e) {

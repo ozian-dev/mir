@@ -2396,17 +2396,6 @@ var renderFnc = {
                         enabled: false,
                         position: 'nearest',
                         external: customTooltip
-                        /*
-                        position: 'nearest',
-                        boxPadding: 5,
-                        caretPadding: 0,
-                        usePointStyle: true, 
-                        callbacks: {
-                            labelPointStyle: function(context) {
-                                return { pointStyle: "circle" };
-                            }
-                        }
-                        */
                     },
                 },
                 scales: {
