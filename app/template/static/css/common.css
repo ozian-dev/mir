@@ -347,28 +347,6 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-icon-run::before {content:"▶";font-size:10px;}
 .att-icon-close::before {content:"⨉";}
 
-/*
-.att-icon-edit-table::before {content:"☷";}
-.att-icon-edit-row::before {content:"✎";}
-.att-icon-plus::before {content:"+";font-size:16px;}
-.att-icon-minus::before {content:"-";font-size:16px;}
-
-.att-icon-stop::before {content:"⊘";font-size:18px;}
-.att-icon-reload::before {content:"↻";font-size:20px;}
-.att-icon-info::before {content:"ⓘ";}
-.att-icon-set::before {content:"⚙";font-size:15px;}
-.att-icon-cmd::before {content:"⌘";font-size:15px;}
-.att-icon-post::before {content:"✎";font-size:15px;}
-.att-icon-go::before {content:"➜";}
-.att-icon-link::before {content:"⿹";}
-.att-icon-move-vertical::before {content:"⇅";font-size:10px;}
-.att-icon-move-horizontal::before {content:"⇄";font-size:10px;}
-.att-icon-move::before {content:"⥱";font-size:17px;}
-.att-icon-flag::before {content:"⚐";font-size:17px;}
-.att-icon-test::before {content:"↪";}
-.att-icon-table::before {content:"𝍖";}
-*/
-
 .att-tool {position:relative;display:inline-block;padding-left:15px;margin-left:12px;}
 .att-tool:hover {color:dodgerblue !important;}
 .att-tool::before {position:absolute;left:0;}
@@ -457,22 +435,23 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .info {padding:10px;}
 .info > li {list-style-type:initial;text-indent:-20px;padding-left:20px;}
 
-.wcard {width:280px;height:130px;margin:20px 20px 0 0;padding:5px 15px;border-radius:15px;background-color:white;position:relative;display:inline-block;vertical-align:top;border:1px solid lightgray;}
+.wcard {width:265px;height:130px;margin:20px 10px 0 0;padding:5px 15px;border-radius:15px;background-color:white;position:relative;display:inline-block;vertical-align:top;border:1px solid lightgray;}
 .wcard .header {height:25px;text-align:center;display:flex;align-items:center;}
 .wcard .header a {font-weight:bold;font-size:15px;color:dimgrey;}
-.wcard .body {align-items:center;position:relative;}
-.wcard .body .index {flex-grow:1;font-size:32px;font-weight:bold;}
+.wcard .body {align-items:center;position:relative;z-index:5;}
+.wcard .body .index {flex-grow:1;font-size:32px;font-weight:bold;white-space:nowrap;}
 .wcard .body div.red {color:crimson;}
 .wcard .body div.yellow {color:#FBC02D;}
 .wcard .body div.green {color:mediumseagreen;}
 
+.wcard .body .cap {white-space:nowrap;}
 .wcard .body .cap .plus{color:green;}
-.wcard .body .cap .plus::before {content:"▲";font-size:11px;margin-right:5px;} 
+.wcard .body .cap .plus::before {content:"▲";font-size:11px;margin-right:2px;} 
 .wcard .body .cap .minus{color:crimson;}
-.wcard .body .cap .minus::before {content:"▼";font-size:11px;margin-right:5px;} 
-.wcard .body .cap .rate {margin-left:10px;}
-.wcard .body .cap .rate::after {content:" %";}
-.wcard .body .cap .base {color:gray;margin-left:10px;}
+.wcard .body .cap .minus::before {content:"▼";font-size:11px;margin-right:2px;} 
+.wcard .body .cap .rate {margin-left:5px;}
+.wcard .body .cap .rate::after {content:"%";margin-left:2px;}
+.wcard .body .cap .base {color:gray;margin-left:5px;}
 .wcard .body .cap .base::before {content:"(";}
 .wcard .body .cap .base::after {content:")";}
 .wcard .body > .plus {color:green;}
@@ -482,17 +461,16 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .wcard .footer .comment {font-size:11px;color:gray;}
 .wcard .footer .comment::before {content:"ⓘ";margin-right:5px;}
 
-.wcard .chart-area {display:none;position:absolute;width:50px;height:35px;right:15px;top:40px;z-index:10;}
-.wcard .chart-area canvas {width:100%;height:100%;}
+.wcard .chart-area {display:none;position:absolute;width:50px;height:25px;right:15px;top:42px;}
+.wcard .chart-area canvas {width:100%;height:100%;z-index:1;}
 
 .wcard .list tr td {vertical-align:middle;border-top:1px dotted lightgray;}
 .wcard .list tr td * {line-height:130%;}
-.wcard .list tr td .item::before {content:"𐄁";margin-right:7px;}
+.wcard .list tr td .item::before {content:"𐄁";margin-right:5px;}
 .wcard .list tr td .item:hover {color:dodgerblue;}
-.wcard .list tr td.td1 a {display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:170px;padding-top:6px;padding-right:5px;}
-.wcard .list tr td.td2 {width:75px;}
+.wcard .list tr td.td1 a {display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:160px;padding-top:6px;padding-right:5px;}
 
-.widget-noti {position:absolute;z-index:100;background-color:white;border:1px solid lightgray;padding:10px;border-radius:10px;top:5px;right:0;}
+.widget-noti {position:absolute;background-color:white;border:1px solid lightgray;padding:10px;border-radius:10px;top:5px;right:0;z-index:100;}
 .widget-noti * {font-size:11px;line-height:130%;}
 
 .widget-noti div:nth-child(1) * {color:crimson;}

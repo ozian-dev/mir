@@ -1,3 +1,6 @@
+### [1.0.18] 2025.01.17
+- [changed] adjust the CSS properties related to the chart unit.
+
 ### [1.0.17] 2025.01.15
 - [fixed] fix a bug in the graph chart where "show all" does not work when the custom search key is cleared (value is "")
 
