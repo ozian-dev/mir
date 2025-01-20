@@ -461,7 +461,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .wcard .footer .comment {font-size:11px;color:gray;}
 .wcard .footer .comment::before {content:"ⓘ";margin-right:5px;}
 
-.wcard .chart-area {display:none;position:absolute;width:50px;height:25px;right:15px;top:42px;}
+.wcard .chart-area {display:none;position:absolute;width:50px;height:32px;right:15px;top:38px;}
 .wcard .chart-area canvas {width:100%;height:100%;z-index:1;}
 
 .wcard .list tr td {vertical-align:middle;border-top:1px dotted lightgray;}

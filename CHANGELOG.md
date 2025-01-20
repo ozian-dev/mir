@@ -1,3 +1,6 @@
+### [1.0.19] 2025.01.20
+- [changed] adjust the CSS properties of the widget chart.
+
 ### [1.0.18] 2025.01.17
 - [changed] adjust the CSS properties related to the chart unit.
 
