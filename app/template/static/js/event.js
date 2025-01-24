@@ -101,7 +101,9 @@ $("body")
         
     } else if ($(this).attr("title") == "modal-close") {
         $(this).parent().parent().slideUp();
-    }
+    } else if ($(this).attr("title") == "pop-layer-close") {
+        $("#pl").hide();
+    }  
 })
 
 
@@ -705,8 +707,8 @@ $("body")
     var idStr = $(this).parent().parent().hide();
     $(panelObj).find(".head .tools .att-tool-reload").click();
 })
-.on ("click", ".fnc-chart-info", function() {
-    modal(_m[_l]["chartinfo"]);
+.on ("click", ".fnc-pop-info", function(e) {
+    popMsg(e,_m[_l]["chartinfo"]);
 })
 
 

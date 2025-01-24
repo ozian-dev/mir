@@ -2302,9 +2302,6 @@ var renderFnc = {
         var chartObj = $(panelObj).find("." + chartClass);
 
         $(chartObj).html("");
-        if ( chartClass != "dynamic-chart" )
-            $(panelObj).find(".chart").append($("<a>").addClass("info fnc-chart-info").attr("href","#").html("ⓘ"));
-
         if ( chartInfo["title"] ) {
 
             var chartHead = $("<div>").addClass(chartClass + "-head");
@@ -2505,10 +2502,16 @@ var renderFnc = {
             var legendItems = document.getElementById("lgditem" + chartId);
             var datasets = chart.data.datasets;
 
-            var btnStr = ["show all", "hide all"];
+            var btnStr = ["show all", "hide all", "ⓘ"];
             for (var i=0; i<btnStr.length ; i++ ) {
                 var btnItem = document.createElement("a");
-                btnItem.classList.add("btn");
+
+                if (btnStr[i] == "ⓘ") {
+                    if (!chart.options.scales.right.display) continue;
+                    else btnItem.classList.add("fnc-pop-info");;
+                } else {
+                    btnItem.classList.add("btn");
+                }
                 btnItem.setAttribute("href", "#");
                 btnItem.appendChild(document.createTextNode(btnStr[i]))
                 legendBtns.appendChild(btnItem);

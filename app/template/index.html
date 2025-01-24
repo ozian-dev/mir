@@ -44,6 +44,10 @@ if (isSafari()) {
     </div>
 
     <div class="modal-layer" id="ml"></div>
+    <div class="pop-layer" id="pl">
+        <a href="#" class="att-icon att-icon-close fnc-close-btn" title="pop-layer-close"></a>
+        <div class="context"></div>
+    </div>
     <div class="pop" id="pop1">
         <div class="progress"><div class="mover"></div></div>
         <div class="head">
@@ -257,6 +261,14 @@ function modal(msg, isHide = true) {
     return false;
 }
 
+function popMsg(e, msg) {
+
+    $("#pl").css({left: (e.clientX+10) + "px", top: e.clientY + "px"});
+    $("#pl .context").html(msg);
+    $("#pl").show();
+    
+    return false;
+}
 
 function putHistory(url) {
 

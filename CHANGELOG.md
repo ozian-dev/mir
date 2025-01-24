@@ -1,3 +1,6 @@
+### [1.0.21] 2025.01.24
+- [changed] chart info. UI
+
 ### [1.0.20] 2025.01.24
 - [added] chart info.
 - [changed] change the default type of the dynamic chart.
