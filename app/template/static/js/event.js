@@ -704,9 +704,12 @@ $("body")
     $(panelObj).find(".head .tools .att-tool-reload").attr("data-clear", 1);
     var idStr = $(this).parent().parent().hide();
     $(panelObj).find(".head .tools .att-tool-reload").click();
-
-    
 })
+.on ("click", ".fnc-chart-info", function() {
+    modal(_m[_l]["chartinfo"]);
+})
+
+
 // widget card function
 ////////////////////////////////////////////////////////////////////
 

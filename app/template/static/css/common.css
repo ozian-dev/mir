@@ -121,6 +121,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .chart-table .table td .edit .att-input-textarea {width:100%;height:100%;display:block;border:none;min-width:200px;}
 .chart-table .table td .edit .att-input-select {width:100%;padding-left:6px;margin-top:-1px;}
 
+.chart .info {position:absolute;right:20px;bottom:0;display:block;width:5px;height:5px;line-height:0;padding:0;z-index:2;}
 .chart .chart-legend { padding:5px 10px 10px 10px;margin-bottom:10px;display:grid;grid-template-columns:125px 1fr;gap:0;}
 .chart .chart-legend .btns .btn {margin-right:10px;white-space:nowrap;color:gray;text-decoration:underline;display:inline-block;}
 .chart .chart-legend .items {flex-grow:1;max-height:100px;overflow-x:hidden;overflow-y:auto;}

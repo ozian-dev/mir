@@ -204,7 +204,8 @@ _m["en"] = {
     "starttoolemptyjson": "json is empty.",
     "dynamicchartempty": "chart attributes are empty.",
     "upload": "file upload",
-    "run":"in progress"
+    "run":"in progress",
+    "chartinfo":"the legend with an underline refers to the right Y-axis."
 
 }
 
@@ -606,9 +607,9 @@ _htmls["draw-chart"] = `
                 <option value="">select defined chart</option>
             </select>
             <div class="dac-title">chart type</div>
-            <select class="att-input-select" data-name="type" name="type" data-value="line">
-                <option value="line">line</option>
+            <select class="att-input-select" data-name="type" name="type" data-value="bar">
                 <option value="bar">bar</option>
+                <option value="line">line</option>
             </select>
             <div class="dac-title">sort the values on the x-axis</div>
             <div class="dac-box fnc-selects">

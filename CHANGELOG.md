@@ -1,3 +1,7 @@
+### [1.0.20] 2025.01.24
+- [added] chart info.
+- [changed] change the default type of the dynamic chart.
+
 ### [1.0.19] 2025.01.20
 - [changed] adjust the CSS properties of the widget chart.
 

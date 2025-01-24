@@ -2302,6 +2302,8 @@ var renderFnc = {
         var chartObj = $(panelObj).find("." + chartClass);
 
         $(chartObj).html("");
+        if ( chartClass != "dynamic-chart" )
+            $(panelObj).find(".chart").append($("<a>").addClass("info fnc-chart-info").attr("href","#").html("ⓘ"));
 
         if ( chartInfo["title"] ) {
 
@@ -2421,8 +2423,6 @@ var renderFnc = {
         var canvas = document.getElementById(chartId);
         var ctx = canvas.getContext("2d");
         _p["chartObj"][chartId] = new Chart(ctx, config);
-
-
 
         function getAxisNum(val) {
             if (val%1 == 0) return val;
