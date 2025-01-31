@@ -123,10 +123,12 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 
 .chart .chart-legend { padding:5px 5px 10px 5px;margin-bottom:10px;display:grid;grid-template-columns:125px 1fr;gap:0;}
 .chart .chart-legend .btns .btn {margin-right:8px;white-space:nowrap;color:gray;text-decoration:underline;display:inline-block;}
+.chart .chart-legend .btns .btn:hover {color:dodgerblue;}
 .chart .chart-legend .btns .fnc-pop-info {color:silver;}
 .chart .chart-legend .items {flex-grow:1;max-height:100px;overflow-x:hidden;overflow-y:auto;}
 .chart .chart-legend .items .right {text-decoration:underline;}
 .chart .chart-legend .items .item {margin-right:15px;white-space:nowrap;display:inline-block;}
+.chart .chart-legend .items .item:hover {color:dodgerblue;}
 .chart .chart-legend .items .item .color {display:inline-block;width:10px;height:10px;border: 1px solid;margin-right:5px;border-radius:50%;}
 .chart .chart-legend .items .hidden {opacity:0.5;text-decoration:line-through;}
 
