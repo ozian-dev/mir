@@ -1,6 +1,10 @@
+### [1.0.23] 2025.02.04
+- [changed] adjusted the close button position in the chart info.
+- [changed] adjusted the chart tooltip top position & border.
+
 ### [1.0.22] 2025.01.31
 - [added] hover attribute to chart legend.
-- [changed] adjusted chart tooltip top position.
+- [changed] adjusted the chart tooltip top position.
 
 ### [1.0.21] 2025.01.24
 - [changed] chart info. UI

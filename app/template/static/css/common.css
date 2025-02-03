@@ -435,8 +435,8 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .modal-layer .modal .context .msg .time {font-size:11px;color:lightgoldenrodyellow;margin-right:10px;}
 .modal-layer .modal .context .msg hr {margin-top:2px;border:none;border-top:1px dotted whitesmoke;height:1px;}
 
-.pop-layer {position:fixed;display:none;width:250px;height:auto;border:1px solid lightgray;padding:10px;padding-bottom:25px;border-radius:10px;background-color:white;z-index:100;}
-.pop-layer .att-icon {position:absolute;right:0;bottom:4px;}
+.pop-layer {position:fixed;display:none;width:250px;height:auto;border:1px solid lightgray;padding:10px;padding-right:28px;border-radius:10px;background-color:white;z-index:100;}
+.pop-layer .att-icon {position:absolute;right:2px;top:11px;}
 
 .info {padding:10px;}
 .info > li {list-style-type:initial;text-indent:-20px;padding-left:20px;}
@@ -506,7 +506,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .markdown-body ul,ol,li,h1,h2,h3 {all:revert;}
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
 
-.tooltip { background:rgba(245,245,245,0.90);color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid lightgray;z-index:40;}
+.tooltip { background:rgba(245,245,245,0.95);color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid gray;z-index:40;}
 .tooltip * {font-size:12px;}
 .tooltip .title {font-weight:bold;margin-bottom:5px;}
 .tooltip .lists li {display:flex;align-items:center;}
