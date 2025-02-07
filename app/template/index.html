@@ -10,7 +10,6 @@
 {{ css["device"]|safe }}
 {{ css["os"]|safe }}
 {{ css["custom"]|safe }}
-
 </style>
 </head>
 <script>
@@ -181,38 +180,9 @@ var _p = {
 _p["transParamRev"] = Object.fromEntries(Object.entries(_p["transParam"]).map(([key, value]) => [value, key]));
 _p["device"] = "{{ device }}";
 
-var _l = "en";
+var _l = "{{ locale['lang']|safe }}";
 var _m = {};
-_m["en"] = {
-    "welcome": "welcome ^^ !!",
-    "ok": "ok",
-    "confirm": "do proceed?",
-    "nochange": "there are no changes.",
-    "noselect": "there are no selected item.",
-    "noquery": "please enter query",
-    "required": "this field is required.",
-    "fromto": "please enter the 'from' and 'to' values.",
-    "copy": "copied !",
-    "apply": "applied !",
-    "align": "formatted !",
-    "dbclickmsg": "double-click on the <b>sql statement</b> or <b>info element</b> to activate the editor.",
-    "queryrollback": "the query rolls back.",
-    "duplicated": "the value already exists.",
-    "updated": "last updated",
-    "bulk": "bulk upload",
-    "excelsample": "download sample excel file",
-    "excelcode": "download code excel file",
-    "nofile": "empty file",
-    "write": "write form",
-    "starttoolempty": "datasource or query is empty.",
-    "starttoolinvalidnumber": "datasource is not number.",
-    "starttoolemptyjson": "json is empty.",
-    "dynamicchartempty": "chart attributes are empty.",
-    "upload": "file upload",
-    "run":"in progress",
-    "chartinfo":"the legend with an underline refers to the right Y-axis."
-
-}
+{{ locale['lang_js']|safe }}
 
 // init
 var queryParams = getQueryParams();

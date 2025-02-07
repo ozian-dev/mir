@@ -16,7 +16,7 @@ function renderLogo(obj) {
         var tmpObj = $("<a>").addClass("fnc-logo-group")
                              .attr("href", "?.g=" + item["idx"])
                              .attr("target", "_win")
-                             .attr("title", name);
+                             .attr("data-title", name);
 
         if (item["idx"] == _p["group"]) {
             title = name;
@@ -2466,8 +2466,13 @@ var renderFnc = {
                                 .css("background-color", bgColor)
                                 .css("border", "1px solid " + lineColor)
                                 ;
+                    try {
+                        if ( tooltip.dataPoints[i]["raw"] == 0 ) {
+                            text = tooltip.dataPoints[i]["dataset"]["label"] + ": 0";
+                        }
+                    } catch (e) {}
+                    
                     var context = $("<span>").addClass("context").html(text);
-
                     $(tooltipObj).find(".lists").append($("<li>").append(color).append(context));
                 }
             }

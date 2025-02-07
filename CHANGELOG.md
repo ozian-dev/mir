@@ -1,3 +1,10 @@
+### [1.0.24] 2025.02.07
+- [changed] changed the tooltip's -0 value to display as 0.
+- [changed] adjusted the modal popup layer border.
+- [changed] adjusted menu border radius.
+- [added] added the locale lang property to the configuration.
+- [removed] removed the tooltip that appears on mouse over for a group of links.
+
 ### [1.0.23] 2025.02.04
 - [changed] adjusted the close button position in the chart info.
 - [changed] adjusted the chart tooltip top position & border.

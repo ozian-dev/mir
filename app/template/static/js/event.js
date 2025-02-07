@@ -111,7 +111,7 @@ $("body")
 ////////////////////////////////////////////////////////////////////
 
 .on ("mouseover", ".fnc-logo-group", function() {
-    $("#gl .title").html($(this).attr("title"));
+    $("#gl .title").html($(this).attr("data-title"));
 })
 .on ("mouseout", ".fnc-logo-group", function() {
     $("#gl .title").html($("#gl .title").attr("data-title"))

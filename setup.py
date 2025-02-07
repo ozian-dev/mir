@@ -25,6 +25,7 @@ from app.util import util_file, util_db
 APP = "mir"
 with open("./ref/version.txt", "r") as file:
     VER = file.read().strip()
+LANG = "en"
 
 conf_file = '_conf/conf.json'
 log_file = '_data/log'
@@ -64,6 +65,9 @@ if os.path.isfile(conf_file) is False:
 
     input_ver = input(f"Input 'App version' (ex: 1.0, default:1.0): ")
     if input_ver != "" : VER = input_ver
+
+    input_lang = input(f"Input the language you want to use. (ex: ko, default:en): ")
+    if input_lang != "" : LANG = input_lang
 
     start_db['type'] = input(f"Input '{APP} DB' server type (ex: mariadb, mysql, default:mariadb): ")
     if start_db['type'] == "": start_db['type'] = "mariadb"
@@ -125,10 +129,13 @@ if os.path.isfile(conf_file) is False:
     conf["app"] = {}
     conf["app"]["name"] = APP
     conf["app"]["ver"] = VER
+    conf["locale"] = {}
+    conf["locale"]["lang"] = LANG
     conf["keys"] = {}
     conf["keys"]["gcs"] = "google.gcs.key.json"
     conf["keys"]["s3"] = "aws.s3.token.json"
     conf["keys"]["fcm"] = "google.fcm.key.json"
+
 
     if custom_favicon == "y" :
         conf["style"]["favicon"] = "./_conf/style"
@@ -172,6 +179,7 @@ else:
     db_info = util_db.get_start_db(conf_file)
 
     APP = conf["app"]["name"]
+    LANG = conf["locale"]["lang"]
 
     is_reset_main = input(f"1. Would you like to reset the main database? (y/n) ")
     if is_reset_main == "y" : set_main (db_info)

@@ -26,7 +26,7 @@ from fastapi.responses import FileResponse
 
 from app.conf import const, log
 from app.router import api, auth, rest, check, custom, user, file
-from app.util import util_auth, util_library
+from app.util import util_auth, util_library, util_file
 
 const.make_env()
 logger = log.get_logger()
@@ -83,7 +83,12 @@ async def root(request: Request):
     device = "m" if util_library.is_mobile(request) else "p"
     css_obj = util_library.get_css(request, device)
     js_obj = util_library.get_js(request)
-    return template.TemplateResponse("index.html",{"app":const.CONF["app"], "cookie":const.APP_NAME, "request":request, "device":device, "css":css_obj, "js_obj":js_obj})
+    js_obj = util_library.get_js(request)
+
+    const.CONF["locale"]["lang_js"] = \
+        util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/lang/{const.CONF['locale']['lang']}.js")
+    
+    return template.TemplateResponse("index.html",{"app":const.CONF["app"], "locale":const.CONF["locale"], "cookie":const.APP_NAME, "request":request, "device":device, "css":css_obj, "js_obj":js_obj})
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
