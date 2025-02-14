@@ -25,5 +25,5 @@ _m["en"] = {
     "dynamicchartempty": "chart attributes are empty.",
     "upload": "file upload",
     "run": "in progress",
-    "chartinfo": "the legend with an underline refers to the right Y-axis."
+    "chartinfo": "the green legend represents the right Y-axis."
 }

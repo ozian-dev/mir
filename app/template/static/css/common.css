@@ -124,7 +124,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .chart .chart-legend .btns .btn:hover {color:dodgerblue;}
 .chart .chart-legend .btns .fnc-pop-info {color:silver;}
 .chart .chart-legend .items {flex-grow:1;max-height:100px;overflow-x:hidden;overflow-y:auto;}
-.chart .chart-legend .items .right {text-decoration:underline;}
+.chart .chart-legend .items .right {color:green;}
 .chart .chart-legend .items .item {margin-right:15px;white-space:nowrap;display:inline-block;}
 .chart .chart-legend .items .item:hover {color:dodgerblue;}
 .chart .chart-legend .items .item .color {display:inline-block;width:10px;height:10px;border: 1px solid;margin-right:5px;border-radius:50%;}
@@ -275,6 +275,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-color-dimgray {color:dimgray;}
 .att-color-crimson {color:crimson;}
 .att-color-dodgerblue {color:dodgerblue;}
+.att-color-green {color:green;}
 .att-color-darkgreen {color:darkgreen;}
 
 .att-bgcolor-white {background-color:white;}

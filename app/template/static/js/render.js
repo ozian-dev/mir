@@ -2410,7 +2410,8 @@ var renderFnc = {
                         grid: { drawOnChartArea: false },
                         stacked: chart_stack["right"],
                         ticks: {
-                            callback: formatYAxisTicks
+                            callback: formatYAxisTicks,
+                            color: "green"
                         }
                     }
                 }
@@ -2450,6 +2451,8 @@ var renderFnc = {
             }
 
             if ( tooltip.body ) {
+
+                var dataset = context.chart.config._config.data.datasets;
                 
                 var title = tooltip.title;
 
@@ -2471,8 +2474,12 @@ var renderFnc = {
                             text = tooltip.dataPoints[i]["dataset"]["label"] + ": 0";
                         }
                     } catch (e) {}
-                    
+
+                    console.log(dataset[i]["yAxisID"])
+
+
                     var context = $("<span>").addClass("context").html(text);
+                    if (dataset[i]["yAxisID"] == "right") $(context).addClass("att-color-green");
                     $(tooltipObj).find(".lists").append($("<li>").append(color).append(context));
                 }
             }
