@@ -9,9 +9,10 @@
 .date-pick .body .defined {padding-top:27px;}
 .date-pick .body .defined a:hover {color:dodgerblue;}
 
+.date-pick .body .custom {padding-bottom:15px;}
 .date-pick .body .custom .title {color:dodgerblue;}
 .date-pick .body .custom > div {display:block;width:100%;padding-left:10px;}
-.date-pick .body .custom > div:last-child {padding-top:10px;}
+.date-pick .body .custom > div:last-child {padding-top:15px;}
 .date-pick .body .custom > div .label {display:inline-block;width:40px;color:gray !important;}
 .date-pick .body .custom > div input {height:24px;padding-left:5px;width:120px;}
 .date-pick .body .custom > div a {margin:0;margin-right:8px;}

@@ -1,8 +1,11 @@
+### [1.0.27] 2025.02.19
+- [changed] changed the CSS of the period setting options.
+
 ### [1.0.26] 2025.02.19
 - [added] added period setting options (180 days, 6 months).
 
 ### [1.0.25] 2025.02.14
-- [changed] changed the legend color for the right Y-axis
+- [changed] changed the legend color for the right Y-axis.
 
 ### [1.0.24] 2025.02.07
 - [changed] changed the tooltip's -0 value to display as 0.
