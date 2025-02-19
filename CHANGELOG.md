@@ -1,3 +1,6 @@
+### [1.0.26] 2025.02.19
+- [added] added period setting options (180 days, 6 months).
+
 ### [1.0.25] 2025.02.14
 - [changed] changed the legend color for the right Y-axis
 

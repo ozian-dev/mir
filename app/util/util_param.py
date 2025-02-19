@@ -148,6 +148,10 @@ def parse_date_period ( date_str ) :
             start_date = (util_library.get_time() - timedelta(days=90)).strftime("%Y-%m-%d")
             end_date = yesterday
 
+        elif date_str == "Last_180_days":
+            start_date = (util_library.get_time() - timedelta(days=180)).strftime("%Y-%m-%d")
+            end_date = yesterday
+
         elif date_str == "This_month":
             start_date = util_library.get_time("%Y-%m-01")
             end_date = today
@@ -160,6 +164,13 @@ def parse_date_period ( date_str ) :
 
         elif date_str == "Last_3_months":
             start_date = (util_library.get_time() - relativedelta(months=3)).replace(day=1).strftime("%Y-%m-%d")
+            tmp_date = (util_library.get_time() - relativedelta(months=1)).replace(day=1).strftime("%Y-%m-%d")
+            tmp_arr = tmp_date.split("-")
+            first_day, last_day = calendar.monthrange(int(tmp_arr[0]), int(tmp_arr[1]))
+            end_date = f"{tmp_arr[0]}-{tmp_arr[1]}-{last_day}"
+
+        elif date_str == "Last_6_months":
+            start_date = (util_library.get_time() - relativedelta(months=6)).replace(day=1).strftime("%Y-%m-%d")
             tmp_date = (util_library.get_time() - relativedelta(months=1)).replace(day=1).strftime("%Y-%m-%d")
             tmp_arr = tmp_date.split("-")
             first_day, last_day = calendar.monthrange(int(tmp_arr[0]), int(tmp_arr[1]))
