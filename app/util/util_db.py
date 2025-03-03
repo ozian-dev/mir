@@ -335,6 +335,10 @@ def get_hash_key (sql: str) :
 def get_cache_file_name (i: int, sql: str, params: object = None, is_raw: bool = False) :
 
     parsed_sql = get_parsed_query(sql, params)
+    if params is not None:
+        for key, val in params.items(): 
+            parsed_sql = parsed_sql.replace(f"%({key})s", f"{val}")
+
     hash_key = get_hash_key (parsed_sql) + f"{is_raw}"
     cache_file_name = const.PATH_DATA_CACHE + "/" + str(i)
 

@@ -1,3 +1,6 @@
+### [1.0.28] 2025.03.03
+- [fixed] fixed cache key bug
+
 ### [1.0.27] 2025.02.19
 - [changed] changed the CSS of the period setting options.
 
