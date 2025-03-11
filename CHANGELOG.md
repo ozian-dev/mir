@@ -1,5 +1,8 @@
+### [1.0.29] 2025.03.11
+- [fixed] fixed bug related to data_rev set.
+
 ### [1.0.28] 2025.03.03
-- [fixed] fixed cache key bug
+- [fixed] fixed cache key bug.
 
 ### [1.0.27] 2025.02.19
 - [changed] changed the CSS of the period setting options.

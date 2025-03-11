@@ -686,7 +686,7 @@ function renderPanel(obj) {
 
     setPanelInfo(obj);
     var pinfo = _p["p"]["i"][pid];
-    
+
     if (pinfo["chart"]) {
         $(panelObj).attr("data-entity", "chart");
     } else if (pinfo["form"]) {
@@ -1813,7 +1813,7 @@ var renderFnc = {
                             valArr[kk] = "" ;
                         }
                     }
-
+                    
                     var isExists = valArr.some(value => v["values"]["data_rev"].hasOwnProperty(value));
                     if (v["values"]["data_rev"] && v["values"]["data_rev"][valStr]) {
                         valArr = v["values"]["data_rev"][valStr];
@@ -2475,8 +2475,7 @@ var renderFnc = {
                         }
                     } catch (e) {}
 
-                    console.log(dataset[i]["yAxisID"])
-
+                    //console.log(dataset[i]["yAxisID"])
 
                     var context = $("<span>").addClass("context").html(text);
                     if (dataset[i]["yAxisID"] == "right") $(context).addClass("att-color-green");
