@@ -1,3 +1,6 @@
+### [1.0.30] 2025.03.13
+- [fixed] fixed disallowed characters in document titles for openpyxl.
+
 ### [1.0.29] 2025.03.11
 - [fixed] fixed bug related to data_rev set.
 

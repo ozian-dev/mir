@@ -34,7 +34,11 @@ def response_excel(data):
 
     workbook = Workbook()
     worksheet = workbook.active
-    worksheet.title = data["title"]
+
+    invalid_chars = ['\\', '/', '*', '?', ':', '"', '<', '>', '|']
+    excel_title = data["title"]
+    for char in invalid_chars: excel_title = excel_title.replace(char, '_')
+    worksheet.title = excel_title
 
     heads = util_library.get_vals_array(data["chart"]["heads"], "name")
     worksheet.append(heads)
