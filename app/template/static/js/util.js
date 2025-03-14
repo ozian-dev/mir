@@ -204,10 +204,10 @@ function switchKeyVal(obj, keys = []) {
     for (var key in obj) {
         var newKeys = keys.concat([key]);
         if (typeof obj[key] === "object") {
-            var nestedObj = switchKeyVal(obj[key] + "", newKeys);
+            var nestedObj = switchKeyVal(obj[key], newKeys);
             result = { ...result, ...nestedObj };
         } else {
-            var newKey = obj[key] + "";
+            var newKey = obj[key];
             result[newKey] = newKeys;
         }
     }
@@ -402,24 +402,23 @@ function setPanelInfo(obj) {
         pInfo["chart"]["tools"]["execute"] = 0;
         if ( pInfo["chart"]["operate"] ) pInfo["chart"]["tools"]["operate"] = 1;
 
-        
         if (pInfo["chart"]["type"] && pInfo["chart"]["type"] == "table") {
             if (pInfo["chart"]["heads_orders"]) {
                 for (var i=0; i<pInfo["chart"]["heads_orders"].length; i++) {
                     var headName = pInfo["chart"]["heads_orders"][i];
-                    if (pInfo["chart"]["heads"][headName]["values"] 
-                        && pInfo["chart"]["heads"][headName]["values"]["data"]) {
+                    var info = pInfo["chart"]["heads"][headName];
+                    if (info["values"] && info["values"]["data"]) {
                         pInfo["chart"]["heads"][headName]["values"]["data_rev"] 
-                            = switchKeyVal(pInfo["chart"]["heads"][headName]["values"]["data"]);
+                            = switchKeyVal(info["values"]["data"]);
                     }
                 }
             }
         }
+
     }
 
     _p["p"]["i"][obj["pid"]] = pInfo;
 }
-
 
 
 function ScrollTrigger(id, options) {

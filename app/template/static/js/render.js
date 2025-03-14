@@ -2088,7 +2088,7 @@ var renderFnc = {
 
         if (info["values"]["data"] && !info["values"]["data_rev"]) 
             info["values"]["data_rev"] = switchKeyVal(info["values"]["data"]);
-
+        console.log(info)
         if (!info["delimiter"]) info["delimiter"] = ",";
 
         var valArr = val.split(info["delimiter"]);

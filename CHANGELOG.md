@@ -1,3 +1,6 @@
+### [1.0.32] 2025.03.14
+- [fixed] fixed bug related to switchKeyVal function.
+
 ### [1.0.31] 2025.03.14
 - [changed] changed async job done notification from socket communication to database management for centralization.
 
