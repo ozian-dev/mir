@@ -120,6 +120,38 @@ async def check_query(request: Request, post: object):
         
     return final_res
 
+
+@router.post("/ajob")
+async def tool (request: Request) :
+    
+    final_res = {}    
+    post = await request.json()
+
+    msg = "this job is done."
+    run = "done"
+    ajob_params = {"pidx": post["i"], "entity":post["entity"], "mode":post["mode"], "target":post["target"]}
+    ajob_query = const.SQLS["ajob_list"]
+    ajob_res = util_db.select_db(const.CONF["start_db"]["idx"], ajob_query, ajob_params)
+    if len(ajob_res["data"]) > 0 :
+        if ajob_res["data"][0]["status"] == 1 : 
+            msg = "this job is running."
+            run = "run"
+        else :
+            job_status = "success"
+            if ajob_res['data'][0]['status'] == 2 : job_status = "fail"
+            msg += f"<br>* job status: {job_status}<br>* time: {ajob_res['data'][0]['ended']}"
+
+    final_res["status"] = "ok"
+    final_res["r_code"] = 200
+    final_res["msg"] = msg
+    final_res["run"] = run
+    final_res["i"] = post["i"]
+    final_res["entity"] = post["entity"]
+    final_res["mode"] = post["mode"]
+    final_res["target"] = post["target"]
+
+    return final_res
+
 @router.post("/tool")
 async def tool (request: Request) :
     post = await request.json()

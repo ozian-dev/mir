@@ -112,7 +112,22 @@ CREATE TABLE user (
   live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
   updated timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (idx),
-  UNIQUE KEY id (grp, id)
+  UNIQUE KEY id (grp,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+DROP TABLE IF EXISTS ajob;
+CREATE TABLE ajob (
+  idx int(11) NOT NULL AUTO_INCREMENT,
+  pidx int(11) NOT NULL COMMENT 'panel idx',
+  entity varchar(50) DEFAULT NULL COMMENT 'ex: chart, form',
+  mode varchar(50) DEFAULT NULL COMMENT 'ex: action',
+  target varchar(50) DEFAULT NULL COMMENT 'ex: last_procedure',
+  status int(1) DEFAULT 1 COMMENT '1:run, 2:fail, 0:done',
+  started timestamp NOT NULL DEFAULT current_timestamp(),
+  ended timestamp,
+  PRIMARY KEY (idx),
+  KEY list_01 (pidx,entity,mode,target,idx)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 ;
 

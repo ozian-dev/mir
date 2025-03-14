@@ -15,6 +15,11 @@ async def execute(info, params, callback):
         await callback(info, params, res_arr)
         
     except Exception as e:
+        if params is not None and '@ajob_idx' in info :
+            ajob_params = {"idx":info["@ajob_idx"]}
+            ajob_query = const.SQLS["ajob_update_fail"]
+            rows = util_db.execute_db(const.CONF["start_db"]["idx"], [ajob_query], [ajob_params])
+
         for cid in const.WS_USER[info["@id"]] :
             res_obj = {
                 "status": "error",
@@ -26,10 +31,29 @@ async def execute(info, params, callback):
             await const.WS_USER[info["@id"]][cid].send_text(json.dumps(res_obj))
             
 async def call(info, params: object=None):
-    task = asyncio.create_task(execute(info, params, callback))
+
+    ajob_data = params[0]
+    ajob_params = {"pidx":ajob_data[".i"], "entity":ajob_data["entity"], "mode":ajob_data["mode"], "target":ajob_data["target"]}
+    ajob_query = const.SQLS["ajob_list"]
+    rows = util_db.select_db(const.CONF["start_db"]["idx"], ajob_query, ajob_params)
+
+    if len(rows["data"]) > 0 and rows["data"][0]["status"] == 1 :
+        raise (Exception(f"process is running : from {rows['data'][0]['started']}"))
+    else :
+        ajob_query = const.SQLS["ajob_insert"]
+        rows = util_db.execute_db(const.CONF["start_db"]["idx"], [ajob_query], [ajob_params])
+        info["@ajob_idx"] = rows[0]['db_id']
+
+        task = asyncio.create_task(execute(info, params, callback))
+    
     return True
 
 async def callback(info, params: object=None, res_arr: object=None) :
+
+    if params is not None and '@ajob_idx' in info :
+        ajob_params = {"idx":info["@ajob_idx"]}
+        ajob_query = const.SQLS["ajob_update"]
+        rows = util_db.execute_db(const.CONF["start_db"]["idx"], [ajob_query], [ajob_params])
 
     if params is None or len(params) < 1 : params = [{}]
 
@@ -44,6 +68,8 @@ async def callback(info, params: object=None, res_arr: object=None) :
 
     util_library.log(logger, params[0], log_obj)
 
+    """
+    # Socket communication is currently blocking
     for cid in const.WS_USER[info["@id"]] :
 
         res_obj = {
@@ -56,3 +82,4 @@ async def callback(info, params: object=None, res_arr: object=None) :
 
         if "forward" in info : res_obj["forward"] = info["forward"]
         await const.WS_USER[info["@id"]][cid].send_text(json.dumps(res_obj))
+    """

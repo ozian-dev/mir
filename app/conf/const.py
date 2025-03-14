@@ -93,10 +93,24 @@ SQLS["auth"] = """
 SQLS["view"] = """
     select title, json_view_value from view where idx=${.v} and live='Y' and levelv >= ${@level}
     """
-
+SQLS["ajob_list"] = """
+    select idx, status, started, ended 
+    from ajob 
+    where pidx=#{pidx} and entity=#{entity} and mode=#{mode} and target=#{target} 
+    order by idx desc limit 1
+    """
+SQLS["ajob_insert"] = """
+    insert into ajob ( pidx, entity, mode, target )
+    values ( #{pidx}, #{entity}, #{mode}, #{target} )
+    """
+SQLS["ajob_update"] = """
+    update ajob set status = 0, ended = now() where idx=#{idx}
+    """
+SQLS["ajob_update_fail"] = """
+    update ajob set status = 2, ended = now() where idx=#{idx}
+    """
 
 WS_USER = {}
-
 
 def make_env() :
 

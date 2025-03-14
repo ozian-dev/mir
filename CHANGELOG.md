@@ -1,3 +1,6 @@
+### [1.0.31] 2025.03.14
+- [changed] changed async job done notification from socket communication to database management for centralization.
+
 ### [1.0.30] 2025.03.13
 - [fixed] fixed disallowed characters in document titles for openpyxl.
 

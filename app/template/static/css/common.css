@@ -502,6 +502,10 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .progress {display:none;position:absolute;width:100%;height:5px;background-color:white;left:0;top:0;z-index:10;}
 .progress .mover { width:50px;height:100%;background:linear-gradient(to left, dodgerblue, azure);position:relative;animation:progress-animation 2s linear infinite;}
 
+@keyframes loader-animation {0%{transform: rotate(0deg);} 100%{transform: rotate(360deg);}}
+.loader {position:absolute;top:12px;display:inline-block;border:3px solid dodgerblue;border-left:3px solid white;border-bottom:3px solid white;border-radius:80%;width:12px;height:12px;animation:loader-animation 1s linear infinite;margin-left:5px;}
+.loader-done {position:absolute;top:12px;display:inline-block;border:3px solid lightgray;border-radius:80%;width:12px;height:12px;margin-left:5px;}
+
 .markdown-body ul,ol,li,h1,h2,h3 {all:revert;}
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
 

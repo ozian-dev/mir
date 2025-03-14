@@ -315,41 +315,67 @@ var postFnc = {
         var panelObj = getPanelObj($(obj));
         var postData = getPostData(panelObj, obj);
 
-        postData["@data"]["new"] = [];
-        
-        var requiredArr = [];
-        if ( $(obj).attr("data-required") ) requiredArr = JSON.parse($(obj).attr("data-required"));
-        var cstObj = $(panelObj).find(".search .custom .item .value [data-name]:visible");
-        var isValid = true;
-        if ($(cstObj).length>0) postData["@data"]["new"][0] = {};
-        $(cstObj).each(function(i, item) {
+        if ($(obj).attr("data-run") == "run") {
+
+            var postData = {};
+            postData["i"] = $(panelObj).attr("data-i");
+            postData["entity"] = $(obj).attr("data-entity");
+            postData["mode"] = $(obj).attr("data-mode");
+            postData["target"] = $(obj).attr("data-target");
+            
+            var url = _p["const"]["ajob"];
+            callAjax(url, function(resObj) {
+                if (resObj["run"] == "done") {
+                    modal(resObj["msg"], false);
+                    $(obj).find(".loader").addClass("loader-done").removeClass("loader");
+                    $(obj).attr("data-run", "done");
+                } else {
+                    modal(resObj["msg"]);
+                }
+            }, 'POST', JSON.stringify(postData));
+            
+        } else {
+
+            postData["@data"]["new"] = [];
+            var requiredArr = [];
+            if ( $(obj).attr("data-required") ) requiredArr = JSON.parse($(obj).attr("data-required"));
+            var cstObj = $(panelObj).find(".search .custom .item .value [data-name]:visible");
+            var isValid = true;
+            if ($(cstObj).length>0) postData["@data"]["new"][0] = {};
+            $(cstObj).each(function(i, item) {
+                if (!isValid) return;
+                var keyName = $(item).attr("data-name");
+                var keyAlias = $(item).parent().prev().text();
+                if (keyName=="@date") keyName = ".date";
+
+                if ( requiredArr.includes(keyName) && !$(item).attr("data-value") ) {
+                    modal(_m[_l]["required"] + " conditions : " + keyAlias, false );
+                    isValid = false;
+                    return;
+                }
+                postData["@data"]["new"][0][keyName] = $(item).attr("data-value");
+            })
+
             if (!isValid) return;
-            var keyName = $(item).attr("data-name");
-            var keyAlias = $(item).parent().prev().text();
-            if (keyName=="@date") keyName = ".date";
+            
+            $(panelObj).find(".progress").show();
 
-            if ( requiredArr.includes(keyName) && !$(item).attr("data-value") ) {
-                modal(_m[_l]["required"] + " conditions : " + keyAlias, false );
-                isValid = false;
-                return;
+            if ($(obj).attr("data-method") == "async" ) {
+                $(obj).find(".loader-done").addClass("loader").removeClass("loader-done");
+                $(obj).attr("data-run", "run");
             }
-            postData["@data"]["new"][0][keyName] = $(item).attr("data-value");
-        })
-
-        if (!isValid) return;
-        
-        $(panelObj).find(".progress").show();
-        
-        var url = _p["const"]["execute"];
-        _p["actionTask"][postData["entity"] + "." + postData["target"]] = new Date();
-        callAjax(url, function(resObj) {
-            modal(resObj["msg"]);
-            if ( "forward" in resObj ) {
-                var panelObj = $("#pan" + resObj["forward"]);
-                $(panelObj).find(".head .tools .att-tool-reload").click();
-            }
-            $(panelObj).find(".progress").hide()
-        }, 'POST', JSON.stringify(postData));
+            
+            var url = _p["const"]["execute"];
+            //_p["actionTask"][postData["entity"] + "." + postData["target"]] = new Date();
+            callAjax(url, function(resObj) {
+                modal(resObj["msg"]);
+                if ( "forward" in resObj ) {
+                    var panelObj = $("#pan" + resObj["forward"]);
+                    $(panelObj).find(".head .tools .att-tool-reload").click();
+                }
+                $(panelObj).find(".progress").hide();
+            }, 'POST', JSON.stringify(postData));
+        }
     },
 
     chartTflowT: function(obj) {

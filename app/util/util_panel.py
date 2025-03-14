@@ -45,6 +45,13 @@ def get_panel (panel:object, panel_json:object, params:object) :
             if "return" in item : del item["return"]
             if "completed" in item : del item["completed"]
 
+            item["run"] = False
+            if item["async"] == True :
+                ajob_params = {"pidx": final_res["pid"], "entity":"action", "mode":"execute", "target":item["name"]}
+                ajob_query = const.SQLS["ajob_list"]
+                ajob_res = util_db.select_db(const.CONF["start_db"]["idx"], ajob_query, ajob_params)
+                if len(ajob_res["data"]) > 0 and ajob_res["data"][0]["status"] == 1 : item["run"] = True
+
     if ".t" in params and params[".t"] == "excel" :
         final_res["title"] = panel["title"]
         return util_response.response_excel(final_res)

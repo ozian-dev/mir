@@ -1131,20 +1131,26 @@ function renderPanelAction(panelObj, obj) {
         var method = "sync";
         if ( item["async"] ) method = "async"; 
 
-        var btn = getLinkObj(panelObj, "btn", "action", "execute", item["name"], "", name, 
-            "att-width-160 att-margin-bottom-10", 
-            { "post":1, "method":method  } 
-        );  
-        if (item["conditions"]) {
+        var run = "done";
+        if ( item["run"] ) run = "run"; 
 
+        var btn = getLinkObj(panelObj, "btn", "action", "execute", item["name"], "", name, 
+            "att-width-180 att-margin-bottom-10", 
+            { "post":1, "method":method, "run":run } 
+        );
+        if (item["conditions"]) {
             var requiredKeys = Object.keys(item["conditions"]).filter(
                 key => item["conditions"][key]["input"] && item["conditions"][key]["input"] === "required"
             );
             $(btn).attr("data-required", JSON.stringify(requiredKeys));
         }
     
+        $(actionObj).append(btn);
 
-        $(actionObj).append(btn)
+        if(method == "async") {
+            if (item["run"] == true) $(btn).append( "<span class='loader'></span>") ;
+            else $(btn).append( "<span class='loader-done'></span>") ;
+        }
     }
 }
 
