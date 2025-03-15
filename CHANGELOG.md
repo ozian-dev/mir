@@ -1,3 +1,6 @@
+### [1.0.33] 2025.03.15
+- [fixed] fixed conversion errors for SQL with regular expressions.
+
 ### [1.0.32] 2025.03.14
 - [fixed] fixed bug related to switchKeyVal function.
 

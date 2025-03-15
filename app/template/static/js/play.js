@@ -675,10 +675,15 @@ var playFnc = {
             format = format.split("\n").join(" ").trim();
 
             var lineContent = editorJson.session.getLine(sqlEditLineNum);
-            var newLineContent = lineContent.replace(sqlEditQueryOrg, format);
+            var newLineContent = lineContent.split(sqlEditQueryOrg).join(format);
+            /*
+            editorJson.selection.setRange(new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length));
+            editorJson.onPaste(newLineContent);
+            */
             editorJson.session.replace(
                 new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length), 
                 newLineContent);
+
 
         } else if ( mode == "markdown" ) {
 

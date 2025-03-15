@@ -727,3 +727,5 @@ function getTableFromJson (jsonData) {
 
     return $(table).prop("outerHTML");
 }
+
+
