@@ -1,3 +1,6 @@
+### [1.0.35] 2025.03.18
+- [removed] removed unnecessary code.
+
 ### [1.0.34] 2025.03.18
 - [changed] hide chart tooltips when scrolling the mouse wheel.
 - [changed] changed the tooltip Y position.
