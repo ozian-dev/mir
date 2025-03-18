@@ -1,3 +1,7 @@
+### [1.0.34] 2025.03.18
+- [changed] hide chart tooltips when scrolling the mouse wheel.
+- [changed] changed the tooltip Y position.
+
 ### [1.0.33] 2025.03.15
 - [fixed] fixed conversion errors for SQL with regular expressions.
 

@@ -2388,7 +2388,7 @@ var renderFnc = {
         var isEmptyLeft = data.datasets.find(dataset => dataset.yAxisID === 'y' && dataset.data.length > 0) === undefined;
         var isEmptyRight = data.datasets.find(dataset => dataset.yAxisID === 'right' && dataset.data.length > 0) === undefined;
         var customTooltip;
-
+    
         var config = {
             data: data,
             options: {
@@ -2481,8 +2481,6 @@ var renderFnc = {
                         }
                     } catch (e) {}
 
-                    //console.log(dataset[i]["yAxisID"])
-
                     var context = $("<span>").addClass("context").html(text);
                     if (dataset[i]["yAxisID"] == "right") $(context).addClass("att-color-green");
                     $(tooltipObj).find(".lists").append($("<li>").append(color).append(context));
@@ -2494,6 +2492,8 @@ var renderFnc = {
             var pointGap = 10;
             var pointRev = 15;
             var pointTop = 40;
+
+            var orgY = tooltip.y;
             
             var tooltipX = positionX + tooltip.caretX + pointGap;
             if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - tooltip.width - pointRev - pointGap ;
@@ -2503,6 +2503,9 @@ var renderFnc = {
                 tooltipY = $(window).height() - $(tooltipObj).innerHeight() - pointGap;
             }
             if ( tooltipY < 0 ) tooltipY = 0;
+            if ( tooltip.height < (chart.height/2) ) {
+                tooltipY = positionY + tooltip.caretY ;
+            }
 
             $(tooltipObj).css("left", tooltipX);
             $(tooltipObj).css("top", tooltipY);
