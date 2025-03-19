@@ -1,3 +1,6 @@
+### [1.0.36] 2025.03.19
+- [added] added a double-click feature on the legend to show only the corresponding data.
+
 ### [1.0.35] 2025.03.18
 - [removed] removed unnecessary code.
 

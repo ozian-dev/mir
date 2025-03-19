@@ -711,7 +711,9 @@ $("body")
     $(panelObj).find(".head .tools .att-tool-reload").click();
 })
 .on ("click", ".fnc-pop-info", function(e) {
-    popMsg(e,_m[_l]["chartinfo"]);
+    msg = _m[_l]["chartinfodbclick"];
+    if ($(this).hasClass("info-green")) msg += "<br>" + _m[_l]["chartinfogreen"]
+    popMsg(e,msg);
 })
 
 

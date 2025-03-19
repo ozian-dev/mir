@@ -2437,6 +2437,7 @@ var renderFnc = {
                 else return val;
             }
         }
+        
         function formatYAxisTicks(value) {
             var vv = Math.abs (value) ;
             if ( vv >= 1000 && vv < 1000000) return getAxisNum(value / 1000) + ' K';
@@ -2444,7 +2445,6 @@ var renderFnc = {
             else if ( vv >= 1000000000 ) return getAxisNum(value / 1000000000) + ' B';
             else return getAxisNum(value);
         }
-
 
         function customTooltip(context) {
             var {chart, tooltip} = context;
@@ -2508,9 +2508,7 @@ var renderFnc = {
             $(tooltipObj).css("left", tooltipX);
             $(tooltipObj).css("top", tooltipY);
             $(tooltipObj).show();
-            
-          };
-
+        };
 
         function createCustomLegend(chart) {
 
@@ -2523,8 +2521,8 @@ var renderFnc = {
                 var btnItem = document.createElement("a");
 
                 if (btnStr[i] == "ⓘ") {
-                    if (!chart.options.scales.right.display) continue;
-                    else btnItem.classList.add("fnc-pop-info");;
+                    btnItem.classList.add("fnc-pop-info");
+                    if (chart.options.scales.right.display) btnItem.classList.add("info-green");
                 } else {
                     btnItem.classList.add("btn");
                 }
@@ -2584,8 +2582,25 @@ var renderFnc = {
                     event.preventDefault();
                     var meta = chart.getDatasetMeta(datasetIndex);
                     meta.hidden = meta.hidden === null ? !chart.data.datasets[datasetIndex].hidden : null;
-                    chart.update();
                     legendItem.classList.toggle('hidden');
+                    chart.update();
+                });
+
+                // double click event listener
+                legendItem.addEventListener('dblclick', function(event) {
+                    event.preventDefault();
+                    console.log("dblclick:" + datasetIndex)
+                    chart.data.datasets.forEach((dataset, index) => {
+                        var datasetMeta = chart.getDatasetMeta(index);
+                        if ( datasetIndex == index ) datasetMeta.hidden = null;
+                        else datasetMeta.hidden = true;
+                    });
+
+                    legendItems.querySelectorAll(".item").forEach((item) => {
+                        item.classList.add("hidden");
+                    });
+                    legendItem.classList.remove("hidden");
+                    chart.update();
                 });
             });
         }

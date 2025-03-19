@@ -25,5 +25,6 @@ _m["en"] = {
     "dynamicchartempty": "chart attributes are empty.",
     "upload": "file upload",
     "run": "in progress",
-    "chartinfo": "the green legend represents the right Y-axis."
+    "chartinfogreen": "the green legend represents the right Y-axis.",
+    "chartinfodbclick": "double-click to show only the corresponding legend chart."
 }

@@ -25,5 +25,6 @@ _m["ko"] = {
     "dynamicchartempty": "차트 속성이 비어 있습니다.",
     "upload": "파일 업로드",
     "run": "진행중",
-    "chartinfo": "녹색 범례는 오른쪽 Y축을 나타냅니다."
+    "chartinfogreen": "녹색 범례는 오른쪽 Y축을 나타냅니다.",
+    "chartinfodbclick": "더블클릭하시면 해당 범례 차트만 표시됩니다."
 }
