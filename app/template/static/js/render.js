@@ -2502,7 +2502,8 @@ var renderFnc = {
             }
             if ( tooltipY < 0 ) tooltipY = 0;
             if ( tooltip.height < (chart.height/2) ) {
-                tooltipY = positionY + tooltip.caretY ;
+                //tooltipY = positionY + tooltip.caretY ;
+                tooltipY = _eventMouseY - (tooltip.height/2);
             }
 
             $(tooltipObj).css("left", tooltipX);

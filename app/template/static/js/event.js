@@ -1,6 +1,11 @@
 
-$("body")
+var _eventMouseY = 0;
+$("body").mousemove(function(e) {
+    _eventMouseY = e.clientY;
+});
 
+
+$("body")
 // global function
 ////////////////////////////////////////////////////////////////////
 .on ("click", "a", function() {
