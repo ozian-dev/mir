@@ -1125,14 +1125,14 @@ function renderPanelHtml(panelObj, obj) {
 
     var htmlObj = $(panelObj).find(".html");
 
-    var iframeObj = $("<iframe>").addClass("att-width-100p att-border-lightgray");
+    var iframeObj = $("<iframe>").addClass("att-width-100p att-border-none");
     var iframeHeight = 200;
     if (obj["html"]["height"]) iframeHeight = obj["html"]["height"];
     $(iframeObj).height(iframeHeight);
 
     $(iframeObj).on('load', function() {
         var iframeDoc = $(this).contents();
-        iframeDoc.find('html').html(obj["html"]["contents"]);
+        iframeDoc.find('html').html(obj["html"]["content"]);
     });
     $(htmlObj).html(iframeObj);
 }

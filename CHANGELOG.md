@@ -1,3 +1,6 @@
+### [1.0.39] 2025.03.21
+- [changed] changed the border property and the attribute name of an HTML entity.
+
 ### [1.0.38] 2025.03.20
 - [added] added HTML entity to JSON format.
 

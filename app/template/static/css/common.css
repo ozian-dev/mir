@@ -329,6 +329,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-div {display:block;}
 
 .att-border-lightgray {border:1px solid lightgray;}
+.att-border-none {border:none;}
 
 .att-remove {cursor:pointer;}
 .att-remove::after {content:"⊖";margin-left:5px;color:crimson;font-weight:bold;}
