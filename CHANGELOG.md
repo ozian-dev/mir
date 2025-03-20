@@ -1,3 +1,6 @@
+### [1.0.38] 2025.03.20
+- [added] added HTML entity to JSON format.
+
 ### [1.0.37] 2025.03.19
 - [changed] changed the tooltip Y position.
 

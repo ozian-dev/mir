@@ -693,6 +693,11 @@ function renderPanel(obj) {
         $(panelObj).attr("data-entity", "form");
     }
 
+    if (pinfo["html"] && pinfo["html"] != "") {
+        renderPanelHtml(panelObj, obj);
+        $(panelObj).find(".html").show();
+    }
+
     if (pinfo["widget"]) {
         $(panelObj).find(".widget").show();
     }
@@ -724,7 +729,6 @@ function renderPanel(obj) {
     var btn;
 
     if (pinfo["info"]) {
-
         btn = getLinkObj(panelObj, "tool", "chart", "heads", "", "info", "info", "att-tool-info", {"info": pinfo["info"]});
         $(toolObj).append(btn);
     }
@@ -1117,6 +1121,21 @@ function renderPanelTable(panelObj, obj) {
     }
 }
 
+function renderPanelHtml(panelObj, obj) {
+
+    var htmlObj = $(panelObj).find(".html");
+
+    var iframeObj = $("<iframe>").addClass("att-width-100p att-border-lightgray");
+    var iframeHeight = 200;
+    if (obj["html"]["height"]) iframeHeight = obj["html"]["height"];
+    $(iframeObj).height(iframeHeight);
+
+    $(iframeObj).on('load', function() {
+        var iframeDoc = $(this).contents();
+        iframeDoc.find('html').html(obj["html"]["contents"]);
+    });
+    $(htmlObj).html(iframeObj);
+}
 
 function renderPanelAction(panelObj, obj) {
 

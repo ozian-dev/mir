@@ -33,6 +33,7 @@ def get_panel (panel:object, panel_json:object, params:object) :
 
     if "info" in panel_json : final_res["info"] = panel_json["info"]
     if "form" in panel_json : final_res["form"] = get_panel_form(panel_json, params)
+    if "html" in panel_json : final_res["html"] = panel_json["html"]
     
     # widget & chart must be called in order because widget's .m value affects the behavior of chart.
     if "widget" in panel_json : final_res["widget"] = get_panel_widget(panel_json, params)
