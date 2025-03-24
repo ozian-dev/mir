@@ -1,3 +1,7 @@
+### [1.0.40] 2025.03.24
+- [changed] adjusted popup width in the mobile version.
+- [changed] reset the basis search value when reloading the panel.
+
 ### [1.0.39] 2025.03.21
 - [changed] changed the border property and the attribute name of an HTML entity.
 

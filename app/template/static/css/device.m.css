@@ -38,3 +38,5 @@
 .m-custom-search-layer {width:100%;text-align:center;margin-bottom:20px;}
 .m-custom-search-layer a {display:inline-block;width:80px;height:30px;text-align:center;font-size:14px;font-weight:bold;background-color:dodgerblue;color:white;border-radius:10px;line-height:27px;}
 .m-custom-search-layer a:first-child {margin-right:20px;}
+
+.pop-layer {width:150px;}

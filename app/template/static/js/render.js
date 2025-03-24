@@ -807,6 +807,9 @@ function renderPanel(obj) {
 
     } else {
 
+        // basis search reset
+        $(panelObj).find(".search .basis .item .value .att-input-text").val("");
+
         // custom search rendering
         var customObj = $(panelObj).find(".search .custom");
         $(customObj).html("");
