@@ -672,10 +672,11 @@ var playFnc = {
                 for(var j=0;j<i; j++) str += " ";
                 format = format.split(str).join("\n");
             }
-            format = format.split("\n").join(" ").trim();
+            format = format.split("\n").join(" ").trim().replaceAll('"', '\\"');
 
             var lineContent = editorJson.session.getLine(sqlEditLineNum);
-            var newLineContent = lineContent.split(sqlEditQueryOrg).join(format);
+            var newLineContent = lineContent.split(sqlEditQueryOrg.replaceAll('"', '\\"')).join(format);
+
             /*
             editorJson.selection.setRange(new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length));
             editorJson.onPaste(newLineContent);

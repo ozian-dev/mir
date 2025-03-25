@@ -1,3 +1,6 @@
+### [1.0.41] 2025.03.25
+- [fixed] fixed SQL query handling errors with included quotes (").
+
 ### [1.0.40] 2025.03.24
 - [changed] adjusted popup width in the mobile version.
 - [changed] reset the basis search value when reloading the panel.
