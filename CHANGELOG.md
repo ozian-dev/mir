@@ -1,3 +1,6 @@
+### [1.0.42] 2025.03.27
+- [changed] changed tooltip number alignment.
+
 ### [1.0.41] 2025.03.25
 - [fixed] fixed SQL query handling errors with included quotes (").
 

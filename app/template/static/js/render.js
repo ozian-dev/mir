@@ -2489,34 +2489,42 @@ var renderFnc = {
 
                 for (var i=0; i<tooltip.body.length; i++ ) {
 
-                    var text = tooltip.body[i].lines[0];
                     var bgColor = tooltip.labelColors[i].backgroundColor;
                     var lineColor = tooltip.labelColors[i].borderColor;
 
-                    var color = $("<span>").addClass("color")
-                                .css("background-color", bgColor)
-                                .css("border", "1px solid " + lineColor)
-                                ;
-                    try {
-                        if ( tooltip.dataPoints[i]["raw"] == 0 ) {
-                            text = tooltip.dataPoints[i]["dataset"]["label"] + ": 0";
-                        }
-                    } catch (e) {}
+                    var numArr = (tooltip.dataPoints[i]["raw"]+"").split(".");
+                    var labelStr = tooltip.dataPoints[i]["dataset"]["label"];
+                    
+                    var div1 = $("<div>").addClass("cell-1"); 
+                    $(div1).append($("<span>").addClass("color")
+                                    .css("background-color", bgColor)
+                                    .css("border", "1px solid " + lineColor)
+                    );
+                    $(div1).append(labelStr);
+                    if (dataset[i]["yAxisID"] == "right") $(div1).addClass("att-color-green");
 
-                    var context = $("<span>").addClass("context").html(text);
-                    if (dataset[i]["yAxisID"] == "right") $(context).addClass("att-color-green");
-                    $(tooltipObj).find(".lists").append($("<li>").append(color).append(context));
+                    
+                    if (numArr[0] == "null" || numArr[0] == "") numArr[0] = "0";
+                
+                    var div2 = $("<div>").addClass("cell-2").html(numberFormat(numArr[0]));
+
+                    var div3 = $("<div>").addClass("cell-3"); 
+                    if (numArr[1]) $(div3).html("."+numArr[1]);
+                    else $(div3).html("");
+
+                    $(tooltipObj).find(".lists").append(div1).append(div2).append(div3); 
                 }
             }
 
             const {left: positionX, top: positionY} = $("#" + chartId).offset();
 
             var pointGap = 10;
-            var pointRev = 15;
+            var pointRev = 25;
             var pointTop = 40;
 
             var tooltipX = positionX + tooltip.caretX + pointGap;
-            if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - tooltip.width - pointRev - pointGap ;
+            //if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - tooltip.width - pointRev - pointGap ;
+            if ( tooltip.caretX > (_p["chartObj"][chartId].width/2) ) tooltipX = tooltipX - $(tooltipObj).width() - pointRev - pointGap ;
 
             var tooltipY  = positionY + (_p["chartObj"][chartId].height/2) - (tooltip.height/2) - pointTop ;
             if ($(window).height() < ($(tooltipObj).innerHeight() + tooltipY + pointGap) ) {
