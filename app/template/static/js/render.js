@@ -2492,7 +2492,9 @@ var renderFnc = {
                     var bgColor = tooltip.labelColors[i].backgroundColor;
                     var lineColor = tooltip.labelColors[i].borderColor;
 
-                    var numArr = (tooltip.dataPoints[i]["raw"]+"").split(".");
+                    var numAdjust = 0;
+                    if ( tooltip.dataPoints[i]["raw"] != null ) numAdjust = Number(tooltip.dataPoints[i]["raw"].toFixed(3));
+                    var numArr = (numAdjust+"").split(".");
                     var labelStr = tooltip.dataPoints[i]["dataset"]["label"];
                     
                     var div1 = $("<div>").addClass("cell-1"); 

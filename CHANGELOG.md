@@ -1,3 +1,6 @@
+### [1.0.43] 2025.03.28
+- [changed] force rounding to 3 decimal places in the chart tooltip.
+
 ### [1.0.42] 2025.03.27
 - [changed] changed tooltip number alignment.
 
