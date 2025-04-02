@@ -1,3 +1,6 @@
+### [1.0.44] 2025.04.02
+- [fixed] fixed dynamic chart tooltip bug
+
 ### [1.0.43] 2025.03.28
 - [changed] force rounding to 3 decimal places in the chart tooltip.
 

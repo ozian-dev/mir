@@ -2493,7 +2493,11 @@ var renderFnc = {
                     var lineColor = tooltip.labelColors[i].borderColor;
 
                     var numAdjust = 0;
-                    if ( tooltip.dataPoints[i]["raw"] != null ) numAdjust = Number(tooltip.dataPoints[i]["raw"].toFixed(3));
+                    if ( tooltip.dataPoints[i]["raw"] != null ) {
+                        if ( typeof tooltip.dataPoints[i]["raw"] !== "number" ) 
+                            tooltip.dataPoints[i]["raw"] = Number(tooltip.dataPoints[i]["raw"]);
+                        numAdjust = Number(tooltip.dataPoints[i]["raw"].toFixed(3));
+                    }
                     var numArr = (numAdjust+"").split(".");
                     var labelStr = tooltip.dataPoints[i]["dataset"]["label"];
                     
