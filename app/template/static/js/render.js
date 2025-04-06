@@ -2626,7 +2626,6 @@ var renderFnc = {
                 // double click event listener
                 legendItem.addEventListener('dblclick', function(event) {
                     event.preventDefault();
-                    console.log("dblclick:" + datasetIndex)
                     chart.data.datasets.forEach((dataset, index) => {
                         var datasetMeta = chart.getDatasetMeta(index);
                         if ( datasetIndex == index ) datasetMeta.hidden = null;

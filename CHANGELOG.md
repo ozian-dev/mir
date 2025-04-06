@@ -1,3 +1,6 @@
+### [1.0.45] 2025.04.07
+- [added] added pivot dynamic chart.
+
 ### [1.0.44] 2025.04.02
 - [fixed] fixed dynamic chart tooltip bug
 

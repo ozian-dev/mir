@@ -326,7 +326,6 @@ var playFnc = {
 
     chartTtable: function(obj){
 
-
         var type = $(obj).attr("data-type");
         var panelObj = getPanelObj(obj);
         var cinfo = _p["p"]["i"][$(panelObj).attr("data-i")]["chart"];
@@ -386,9 +385,12 @@ var playFnc = {
 
             var definedChart = $(panelObj).find(".search .custom .draw-chart .dac-defined select[data-name=defined]").attr("data-value");
             var chartType = $(panelObj).find(".search .custom .draw-chart .dac-defined select[data-name=type]").attr("data-value");
+            var chartMode = $(panelObj).find(".search .custom .draw-chart .dac-body .dac-custom .dac-mode .att-selected-item").attr("data-value");
             var xSort = $(panelObj).find(".search .custom .draw-chart .dac-defined .dac-box .att-selected-item").attr("data-value");
-            
+
             var data = {};
+            var pivotCol = "";
+            var heads_orders = [];
 
             if (definedChart) {                
                 data = JSON.parse(JSON.stringify(getValFromArr(cinfo["dchart"], definedChart)));
@@ -397,54 +399,152 @@ var playFnc = {
             } else {
 
                 var customObj = $(panelObj).find(".search .custom .draw-chart .dac-body .dac-custom .dac-axis");
-            
-                data["x"] = $(customObj).find(".fnc-selects[data-name=x] .att-selected-item").attr("data-value");
-                data["x_prt"] = $(customObj).find(".fnc-selects[data-name=x] .att-selected-item").text();
-
                 data["type"] = chartType;
-                
-                var tmpArr = $(customObj).find(".fnc-selects[data-name=y] .att-selected-item");
-                data["y"] = [];
-                data["y_prt"] = "";
-                $(tmpArr).each (function( i, item){
-                    data["y"].push($(item).attr("data-value"));
-                    data["y_prt"] += $(item).attr("data-value") + ", ";
-                })
-                data["name"] = data["x_prt"] + " vs " + data["y_prt"];
-                data["name"] = data["name"].substring(0, data["name"].length - 2);
-            }
 
-            if ( !data["x"] || data["x"].length < 1 ) {
-                modal(_m[_l]["dynamicchartempty"], false);
-                return;
-            }    
+                if ( chartMode == "normal") {
+
+                    data["x"] = $(customObj).find(".fnc-selects[data-name=x] .att-selected-item").attr("data-value");
+                    data["x_prt"] = $(customObj).find(".fnc-selects[data-name=x] .att-selected-item").text();
+                    
+                    var tmpArr = $(customObj).find(".fnc-selects[data-name=y] .att-selected-item");
+                    data["y"] = [];
+                    data["y_prt"] = "";
+                    $(tmpArr).each (function( i, item){
+                        data["y"].push($(item).attr("data-value"));
+                        data["y_prt"] += $(item).attr("data-value") + ", ";
+                    })
+                    data["name"] = data["x_prt"] + " vs " + data["y_prt"];
+                    data["name"] = data["name"].substring(0, data["name"].length - 2);
+                    
+                    if ( !data["x"] || data["x"].length < 1  || !data["y"] || data["y"].length < 1 ) {
+                        modal(_m[_l]["dynamicchartempty"], false);
+                        return;
+                    }
+
+                    heads_orders = data["y"];
+                    heads_orders.unshift(data["x"]); 
+
+                } else {
+
+                    var tmpCols = $(customObj).find(".fnc-selects[data-name=x]").attr("data-selects");
+                    if(!tmpCols || tmpCols == "") {
+                        tmpCols = [];
+                    } else {
+                        tmpCols = JSON.parse(tmpCols);
+                        if (tmpCols.length < 2 ) { 
+                            data["x"] = [];
+                        } else {
+                            var tmpRow = [];
+                            var idx = cinfo["heads_orders"].indexOf(tmpCols[1]);
+                            var tr = $(panelObj).find(".chart .chart-table .table tr.row");
+                            $(tr).each (function(j, row) {
+                                var val = $(row).find("td").eq(idx).attr("data-org");
+                                if (!tmpRow.includes(val)) {
+                                    tmpRow.push(val);
+                                }
+                            });
+
+                            tmpRow.sort((a, b) => a.localeCompare(b));
+                            tmpRow.unshift(tmpCols[0]); 
+                            data["x"] = tmpRow;
+                            data["x_prt"] = tmpCols[0] + " for " + tmpCols[1];
+                            pivotCol = tmpCols[1];
+
+                            var tmp = $(customObj).find(".fnc-selects[data-name=y] .att-selected-item").attr("data-value");
+                            if (tmp) {
+                                data["y"] = [tmp];
+                                data["y_prt"] = $(customObj).find(".fnc-selects[data-name=y] .att-selected-item").text();
+                            } else {
+                                data["y"] = [];
+                                data["y_prt"] = "";
+                            }
+                            data["name"] = data["y_prt"] + " by " + data["x_prt"];
+                        }
+                    }
+
+                    if ( !data["x"] || data["x"].length < 2  || !data["y"] || data["y"].length < 1 ) {
+                        modal(_m[_l]["dynamicchartempty"], false);
+                        return;
+                    }
+
+                }
+            }
 
             var dc = $("<div>").addClass("dynamic-chart");
             $(panelObj).find(".search").append(dc);
 
-            var heads_orders = data["y"];
-            heads_orders.unshift(data["x"]);
-            var heads = {}
-            var values = []
-            for (var i=0; i<heads_orders.length; i++) {
+            var heads = {};
+            var values = [];
 
-                var name = heads_orders[i];
-                heads[name] = cinfo["heads"][name];
-                heads[name]["chart"] = {};
-                heads[name]["chart"]["type"] = data["type"];
 
-                var idx = cinfo["heads_orders"].indexOf(name)
-                var tmpRow = [];
+            if ( chartMode == "normal" ) {
+
+                for (var i=0; i<heads_orders.length; i++) {
+                    var name = heads_orders[i];
+                    heads[name] = cinfo["heads"][name];
+                    heads[name]["chart"] = {};
+                    heads[name]["chart"]["type"] = data["type"];
+
+                    var idx = cinfo["heads_orders"].indexOf(name)
+                    var tmpRow = [];
+                    var tr = $(panelObj).find(".chart .chart-table .table tr.row");
+                    $(tr).each (function(j, row) {
+                        var val = $(row).find("td").eq(idx).attr("data-org");
+                        tmpRow.push(val);
+                    });
+                    values.push(tmpRow);
+                }
+                values = transpose(values);
+            
+            } else {              
+                // data sample
+                //var heads = {"ymd":{"name":"ymd", "type":"string"},"ssp1":{"name":"ssp1", "type":"number"},"ssp2":{"name":"ssp2", "type":"number"}};
+                //var values = [["01", 24, 54], ["02",  64, 24]];
+                //heads_orders = ["ymd", "ssp1", "ssp2" ];
+                heads_orders = [];
+
                 var tr = $(panelObj).find(".chart .chart-table .table tr.row");
-                $(tr).each (function(j, row) {
-                    var val = $(row).find("td").eq(idx).attr("data-org");
-                    tmpRow.push(val);
-                });
-                values.push(tmpRow);
-            }
-            values = transpose(values);
+                var xIdx = cinfo["heads_orders"].indexOf(data['x'][0]);
+                var colIdx = cinfo["heads_orders"].indexOf(pivotCol);
 
-            if (xSort == "1") {
+                var valIdx = cinfo["heads_orders"].indexOf(data['y'][0]);
+                var dataObj = {};
+                var dataArr = [];
+                $(tr).each (function(j, row) {
+                    var tmpX = $(row).find("td").eq(xIdx).attr("data-org");
+                    if (!(tmpX in dataObj)) {
+                        dataArr.push(tmpX);
+                        dataObj[tmpX] = {};
+                    }
+                    for (var i=1; i<data['x'].length; i++) {
+                        var tmpCol = $(row).find("td").eq(colIdx).attr("data-org");
+                        var tmpval = $(row).find("td").eq(valIdx).attr("data-org");
+                        dataObj[tmpX][tmpCol] = tmpval;   
+                    }
+                });
+
+                for(var i=0; i<data['x'].length; i++ ) {
+                    var tmpX = data['x'][i];
+                    heads[tmpX] = {};
+                    heads[tmpX]["name"] = tmpX;
+                    heads[tmpX]["chart"] = {};
+                    heads[tmpX]["chart"]["type"] = data["type"];
+
+                    heads_orders.push(tmpX);
+                }
+
+                for(var i=0; i<dataArr.length; i++ ) {
+                    var tmpData = [];
+                    tmpData.push(dataArr[i]);
+                    for(var j=1; j<data['x'].length; j++ ) {
+                        if ( dataObj[dataArr[i]][data['x'][j]] ) tmpData.push(dataObj[dataArr[i]][data['x'][j]]);
+                        else tmpData.push(0);
+                    }
+                    values.push(tmpData);
+                }
+            }
+
+            if (chartMode == "normal" && xSort == "1") {
 
                 values.sort((a, b) => {
                     const aValue = parseFloat(a[0]);

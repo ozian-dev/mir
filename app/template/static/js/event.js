@@ -501,7 +501,32 @@ $("body")
     }
 })
 
-//.on ("click", ".fnc-select-multi, .fnc-select-toggle", function() {
+.on ("click", ".fnc-select-two", function() {
+    var selects = $(this).parent().attr("data-selects");
+    if (selects && selects != "" ) selects = JSON.parse(selects);
+    else selects = [];
+
+    if ($(this).hasClass("att-selected-item")) {
+        index = selects.indexOf($(this).attr("data-value"));
+        if (index !== -1) {
+            selects.splice(index, 1);
+        }
+        $(this).removeClass("att-selected-item");
+    } else {
+        selects.push($(this).attr("data-value"));
+        $(this).addClass("att-selected-item");
+    }
+
+    if (selects.length == 3) {
+        var tmp = selects[0];
+        tmp = tmp.split("'").join("\\'");
+        $(this).parent().find("a[data-value='"+tmp+"']").removeClass("att-selected-item");
+        selects.splice(0, 1); 
+    }
+
+    $(this).parent().attr("data-selects", JSON.stringify(selects));
+})
+
 .on ("click", ".fnc-select-toggle", function() {
     $(this).toggleClass('att-selected-item');
 })
@@ -563,6 +588,44 @@ $("body")
 
     $(this).parent().attr("data-value", JSON.stringify(valArr));
 })
+
+
+.on ("click", ".fnc-select-mode", function() {
+
+    var mode = $(this).attr("data-value");
+    
+    var items = $("<div>");
+    var target = $(this).parent().parent().find(".dac-axis[data-name=x] .fnc-selects");
+    $(target).attr("data-selects", "");
+    $.each($(target).find("a"), function(i, item){
+        var val = $(item).attr("data-value");
+        var txt = $(item).text();
+        var a = $("<a>").attr("href", "#").attr("data-value", val).html(txt);
+        if(mode == "normal") {
+            $(a).addClass("fnc-select-one");
+        } else {
+            $(a).addClass("fnc-select-two");
+        }
+        $(items).append(a);
+    });
+    $(target).html($(items).html());
+
+    var items = $("<div>");
+    var target = $(this).parent().parent().find(".dac-axis[data-name=y] .fnc-selects");
+    $.each($(target).find("a"), function(i, item){
+        var val = $(item).attr("data-value");
+        var txt = $(item).text();
+        var a = $("<a>").attr("href", "#").attr("data-value", val).html(txt);
+        if(mode == "normal") {
+            $(a).addClass("fnc-select-toggle fnc-put-array");
+        } else {
+            $(a).addClass("fnc-select-one");
+        }
+        $(items).append(a);
+    });
+    $(target).html($(items).html());
+})
+
 
 .on ("click", ".fnc-delete-item", function() {
 

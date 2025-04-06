@@ -384,6 +384,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .fnc-selects .fnc-select-one::before {content:"⦿";margin-right:3px;}
 .fnc-selects .fnc-select-multi::before {content:"✓";margin-right:3px;}
 .fnc-selects .fnc-select-toggle::before {content:"✓";margin-right:3px;}
+.fnc-selects .fnc-select-two::before {content:"✓";margin-right:3px;}
 
 .fnc-selects-td .fnc-select-toggle {margin:0 10px;cursor:pointer;color:gray;}
 .fnc-selects-td .fnc-select-toggle::before {content:"⦿";margin-right:3px;}
@@ -402,8 +403,11 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .draw-chart {position:absolute;top:-1px;right:0;padding:5px 10px;background-color:white;border:1px solid #aaa;border-bottom-left-radius:10px;display:none;z-index:10;}
 .draw-chart .dac-head {color:dodgerblue;padding:0 5px 3px 5px !important;position:relative;border-bottom:1px solid gray;font-weight:bold;font-size:15px;}
 .draw-chart .dac-head a {position:absolute;right:0;top:4px;}
-.draw-chart .dac-body {display:flex;padding:5px;}
-.draw-chart .dac-body .dac-custom  {width:350px;}
+.draw-chart .dac-body {display:flex;padding:5px;padding-bottom:10px;}
+
+.draw-chart .dac-body .dac-custom  {position:relative;width:350px;}
+.draw-chart .dac-body .dac-custom .dac-title {color:dodgerblue;margin-bottom:10px;font-weight:bold;}
+.draw-chart .dac-body .dac-custom .dac-mode {position:absolute;left:50px;}
 .draw-chart .dac-body .dac-custom .dac-axis {margin-bottom:10px;}
 .draw-chart .dac-body .dac-custom .dac-axis .dac-label {margin-bottom:10px;font-weight:bold;color:dodgerblue;}
 .draw-chart .dac-body .dac-custom .dac-axis .fnc-selects { word-break:break-all;}
@@ -411,8 +415,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .draw-chart .dac-body .dac-defined {width:200px;}
 .draw-chart .dac-body .dac-defined select {margin:0 0 20px 0;padding-left:0;border-bottom:1px solid lightgray;}
 .draw-chart .dac-body .dac-defined a {margin-left:0;}
-.draw-chart .dac-body .dac-defined .foot {margin:10px 0;}
-.draw-chart .dac-body .dac-title {color:dodgerblue;margin-bottom:10px;}
+.draw-chart .dac-body .dac-defined .dac-line {color:dodgerblue; margin-bottom:2px;}
 .draw-chart .dac-body .dac-box {margin-bottom:10px;}
 
 .dynamic-chart {position:absolute;top:0;left:0;padding:0 10px 20px 10px;width:100%;background-color:white;border:1px solid silver;border-top:none;z-index:20;}

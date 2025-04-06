@@ -579,31 +579,35 @@ _htmls["draw-chart"] = `
     <div class="dac-body">
         <div class="dac-custom">
             <div class="dac-title">custom</div>
-            <div class="dac-axis">
+            <div class="dac-mode fnc-selects" data-name="mode">
+                <a class="fnc-select-one fnc-select-mode att-selected-item" href="#" data-value="normal">normal</a>
+                <a class="fnc-select-one fnc-select-mode" href="#" data-value="pivot">pivot</a>
+            </div>
+            <div class="dac-axis" data-name="x">
                 <div class="dac-label">X axis</div>
                 <div class="fnc-selects" data-name="x"></div>
             </div>
-            <div class="dac-axis">
+            <div class="dac-axis" data-name="y">
                 <div class="dac-label">Y axis</div>
                 <div class="fnc-selects" data-name="y"></div>
             </div>
         </div>
         <div class="dac-defined">
-            <div class="dac-title">defined</div>
+            <div class="dac-title dac-line">pre-defined</div>
             <select class="att-input-select" data-name="defined" name="defined" data-value="">
                 <option value="">select defined chart</option>
             </select>
-            <div class="dac-title">chart type</div>
+            <div class="dac-title dac-line">chart type</div>
             <select class="att-input-select" data-name="type" name="type" data-value="bar">
                 <option value="bar">bar</option>
                 <option value="line">line</option>
             </select>
-            <div class="dac-title">sort the values on the x-axis</div>
+            <div class="dac-title dac-line">sort the values on the x-axis (normal mode only)</div>
             <div class="dac-box fnc-selects">
                 <a href="#" class="fnc-select-one" data-name="xsort" data-value="1">yes</a>
                 <a href="#" class="fnc-select-one att-selected-item" data-name="xsort" data-value="0">no</a>
             </div>
-            <div class="dac-footer">
+            <div class="dac-title">
                 <a href="#" class="fnc-link att-btn" title="draw" data-entity="chart" data-mode="table" data-target="" data-type="draw">Draw</a>
                 <a href="#" class="fnc-close-btn att-btn" title="draw-chart-close">cancel</a>
             </div>
