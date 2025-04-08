@@ -395,6 +395,40 @@ var playFnc = {
             if (definedChart) {                
                 data = JSON.parse(JSON.stringify(getValFromArr(cinfo["dchart"], definedChart)));
                 data["type"] = chartType;
+                chartMode = data["mode"];
+
+                if (chartMode == "normal") {
+                    heads_orders = data["y"];
+                    heads_orders.unshift(data["x"][0]); 
+                } else {
+                    tmpCols = data["x"];
+                    if (tmpCols.length < 2 ) { 
+                        data["x"] = [];
+                    } else {
+                        var tmpRow = [];
+                        var idx = cinfo["heads_orders"].indexOf(tmpCols[1]);
+                        var tr = $(panelObj).find(".chart .chart-table .table tr.row");
+                        $(tr).each (function(j, row) {
+                            var val = $(row).find("td").eq(idx).attr("data-org");
+                            if (!tmpRow.includes(val)) {
+                                tmpRow.push(val);
+                            }
+                        });
+
+                        tmpRow.sort((a, b) => a.localeCompare(b));
+                        tmpRow.unshift(tmpCols[0]); 
+                        data["x"] = tmpRow;
+                        var n1 = cinfo["heads"][tmpCols[0]]["alias"] ? cinfo["heads"][tmpCols[0]]["alias"] : cinfo["heads"][tmpCols[0]]["name"];
+                        var n2 = cinfo["heads"][tmpCols[1]]["alias"] ? cinfo["heads"][tmpCols[1]]["alias"] : cinfo["heads"][tmpCols[1]]["name"] ;
+
+                        pivotCol = tmpCols[1];
+                    }
+
+                    if ( !data["x"] || data["x"].length < 2  || !data["y"] || data["y"].length < 1 ) {
+                        modal(_m[_l]["dynamicchartempty"], false);
+                        return;
+                    }
+                }
             
             } else {
 
@@ -447,7 +481,9 @@ var playFnc = {
                             tmpRow.sort((a, b) => a.localeCompare(b));
                             tmpRow.unshift(tmpCols[0]); 
                             data["x"] = tmpRow;
-                            data["x_prt"] = tmpCols[0] + " for " + tmpCols[1];
+                            var n1 = cinfo["heads"][tmpCols[0]]["alias"] ? cinfo["heads"][tmpCols[0]]["alias"] : cinfo["heads"][tmpCols[0]]["name"];
+                            var n2 = cinfo["heads"][tmpCols[1]]["alias"] ? cinfo["heads"][tmpCols[1]]["alias"] : cinfo["heads"][tmpCols[1]]["name"] ;
+                            data["x_prt"] = n1 + " for " + n2;
                             pivotCol = tmpCols[1];
 
                             var tmp = $(customObj).find(".fnc-selects[data-name=y] .att-selected-item").attr("data-value");

@@ -1,3 +1,6 @@
+### [1.0.46] 2025.04.08
+- [added] added predefined pivot dynamic chart
+
 ### [1.0.45] 2025.04.07
 - [added] added pivot dynamic chart.
 
