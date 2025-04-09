@@ -523,7 +523,7 @@ var playFnc = {
 
                     var idx = cinfo["heads_orders"].indexOf(name)
                     var tmpRow = [];
-                    var tr = $(panelObj).find(".chart .chart-table .table tr.row");
+                    var tr = $(panelObj).find(".chart .chart-table .table tr.row:visible");
                     $(tr).each (function(j, row) {
                         var val = $(row).find("td").eq(idx).attr("data-org");
                         tmpRow.push(val);
@@ -539,7 +539,7 @@ var playFnc = {
                 //heads_orders = ["ymd", "ssp1", "ssp2" ];
                 heads_orders = [];
 
-                var tr = $(panelObj).find(".chart .chart-table .table tr.row");
+                var tr = $(panelObj).find(".chart .chart-table .table tr.row:visible");
                 var xIdx = cinfo["heads_orders"].indexOf(data['x'][0]);
                 var colIdx = cinfo["heads_orders"].indexOf(pivotCol);
 

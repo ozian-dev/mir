@@ -1,3 +1,6 @@
+### [1.0.47] 2025.04.09
+- [changed] changed to reflect only visible row values in the dynamic chart.
+
 ### [1.0.46] 2025.04.08
 - [added] added predefined pivot dynamic chart
 
