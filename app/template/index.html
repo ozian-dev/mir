@@ -213,7 +213,9 @@ $(document).ready(function() {
         }
     });
 
-    //setTimeout(function(){$(".level-2").show();alert("d")}, 1000);
+    $("#gw").on("scroll",function() {
+        $("#tooltip").hide();
+    });
 });
 
 function modal(msg, isHide = true) {

@@ -111,10 +111,6 @@ $("body")
     }  
 })
 
-.on ("wheel", "#gw", function() {
-    $("#tooltip").hide();
-})
-
 // logo function
 ////////////////////////////////////////////////////////////////////
 
@@ -187,6 +183,8 @@ $("body")
 
     renderPop1($(this), "user");
 })
+
+
 
 
 // unified button funtion

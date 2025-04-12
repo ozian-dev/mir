@@ -1,3 +1,6 @@
+### [1.0.48] 2025.04.12
+- [changed] replaced the wheel event with the scroll event to hide the tooltip.
+
 ### [1.0.47] 2025.04.09
 - [changed] changed to reflect only visible row values in the dynamic chart.
 
