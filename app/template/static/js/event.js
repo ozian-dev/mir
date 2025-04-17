@@ -460,7 +460,6 @@ $("body")
 
         $.each(row[1], function(j, item) {
 
-            //var idx = _p["p"]["i"][pid]["chart"]["t_heads_orders"].indexOf(item);
             var idx = _p["p"]["i"][pid]["chart"]["heads_orders"].indexOf(item);
             
             if ($(rowObj).find(".att-def-extra").length > 0) idx++;
@@ -481,6 +480,14 @@ $("body")
                 else $(skeyObj).html(val);
             }
         });
+
+        var tarDateObj = $(tarPObj).find(".search .custom .item .value .fnc-date-pick");
+        var srcDateObj = $(panelObj).find(".search .custom .item .value .fnc-date-pick");
+
+        if ( srcDateObj.length == 1 && tarDateObj.length == 1) {
+            $(tarDateObj).attr("data-value", $(srcDateObj).attr("data-value"));
+            $(tarDateObj).html($(srcDateObj).html());   
+        }
 
         $(tarPObj).find(".head .tools a[data-type=reload]").click();
     });

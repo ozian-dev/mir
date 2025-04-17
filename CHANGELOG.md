@@ -1,3 +1,6 @@
+### [1.0.50] 2025.04.17
+- [changed] changed to sync date fields between source and target on panel link click. 
+
 ### [1.0.49] 2025.04.17
 - [changed] changed the default value for the dynamic chart.
 - [changed] changed background color of odd and even table rows.
