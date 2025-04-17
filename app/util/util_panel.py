@@ -637,14 +637,15 @@ def gen_json (post, data:object) :
         tmp_obj["name"] = key
         tmp_obj["alias"] = key
         tmp_obj["type"] = type
-        
         res["chart"]["heads"].append(tmp_obj)
+
     res["chart"]["note"] = []
     res["chart"]["defaults"] = {}
     res["chart"]["conditions"] = {}
     res["chart"]["operate"] = []
     res["chart"]["execute"] = []
     res["chart"]["insert"] = []
+    res["chart"]["dchart"] = []
     res["chart"]["chart"] = []
     res["chart"]["search"] = {}
 

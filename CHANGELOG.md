@@ -1,3 +1,7 @@
+### [1.0.49] 2025.04.17
+- [changed] changed the default value for the dynamic chart.
+- [changed] changed background color of odd and even table rows.
+
 ### [1.0.48] 2025.04.12
 - [changed] replaced the wheel event with the scroll event to hide the tooltip.
 
