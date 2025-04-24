@@ -40,7 +40,12 @@ def response_excel(data):
     for char in invalid_chars: excel_title = excel_title.replace(char, '_')
     worksheet.title = excel_title
 
-    heads = util_library.get_vals_array(data["chart"]["heads"], "name")
+    heads = []
+    for head in data["chart"]["heads"]:
+        head_name = head['name']
+        if 'alias' in head : head_name = head['alias']
+        heads.append(head_name)
+
     worksheet.append(heads)
 
     for row in data["chart"]["values"] :

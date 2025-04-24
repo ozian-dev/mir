@@ -50,6 +50,7 @@ async def login( request: Request,
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.n", value=quote(login_res['grp_name']), domain=host_name, httponly=False)
     response.set_cookie(key=f"{const.APP_NAME}.{request_info['grp']}.e", value=quote(enc_info_str), domain=host_name, httponly=True)
     
+    # last login group
     response.set_cookie(key=f"{const.APP_NAME}.l.g", value=request_info["grp"], domain=host_name, httponly=False)
 
     log_obj = { "@id":login_res['id'], "@level":login_res['level'], "@grp":request_info['grp'], "@ip":ip, "login":"login_ok" }

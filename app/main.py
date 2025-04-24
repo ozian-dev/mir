@@ -17,7 +17,7 @@ import io
 import json
 import traceback
 
-from fastapi import FastAPI, Request, Depends, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, Response, Depends, WebSocket, WebSocketDisconnect
 from fastapi.responses import RedirectResponse
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -46,7 +46,10 @@ async def add_process_prework(request: Request, call_next):
 
     path = request.url.path
     query_params = dict(request.query_params)
-    group = query_params.get('.g', 1)
+
+    last_visit_group = request.cookies.get(f"{const.APP_NAME}.v.g")
+    if last_visit_group == None : last_visit_group = 1
+    group = query_params.get('.g', last_visit_group)
 
     is_allow = False
     for allow in const.ENV["path_allows"]:
@@ -75,11 +78,14 @@ async def add_process_prework(request: Request, call_next):
     process_time = time.time() - start_time
     response.headers["X-server-duration"] = str(process_time)
 
+    # last visited group
+    response.set_cookie(key=f"{const.APP_NAME}.v.g", value=group, domain=request.base_url.hostname, httponly=False)
+
     return response
 
 @app.get("/")
 @app.get("/index.html")
-async def root(request: Request):
+async def root(request: Request, response: Response):
     device = "m" if util_library.is_mobile(request) else "p"
     css_obj = util_library.get_css(request, device)
     js_obj = util_library.get_js(request)
@@ -87,7 +93,7 @@ async def root(request: Request):
 
     const.CONF["locale"]["lang_js"] = \
         util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/lang/{const.CONF['locale']['lang']}.js")
-    
+
     return template.TemplateResponse("index.html",{"app":const.CONF["app"], "locale":const.CONF["locale"], "cookie":const.APP_NAME, "request":request, "device":device, "css":css_obj, "js_obj":js_obj})
 
 @app.get("/favicon.ico", include_in_schema=False)
