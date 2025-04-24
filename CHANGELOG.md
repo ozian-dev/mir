@@ -1,3 +1,7 @@
+### [1.0.52] 2025.04.24
+- [added] added date items.
+- [fixed] fixed decimal error from BigQuery select cache.
+
 ### [1.0.51] 2025.04.24
 - [changed] changed to redirect to the last visited group if no group parameter. 
 - [changed] changed column headers with aliases when exporting to Excel.

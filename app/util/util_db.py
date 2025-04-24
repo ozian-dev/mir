@@ -101,7 +101,10 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
     result_list = []
 
     for row in result:
-        row_dict = dict(row.items())
+        row_dict = {
+            key: float(value) if isinstance(value, decimal) else value
+            for key, value in row.items()
+        }
         result_list.append(row_dict)
 
     return result_list

@@ -136,8 +136,20 @@ def parse_date_period ( date_str ) :
             start_date = (util_library.get_time() - timedelta(days=2)).strftime("%Y-%m-%d")
             end_date = (util_library.get_time() - timedelta(days=2)).strftime("%Y-%m-%d")
 
+        elif date_str == "3_days_ago":
+            start_date = (util_library.get_time() - timedelta(days=3)).strftime("%Y-%m-%d")
+            end_date = (util_library.get_time() - timedelta(days=3)).strftime("%Y-%m-%d")
+
+        elif date_str == "4_days_ago":
+            start_date = (util_library.get_time() - timedelta(days=4)).strftime("%Y-%m-%d")
+            end_date = (util_library.get_time() - timedelta(days=4)).strftime("%Y-%m-%d")
+
         elif date_str == "Last_7_days":
             start_date = (util_library.get_time() - timedelta(days=7)).strftime("%Y-%m-%d")
+            end_date = yesterday
+
+        elif date_str == "Last_14_days":
+            start_date = (util_library.get_time() - timedelta(days=14)).strftime("%Y-%m-%d")
             end_date = yesterday
 
         elif date_str == "Last_30_days":
