@@ -1,3 +1,6 @@
+### [1.0.53] 2025.04.29
+- [fixed] fixed the 'last visited group' cookie name.
+
 ### [1.0.52] 2025.04.24
 - [added] added date items.
 - [fixed] fixed decimal error from BigQuery select cache.

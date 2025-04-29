@@ -47,7 +47,7 @@ async def add_process_prework(request: Request, call_next):
     path = request.url.path
     query_params = dict(request.query_params)
 
-    last_visit_group = request.cookies.get(f"{const.APP_NAME}.v.g")
+    last_visit_group = request.cookies.get("mir.v.g")
     if last_visit_group == None : last_visit_group = 1
     group = query_params.get('.g', last_visit_group)
 
@@ -79,7 +79,7 @@ async def add_process_prework(request: Request, call_next):
     response.headers["X-server-duration"] = str(process_time)
 
     # last visited group
-    response.set_cookie(key=f"{const.APP_NAME}.v.g", value=group, domain=request.base_url.hostname, httponly=False)
+    response.set_cookie(key="mir.v.g", value=group, domain=request.base_url.hostname, httponly=False)
 
     return response
 
