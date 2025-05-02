@@ -18,8 +18,8 @@ function callAjax(url, callback, method="GET", data=null) {
                 if (res["status"] == "ok") {
                     callback(res);
                 } else {
-                    if (res["msg"].indexOf("auth error") >= 0 ) {
-                        location.href = "/login";
+                    if (res["msg"].toLowerCase().indexOf("auth error") >= 0 ) {
+                        location.href = "/login?.g=" + _p["group"];
                     } else { 
                         modal("server error<hr>" + res["msg"], false);
                     }

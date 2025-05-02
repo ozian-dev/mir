@@ -1,3 +1,6 @@
+### [1.0.54] 2025.05.02
+- [changed] changed to redirect to the login page when the cookie expires.
+
 ### [1.0.53] 2025.04.29
 - [fixed] fixed the 'last visited group' cookie name.
 
