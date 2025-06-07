@@ -127,7 +127,7 @@ async def tool (request: Request) :
     final_res = {}    
     post = await request.json()
 
-    msg = "this job is done."
+    msg = "The status of this job"
     run = "done"
     ajob_params = {"pidx": post["i"], "entity":post["entity"], "mode":post["mode"], "target":post["target"]}
     ajob_query = const.SQLS["ajob_list"]

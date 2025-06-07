@@ -105,7 +105,9 @@ $("body")
         $("#pop3 .head .console").slideUp();
         
     } else if ($(this).attr("title") == "modal-close") {
-        $(this).parent().parent().slideUp();
+        $(this).parent().parent().slideUp(function() {
+            $(this).remove();
+        });
     } else if ($(this).attr("title") == "pop-layer-close") {
         $("#pl").hide();
     }  
@@ -237,6 +239,16 @@ $("body")
     var panelObj = getPanelObj($(this));
     $(panelObj).find(".search .custom .item .value input[data-name='.o']").attr("data-value", $(this).attr("data-offset"));
     $(panelObj).find(".head .tools .att-tool-reload").click();
+    return;
+})
+
+.on ("click", ".fnc-action-aync", function() {
+
+    var actBtn = $('#pan'+$(this).attr('data-i')).find(".action a.fnc-link[data-target='"+$(this).attr('data-target')+"' ]");
+    $(actBtn).attr("data-run", "done");
+    $(actBtn).click();
+
+    $('#'+$(this).attr('data-modal')).find('.context a.fnc-close-btn').click();
     return;
 })
 

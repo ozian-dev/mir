@@ -235,11 +235,10 @@ function modal(msg, isHide = true) {
     $(obj).attr("id", modalId);
 
     $("#ml").append(obj);
-    if ( isHide ) setTimeout(function() {$("#" + modalId).slideUp();}, 2000);
-
+    if ( isHide ) setTimeout(function() {$("#" + modalId + ' .context a.fnc-close-btn').click();}, 2000)
     $(".progress").hide();
 
-    return false;
+    return modalId;
 }
 
 function popMsg(e, msg) {

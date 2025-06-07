@@ -1,3 +1,7 @@
+### [1.0.56] 2025.06.07
+- [changed] changed to async process.
+- [fixed] fixed bug causing modal boxes to stack.
+
 ### [1.0.55] 2025.06.07
 - [changed] changed Data Source JSON definition.
 

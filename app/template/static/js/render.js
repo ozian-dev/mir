@@ -1153,9 +1153,8 @@ function renderPanelAction(panelObj, obj) {
         var method = "sync";
         if ( item["async"] ) method = "async"; 
 
-        var run = "done";
-        if ( item["run"] ) run = "run"; 
-
+        var run = "run";
+        if(method == "sync") run = "done";
         var btn = getLinkObj(panelObj, "btn", "action", "execute", item["name"], "", name, 
             "att-width-180 att-margin-bottom-10", 
             { "post":1, "method":method, "run":run } 

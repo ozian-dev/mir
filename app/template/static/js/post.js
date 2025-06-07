@@ -326,9 +326,16 @@ var postFnc = {
             var url = _p["const"]["ajob"];
             callAjax(url, function(resObj) {
                 if (resObj["run"] == "done") {
-                    modal(resObj["msg"], false);
+                    var modalId = modal(resObj["msg"], false);
                     $(obj).find(".loader").addClass("loader-done").removeClass("loader");
-                    $(obj).attr("data-run", "done");
+                    var runBtn = $("<a>").addClass('fnc-action-aync att-btn att-width-180 att-margin-bottom-10')
+                        .attr('data-i', postData["i"])
+                        .attr('data-target', postData["target"])
+                        .attr('data-modal', modalId)
+                        .html('Run it?')
+                    $('#' + modalId).find('.context .msg').height(100).append("<br><br>");
+                    $('#' + modalId).find('.context .msg').append(runBtn);
+
                 } else {
                     modal(resObj["msg"]);
                 }
