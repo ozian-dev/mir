@@ -1,3 +1,6 @@
+### [1.0.55] 2025.06.07
+- [changed] changed Data Source JSON definition.
+
 ### [1.0.54] 2025.05.02
 - [changed] changed to redirect to the login page when the cookie expires.
 
@@ -11,7 +14,6 @@
 ### [1.0.51] 2025.04.24
 - [changed] changed to redirect to the last visited group if no group parameter. 
 - [changed] changed column headers with aliases when exporting to Excel.
-
 
 ### [1.0.50] 2025.04.17
 - [changed] changed to sync date fields between source and target on panel link click. 
