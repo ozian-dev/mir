@@ -100,6 +100,14 @@ $("body")
 
         $("#pop6").slideUp();
 
+        var post = { 
+            "entity": "chart",
+            "mode": "chat",
+            "target": 'del',
+        };
+        var url = _p["const"]["chat"];
+        callAjax(url, function(){}, 'POST', JSON.stringify(post));
+
     } else if ($(this).attr("title") == "console-close") {
         
         $("#pop3 .head .console").slideUp();
@@ -844,4 +852,18 @@ $("body")
     var toolsRow = $(panelObj).find(".head .tools a[data-mode=execute][data-target='"+execute+"']");
     toolsRow.click();
 })
+
+// agent prompt function
+////////////////////////////////////////////////////////////////////
+
+.on ("keyup", ".fnc-prompt", function(e) {
+    if (e.key === "Enter" || e.keyCode === 13) {
+        $(this).next().click()
+    }
+})
+
+
+
+
+
 ;

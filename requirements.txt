@@ -1,5 +1,5 @@
 annotated-types==0.7.0
-anyio==4.4.0
+anyio==4.9.0
 APScheduler==3.10.4
 bcrypt==4.2.0
 boto3==1.35.29
@@ -23,6 +23,7 @@ google-cloud-core==2.4.1
 google-cloud-firestore==2.19.0
 google-cloud-storage==2.18.2
 google-crc32c==1.5.0
+google-genai==1.20.0
 google-resumable-media==2.7.2
 googleapis-common-protos==1.63.2
 grpcio==1.65.4
@@ -30,7 +31,7 @@ grpcio-status==1.65.4
 h11==0.14.0
 httpcore==1.0.5
 httplib2==0.22.0
-httpx==0.27.0
+httpx==0.28.1
 idna==3.7
 Jinja2==3.1.4
 jmespath==1.0.1

@@ -12,6 +12,8 @@ def get_init_info ( request:Request, post:object = None, only_params:bool = Fals
 
     params =  get_predefined_params ( request, post )
     params["@ip"] = util_library.get_client_ip(request)
+    params["@lang"] = const.CONF["locale"]["lang"]
+
     if post :
         for key, val in post.items():
             if key not in ["g", "i"] : params[key] = val

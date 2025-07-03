@@ -10,7 +10,7 @@ _m["ko"] = {
     "copy": "복사되었습니다!",
     "apply": "적용되었습니다!",
     "align": "정렬되었습니다!",
-    "dbclickmsg": "<b>SQL</b> 또는 <b>info</b>를 더블 클릭하여 편집기를 활성화합니다.",
+    "dbclickmsg": "<b>SQL</b>, <b>info</b>, <b>system</b> 또는 <b>user</b>를 더블 클릭하여 편집기를 활성화합니다.",
     "queryrollback": "실행한 쿼리는 롤백됩니다.",
     "duplicated": "값이 이미 존재합니다.",
     "updated": "last updated",

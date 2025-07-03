@@ -48,7 +48,7 @@ PREDEFINED_PARAMS = {
     ".i" : { "type": "int" },
     ".v" : { "type": "int" },
     ".p" : { "type": "string" },
-    ".t" : { "type": "string", "values":["excel","csv","sample","code"] },
+    ".t" : { "type": "string", "values":["excel","csv","sample","code","agent"] },
     ".c" : { "type": "string", "values":["1"] },
     ".m" : { "type": "string", "values":["view"] }, #just for view
     ".n" : { "type": "string" }, #just for view
@@ -93,6 +93,9 @@ SQLS["auth"] = """
 SQLS["view"] = """
     select title, json_view_value from view where idx=${.v} and live='Y' and levelv >= ${@level}
     """
+SQLS["prompt"] = """
+    select json_prompt_value from prompt where idx=${idx} and live='Y' and levelv >= ${@level}
+    """
 SQLS["ajob_list"] = """
     select idx, status, started, ended 
     from ajob 
@@ -111,6 +114,9 @@ SQLS["ajob_update_fail"] = """
     """
 
 WS_USER = {}
+
+# llm: google, openai, anthropic
+CHAT_USER = {}
 
 def make_env() :
 

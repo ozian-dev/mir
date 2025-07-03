@@ -31,9 +31,19 @@ var initFnc = {
         $("#pop5 .space .json .context").html("");
     },
 
-    pop6: function() {
+    pop6: function(btnObj) {
+
         $("#pop6").hide();        
+        $("#pop6 .head .subtitle").hide();    
         $("#pop6 .space").html("");
-        $("#pop6 .head .title").html("View");
+
+        if($(btnObj).attr("data-type") == 'agent') {
+            $("#pop6 .head .title").html("Agent");
+            $("#pop6").width(1000);
+            
+        } else {
+            $("#pop6 .head .title").html("View");
+            $("#pop6").width(600);
+        }
     }
 };

@@ -10,7 +10,7 @@ _m["en"] = {
     "copy": "copied !",
     "apply": "applied !",
     "align": "formatted !",
-    "dbclickmsg": "double-click on the <b>sql statement</b> or <b>info element</b> to activate the editor.",
+    "dbclickmsg": "double-click on the <b>sql statement</b>, <b>info</b>, <b>system</b> or <b>user</b> element to activate the editor.",
     "queryrollback": "the query rolls back.",
     "duplicated": "the value already exists.",
     "updated": "last updated",

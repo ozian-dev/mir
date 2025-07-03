@@ -441,9 +441,7 @@ function renderPop2 (obj) {
 }
 
 function renderPop3 (data, mode="sql", info) {
-    
     var title = mode;
-    if ( title == "markdown" ) title = "text (Markdown format)";
     
     $('#pop3').hide();
     $('#pop3').attr("data-mode", mode);
@@ -456,7 +454,7 @@ function renderPop3 (data, mode="sql", info) {
         $("#pop3 .space").html($("<div>").attr("id", "editsql").html(sql));
         callSqlEditor("editsql", sql, info);
 
-    } else if ( mode = "markdown" ) {
+    } else if ( mode == "markdown" ||  mode == "prompt" ) {
         $("#pop3 .head a.att-icon-align").hide();
         var textarea = $("<textarea>")
                 .addClass("att-input att-input-textarea att-width-100p att-height-95p att-padding-top-bottom-10 att-border-lightgray")
@@ -531,6 +529,7 @@ function renderPop6 (btnObj, mode="view") {
 
     if (_p["device"] == "m") $("#pop6").width($("body").width());
     
+    $("#pop6").width(650);
     var space = $("#pop6 .space");
     var panelObj = getPanelObj(btnObj);
     var tdObj = $(btnObj).parent().parent();
@@ -743,6 +742,10 @@ function renderPanel(obj) {
 
     if (pinfo["chart"] && pinfo["chart"]["dchart"]) {
         btn = getLinkObj(panelObj, "tool", "chart", "table", "", "chart", "chart", "att-tool-chart");        
+        $(toolObj).append(btn);
+    }
+    if (pinfo["chart"] && pinfo["chart"]["agent"]) {
+        btn = getLinkObj(panelObj, "tool", "chart", "heads", "", "agent", "agent", "att-tool-agent", {"source": pinfo["chart"]["agent"]["source"]});        
         $(toolObj).append(btn);
     }
 

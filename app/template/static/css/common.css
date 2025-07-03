@@ -135,6 +135,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .pop {width:500px;height:calc(100% - 40px);position:fixed;top:40px;right:0;background-color:white;border-left:10px solid dodgerblue;z-index:50;}
 .pop .head {display:flex;align-items:center;padding:10px;}
 .pop .head .title {flex-grow:1;font-size:17px;font-weight:bold;color:dodgerblue;}
+.pop .head .subtitle {display:none;padding-right:10px;font-size:15px;}
 .pop .space {height:calc(100% - 80px);width:100%;padding:0 10px;overflow-x:hidden;overflow-y:auto;position:relative;}
 .pop .foot {width:calc(100% - 20px);margin:10px;margin-top:0;color:gray;border-top:1px solid lightgray;}
 
@@ -181,7 +182,6 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 #pop5 .space .json { height:75%;margin-top:10px;}
 
 #pop6 {width:650px;right:0;}
-
 #pop6 .space .view {padding-bottom:100px;}
 #pop6 .space .view .row {display:grid;grid-template-columns:130px 1fr;gap:10px;grid-auto-rows:auto;padding:7px 5px;border-top:1px dotted lightgray;}
 #pop6 .space .view .row .label {color:dodgerblue;white-space:normal;}
@@ -190,6 +190,13 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 #pop6 .space .view .row .value .image {max-width:100%;}
 #pop6 .space .view .row .value > li {list-style-type:initial;text-indent:-20px;padding-left:20px;}
 
+#pop6 .space .agent-body {height:calc(100% - 80px);margin-bottom:10px;overflow:auto;padding:5px;border:1px solid lightgrey;}
+#pop6 .space .agent-body .question {margin-bottom:10px;padding:10px;background-color:gainsboro;border-radius:10px;}
+#pop6 .space .agent-body .answer {margin-bottom:10px;padding:10px;}
+#pop6 .space .agent-prompt {display:flex;height:60px;}
+#pop6 .space .agent-prompt .input {flex:1;height:100%;padding:10px;border:1px solid lightgrey;}
+#pop6 .space .agent-prompt .send {display:flex;width:80px;height:100%;font-size:15px;align-items:center;justify-content:center;margin-left:10px;color:white;background-color:dodgerblue;cursor:pointer;}
+#pop6 .space .agent-prompt .disable {color:lightgrey !important;background-color:white !important;border:1px solid lightgrey;}
 
 .form > .info {margin-bottom:15px;position:relative;}
 .form > .body {margin-bottom:15px;position:relative;}
@@ -350,6 +357,7 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-icon-align::before {content:"❮	❯";font-size:9px;}
 .att-icon-run::before {content:"▶";font-size:10px;}
 .att-icon-close::before {content:"⨉";}
+.att-icon-edit-row::before {content:"⧈";}
 
 .att-tool {position:relative;display:inline-block;padding-left:15px;margin-left:12px;}
 .att-tool:hover {color:dodgerblue !important;}
@@ -363,6 +371,8 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .att-tool-excel::before {content:"⇩";top:1px;}
 .att-tool-new::before {content:"+";top:1px;}
 .att-tool-chart::before {content:"⨳";}
+.att-tool-agent::before {content:"𝐀";}
+
 
 .att-insert-tool {display:inline-block;padding:5px;margin-left:17px;font-size:15px;position:relative;width:160px;}
 .att-insert-tool::before {content:"☺";font-size:19px;top:5px;left:-15px;position:absolute;}
@@ -513,6 +523,11 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 
 .markdown-body ul,ol,li,h1,h2,h3 {all:revert;}
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
+.markdown-body hr {margin:15px 0;size:1px;}
+.markdown-body table {border-collapse:collapse;width:100%;margin:5px 0;}
+.markdown-body th, .markdown-body td {border:1px solid lightgrey;padding:2px 4px;white-space:nowrap; }
+.markdown-body th {text-align:center;}
+.markdown-body td {text-align:right;}
 
 .tooltip { background:rgba(245,245,245,0.95);color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid gray;z-index:40;}
 .tooltip * {font-size:12px;}

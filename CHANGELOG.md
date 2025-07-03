@@ -1,3 +1,6 @@
+### [1.1.0] 2025.07.03
+- [added] added Google Gemini integration feature
+
 ### [1.0.56] 2025.06.07
 - [changed] changed to async process.
 - [fixed] fixed bug causing modal boxes to stack.

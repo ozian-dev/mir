@@ -378,17 +378,26 @@ def import_db_mysql(i: int, sql: str):
     )
     cursor = conn.cursor()
     
-    # Execute multi query
-    result_arr = []
-    for result in cursor.execute(sql, multi=True):
-        if result.with_rows:
-            result_arr.extend(result.fetchall())
-        else:
-            res_obj = {"rowcount": result.rowcount, "statement": result.statement}
-            result_arr.append(res_obj)
 
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try :
 
+        # Execute multi query
+        result_arr = []
+        for result in cursor.execute(sql, multi=True):
+            if result.with_rows:
+                result_arr.extend(result.fetchall())
+            else:
+                res_obj = {"rowcount": result.rowcount, "statement": result.statement}
+                result_arr.append(res_obj)
+        conn.commit()
+
+    except Exception as e:
+        print(e)
+        conn.rollback()
+        raise Exception(e)
+    
+    finally :
+        cursor.close()
+        conn.close()
+    
     return result_arr

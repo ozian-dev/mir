@@ -17,12 +17,13 @@ import io
 import json
 import traceback
 
+import asyncio
+from google import genai
+
 from fastapi import FastAPI, Request, Response, Depends, WebSocket, WebSocketDisconnect
-from fastapi.responses import RedirectResponse
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 
 from app.conf import const, log
 from app.router import api, auth, rest, check, custom, user, file
@@ -114,6 +115,20 @@ async def login(request: Request):
     color = const.STYLE[const.CONF["style"]["color"]]["sub"]
     return template.TemplateResponse("login.html",{"app":const.CONF["app"], "cookie":const.APP_NAME, "request":request, "color":color})
 
+"""
+@app.get("/test.html")
+async def test_html(request: Request, response: Response):
+    return template.TemplateResponse("test.html",{"request":request})
+
+
+model = genai.GenerativeModel("gemini-2.5-flash")
+chat = model.start_chat(history=[])  # history를 유지하기 위한 ChatSession
+
+"""
+
+
+
+
 @app.exception_handler(Exception)
 async def exception_handler(request, exc):
     output = io.StringIO()
@@ -139,6 +154,7 @@ async def exception_handler(request, exc):
         "traceback": "   ".join(error_lines)
     }
     return JSONResponse(content=response, status_code=200)
+
 
 app.include_router(auth.router, prefix="/auth", dependencies=[Depends(log.get_logger)])
 app.include_router(api.router, prefix="/api")

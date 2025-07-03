@@ -278,12 +278,10 @@ var playFnc = {
 
     chartTheads: function(obj){
         playFnc["chartTheads" + "T" + $(obj).attr("data-type")](obj);
-
     },
 
     chartTheadsTinfo: function(obj){
         renderPop1(obj);
-
     },
 
     chartTheadsTreload: function(obj){
@@ -323,6 +321,244 @@ var playFnc = {
 
         location.href = url;
     },
+
+    chartTheadsTagent: function(obj){
+
+        var post = { 
+            "entity": "chart",
+            "mode": "chat",
+            "target": 'info',
+            "source": $(obj).attr("data-source"),
+            
+        };
+        var url = _p["const"]["chat"];
+        callAjax(url, function(resObj){
+            $("#pop6 .head .subtitle").html(" " + resObj['data']['source'] + " :: " + resObj['data']['name']);
+            $("#pop6 .head .subtitle").show();
+        }, 'POST', JSON.stringify(post));
+
+
+        var panelObj = getPanelObj($(obj));
+        var url = getPanelUrl(panelObj, {".t":"agent"});
+
+        initFnc["pop6"](obj);
+        var space = $("#pop6 .space");
+        var body = $("<div>").addClass("agent-body");
+        var prompt = $("<div>").addClass("agent-prompt")
+            .append($("<textarea>").addClass("input fnc-prompt").attr("name", "prompt").attr("data-name", "prompt"))
+        ;
+
+        var sendBtn = 
+                $("<a>").addClass("send fnc-link disable")
+                .attr('data-g', $(panelObj).attr('data-g'))
+                .attr('data-i', $(panelObj).attr('data-i'))
+                .attr('data-entity', $(panelObj).attr('data-entity'))
+                .attr('data-mode', 'chat')
+                .html("send")
+                ;
+        $(prompt).append(sendBtn);
+        $(space).append(body).append(prompt);
+        var answer = $("<div>").addClass("answer");
+        $(body).append(answer);
+
+        $("#pop6").toggle("slide", {direction:"right"}, 350, function(){
+            $(space).scrollTop(0);
+        });
+
+        $("#pop6").find(".progress").show();
+
+        var eventSource = new EventSource(url);
+        var aiText = '';
+        var isFirstChunk = true;
+        var typingQueue = [];
+        var typingTimer = null;
+
+        function typeNext() {
+            if (typingQueue.length === 0) {
+                typingTimer = null;
+                return;
+            }
+
+            var char = typingQueue.shift();
+            aiText += char;
+
+            var aiHtml = toHtml(aiText);
+            $(answer).html(aiHtml);
+            scrollToBottom(body);
+
+            if (typingQueue.length == 0)
+                $('#pop6 .space .agent-prompt .send').removeClass('disable');
+
+            typingTimer = setTimeout(function () {
+                typeNext();
+            }, 20);
+        }
+
+        eventSource.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+
+            if (data.type === 'token') {
+                if (isFirstChunk) {
+                    isFirstChunk = false;
+                    $("#pop6").find(".progress").hide();
+                }
+
+                if (data.content) {
+                    typingQueue.push(...data.content);
+                    if (!typingTimer) {
+                        typeNext();
+                    }
+                }
+            } else if (data.type === 'done') {
+                if (data.content) {
+                    typingQueue.push(...data.content);
+                    if (!typingTimer) {
+                        typeNext();
+                    }
+                }
+                eventSource.close();
+            }
+            else if (data.type === 'error') {
+                $(answer).html("An error has occurred. Please try again later. #1");
+                $("#pop6").find(".progress").hide();
+                eventSource.close();
+                $('#pop6 .space .agent-prompt .send').removeClass('disable');
+            }
+        };
+
+        eventSource.onerror = function(e) {
+            $(answer).html("An error has occurred. Please try again later. #1");
+            $("#pop6").find(".progress").hide();
+            eventSource.close();
+            $('#pop6 .space .agent-prompt .send').removeClass('disable');
+        };
+
+    },
+
+    chartTchat: function(obj){
+
+        var post = { 
+            "g":$(obj).attr("data-g"),
+            "i": $(obj).attr("data-i"),
+            "entity":$(obj).attr("data-entity"),
+            "mode":$(obj).attr("data-mode"),    
+            "prompt": $(obj).prev().val().trim(),
+        };
+
+        if ($(obj).hasClass('disable')) return false;
+        if (post['prompt'] == '') return false;
+         
+        $('#pop6 .space .agent-prompt .send').addClass('disable');
+        $(obj).prev().val('');
+        $("#pop6").find(".progress").show();
+
+
+        var body = $("#pop6 .space .agent-body");
+        var question = $("<div>").addClass("question").html(post['prompt'].replace("\n", "<br>"));
+        $(body).append(question);
+        
+        var answer = $("<div>").addClass("answer");
+        $(body).append(answer);
+
+        var aiText = '';
+        var isFirstChunk = true;
+        var typingQueue = [];
+        var typingTimer = null;
+
+        function typeNext() {
+            if (typingQueue.length === 0) {
+                typingTimer = null;
+                return;
+            }
+
+            var char = typingQueue.shift();
+            aiText += char;
+
+            var aiHtml = toHtml(aiText);
+            $(answer).html(aiHtml);
+            scrollToBottom(body);
+
+            if (typingQueue.length == 0)
+                $('#pop6 .space .agent-prompt .send').removeClass('disable');
+
+            typingTimer = setTimeout(function () {
+                typeNext();
+            }, 20);
+        }
+
+        var url = _p["const"]["chat"];
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        }).then(response => {
+             $("#pop6").find(".progress").hide();
+            var contentType = response.headers.get('Content-Type') || '';
+            if (contentType.includes('application/json')) {
+                return response.json().then(function (data) {
+                    var errorMessage = data.msg || 'unknown error';
+                    modal(errorMessage, false);
+                    $('#pop6 .space .agent-prompt .send').removeClass('disable');
+                });
+            }
+
+            var reader = response.body.getReader();
+            var decoder = new TextDecoder('utf-8');
+            
+            let buffer = '';
+            function processLine(line) {
+
+                if (line.startsWith("data: ")) {
+                    var jsonStr = line.slice(6).trim();
+                    var data = JSON.parse(jsonStr);
+                    
+                    try {
+
+                        if (data.type === 'token') {
+                            if (isFirstChunk) {
+                                isFirstChunk = false;
+                                $("#pop6").find(".progress").hide();
+                            }
+                        }
+                        if (data.content) {
+                            typingQueue.push(...data.content);
+                            if (!typingTimer) {
+                                typeNext();
+                            }
+                        } else if (data.type === 'done') {
+                            if (data.content) {
+                                typingQueue.push(...data.content);
+                                if (!typingTimer) {
+                                    typeNext();
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Invalid JSON:', jsonStr);
+                        $('#pop6 .space .agent-prompt .send').removeClass('disable');
+                    }
+                }
+            }
+
+            function read() {
+                reader.read().then(({ done, value }) => {
+                    if (done) return;
+                    var chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    var lines = buffer.split('\n');
+                    buffer = lines.pop();
+                    for (var line of lines) {
+                        processLine(line);
+                    }
+                    read();
+                });
+            }
+            read();
+        });
+    },
+
 
     chartTtable: function(obj){
 
@@ -583,8 +819,8 @@ var playFnc = {
             if (chartMode == "normal" && xSort == "1") {
 
                 values.sort((a, b) => {
-                    const aValue = parseFloat(a[0]);
-                    const bValue = parseFloat(b[0]);
+                    var aValue = parseFloat(a[0]);
+                    var bValue = parseFloat(b[0]);
                     if (!isNaN(aValue) && !isNaN(bValue)) return aValue - bValue;
                     return a[0].localeCompare(b[0]);
                 });
@@ -783,16 +1019,20 @@ var playFnc = {
         modal(_m[_l]["align"]);
     },  
     pop3Tcopy: function(obj){
-        var sqlStr = editorSql.getValue();
+        var copyStr;
+        try {
+            copyStr = editorSql.getValue();
+        } catch (e) {
+            copyStr = $('#pop3 .space .att-input-textarea').val();
+        }
 
-        var textarea = $("<textarea>").val(sqlStr);
+        var textarea = $("<textarea>").val(copyStr);
         $("body").append(textarea);
         $(textarea).select();
         document.execCommand('copy');
         $(textarea).remove();
 
         modal(_m[_l]["copy"]);
-
     },  
     pop3Tapply: function(obj) {
 
@@ -821,8 +1061,7 @@ var playFnc = {
                 new ace.Range(sqlEditLineNum, 0, sqlEditLineNum, lineContent.length), 
                 newLineContent);
 
-
-        } else if ( mode == "markdown" ) {
+        } else if ( mode == "markdown" || mode == "prompt" ) {
 
             var text = $("#pop3 .space .att-input-textarea").val().replace("\n", "\\n");
             var info = JSON.parse($("#pop3 .space .att-input-textarea").attr("data-info"));

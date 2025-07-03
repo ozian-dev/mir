@@ -550,11 +550,17 @@ function callJsonEditor(target) {
                 candidate = jsonObj[Object.keys(jsonObj)[0]];
             } catch (e2) {}
         }
-        if( jsonObj && "info" in jsonObj ) {
 
+        if( jsonObj && "info" in jsonObj ) {
             var info = { "pos": pos, "line": line };
             renderPop3(jsonObj["info"], "markdown", info);
             return ;
+        } else if (jsonObj && ["system", "user"].some(key => key in jsonObj)) {
+            var info = { "pos": pos, "line": line };
+            var prompt = jsonObj["system"];
+            if (!prompt) prompt = jsonObj["user"];
+            renderPop3(prompt, "prompt", info);
+            return ;  
         }
     
         if ( candidate != "" ) {
@@ -728,4 +734,6 @@ function getTableFromJson (jsonData) {
     return $(table).prop("outerHTML");
 }
 
-
+function scrollToBottom(obj) {
+    $(obj).scrollTop($(obj)[0].scrollHeight);
+}
