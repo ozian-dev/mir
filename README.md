@@ -53,7 +53,7 @@ The mir project is designed to provide an admin tool based on **MySQL** or **Mar
 ```
 
 ## Documentation
-You can find the full mir Project [documentation(en)](https://www.notion.so/mir-project-168855b386608005a708dc656e4dd646), [documentation(ko)](https://ozian.notion.site/mir-project-ko-580d071c99954078876446fae3285fe4), including the 'getting started' guide.
+You can find the full mir Project [documentation(en)](https://www.ozian.net/docs/en/mir), [documentation(ko)](https://www.ozian.net/docs/ko/mir), including the 'getting started' guide.
 
 ## License
 This project is licensed under the MIT License
