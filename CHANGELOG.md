@@ -1,3 +1,6 @@
+### [1.2.1] 2025.07.24
+- [changed] changed prompt panel to full sharing.
+
 ### [1.2.0] 2025.07.24
 - [added] added watcher for conf.json changes.
 
