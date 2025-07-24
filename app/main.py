@@ -17,14 +17,12 @@ import io
 import json
 import traceback
 
-import asyncio
-from google import genai
-
 from fastapi import FastAPI, Request, Response, Depends, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse, JSONResponse
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
+from app import watcher
 from app.conf import const, log
 from app.router import api, auth, rest, check, custom, user, file
 from app.util import util_auth, util_library, util_file
@@ -33,14 +31,21 @@ const.make_env()
 logger = log.get_logger()
 app = FastAPI()
 template = Jinja2Templates(directory=const.PATH_TEMPLATE)
+file_observer = None
 
 @app.on_event("startup") 
 def startup_event():
-    app.mount("/" + const.ALIAS_STATIC, StaticFiles(directory=const.PATH_TEMPLATE_STATIC), name=const.ALIAS_STATIC) 
+    app.mount("/" + const.ALIAS_STATIC, StaticFiles(directory=const.PATH_TEMPLATE_STATIC), name=const.ALIAS_STATIC)
+    
+    global file_observer
+    file_observer = watcher.start_file_watcher(const.FILE_CONF, const.load_conf)
     
 @app.on_event("shutdown") 
 def shutdown_event(): 
-    pass
+    global file_observer
+    if file_observer:
+        file_observer.stop()
+        file_observer.join()
 
 @app.middleware("http")
 async def add_process_prework(request: Request, call_next):
@@ -67,7 +72,6 @@ async def add_process_prework(request: Request, call_next):
             content_type = ""
             if "Content-Type" in request.headers: 
                 content_type = request.headers["Content-Type"]
-
             if path != "/":
                 raise (Exception("Auth Error"))
             else:
@@ -115,19 +119,6 @@ async def login(request: Request):
     color = const.STYLE[const.CONF["style"]["color"]]["sub"]
     return template.TemplateResponse("login.html",{"app":const.CONF["app"], "cookie":const.APP_NAME, "request":request, "color":color})
 
-"""
-@app.get("/test.html")
-async def test_html(request: Request, response: Response):
-    return template.TemplateResponse("test.html",{"request":request})
-
-
-model = genai.GenerativeModel("gemini-2.5-flash")
-chat = model.start_chat(history=[])  # history를 유지하기 위한 ChatSession
-
-"""
-
-
-
 
 @app.exception_handler(Exception)
 async def exception_handler(request, exc):
@@ -163,8 +154,6 @@ app.include_router(check.router, prefix="/check")
 app.include_router(user.router, prefix="/user")
 app.include_router(file.router, prefix="/file")
 app.include_router(custom.router, prefix="/custom")
-
-
 
 
 

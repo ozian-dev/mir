@@ -2,6 +2,30 @@
 import os
 from app.util import util_file
 
+def make_env():
+    util_file.make_directory (PATH_KEY)
+    util_file.make_directory (PATH_DATA)
+    util_file.make_directory (PATH_DATA_LOG)
+    util_file.make_directory (PATH_DATA_CACHE)
+    util_file.make_directory (PATH_DATA_ASSET)
+    util_file.make_directory (PATH_DATA_UPLOAD)
+    util_file.make_directory (PATH_DATA_TEPM)
+
+def load_conf():
+    global CONF
+    try:
+        if os.path.exists(FILE_CONF) : 
+            CONF = util_file.load_json_file(FILE_CONF)
+            if CONF["app"]["name"] == APP_NAME :
+                version_file = "./ref/version.txt"
+                real_ver = util_file.load_file(version_file).strip()
+                if "ver" not in CONF["app"] or CONF["app"]["ver"] != real_ver:
+                    CONF["app"]["ver"] = util_file.load_file(version_file).strip()
+                    util_file.write_json_file(CONF, FILE_CONF, 4)
+    except Exception as e:
+        pass
+
+
 APP_NAME = "mir"
 
 PATH_CONF = "_conf"
@@ -30,15 +54,7 @@ STYLE = {
 }
 
 CONF = {}
-try:
-    if os.path.exists(FILE_CONF) : 
-        CONF = util_file.load_json_file(FILE_CONF)
-        if CONF["app"]["name"] == APP_NAME :
-            version_file = "./ref/version.txt"
-            CONF["app"]["ver"] = util_file.load_file(version_file).strip()
-            util_file.write_json_file(CONF, FILE_CONF, 4)
-except Exception as e:
-    pass
+load_conf()
 
 ENV = {}
 ENV["path_allows"] = ["/login", "/auth", "/api", "/favicon.ico", "/static", "/ws"]
@@ -118,12 +134,3 @@ WS_USER = {}
 # llm: google, openai, anthropic
 CHAT_USER = {}
 
-def make_env() :
-
-    util_file.make_directory (PATH_KEY)
-    util_file.make_directory (PATH_DATA)
-    util_file.make_directory (PATH_DATA_LOG)
-    util_file.make_directory (PATH_DATA_CACHE)
-    util_file.make_directory (PATH_DATA_ASSET)
-    util_file.make_directory (PATH_DATA_UPLOAD)
-    util_file.make_directory (PATH_DATA_TEPM)

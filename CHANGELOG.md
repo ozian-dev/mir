@@ -1,5 +1,8 @@
+### [1.2.0] 2025.07.24
+- [added] added watcher for conf.json changes.
+
 ### [1.1.0] 2025.07.03
-- [added] added Google Gemini integration feature
+- [added] added Google Gemini integration feature.
 
 ### [1.0.56] 2025.06.07
 - [changed] changed to async process.
