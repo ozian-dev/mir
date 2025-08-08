@@ -355,7 +355,31 @@ var playFnc = {
             $(space).scrollTop(0);
         });
 
+        var runBtn = 
+                $("<a>").addClass("agent-run fnc-link")
+                .attr('data-g', $(panelObj).attr('data-g'))
+                .attr('data-i', $(panelObj).attr('data-i'))
+                .attr('data-entity', 'chart')
+                .attr('data-mode', 'agentTrun')
+                .attr('data-source', $(obj).attr("data-source"))
+                .attr('data-name', $(obj).attr("data-name"))
+                .attr('data-idx', $(obj).attr("data-idx"))
+                .html("Run Agent ▶")
+                ;
+
+        $("#pop6 .head").append(runBtn);
+
+    },
+
+    chartTagentTrun: function(obj){
+
+        var panelObj = $("#pan" + $(obj).attr("data-i"));
+        var url = getPanelUrl(panelObj, {".t":"agent", "pmtidx":$(obj).attr("data-idx")});
+        
+        $("#pop6 .head .agent-run").remove();
         $("#pop6").find(".progress").show();
+        var body = $("#pop6 .space .agent-body");
+        var answer = $("#pop6 .space .agent-body .answer");
 
         var eventSource = new EventSource(url);
         var aiText = '';
@@ -422,7 +446,6 @@ var playFnc = {
             eventSource.close();
             $('#pop6 .space .agent-prompt .send').removeClass('disable');
         };
-
     },
 
     chartTchat: function(obj){

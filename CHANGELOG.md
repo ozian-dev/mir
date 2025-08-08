@@ -1,3 +1,6 @@
+### [1.3.1] 2025.08.08
+- [changed] changed Agent Execution
+
 ### [1.3.0] 2025.08.08
 - [added] added job scheduling function.
 - [changed] changed the logging logic.
