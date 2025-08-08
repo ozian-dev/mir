@@ -1,11 +1,9 @@
+import re
 
 from fastapi import APIRouter, Request
 from app.util import util_db, util_param, util_response, util_panel
 from app.conf import const
 
-import re
-import logging
-logger = logging.getLogger()
 
 router = APIRouter()
 

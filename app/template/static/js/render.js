@@ -745,14 +745,21 @@ function renderPanel(obj) {
         $(toolObj).append(btn);
     }
     if (pinfo["chart"] && pinfo["chart"]["agent"]) {
-        btn = getLinkObj(panelObj, "tool", "chart", "heads", "", "agent", "agent", "att-tool-agent", {"source": pinfo["chart"]["agent"]["source"]});        
-        $(toolObj).append(btn);
+        
+        $.each(pinfo["chart"]["agent"], function(i, item) {
+            var btnName = item['name'];
+            btn = getLinkObj(panelObj, "tool", "chart", "heads", "", "agent", btnName, "att-tool-agent", 
+                {"idx": item["idx"],
+                "source": item["source"],
+                "name": item["name"],
+                });        
+            $(toolObj).append(btn);
+        });
     }
 
     if (pinfo["chart"] && pinfo["chart"]["operate"]) {
 
         $.each(pinfo["chart"]["operate_orders"], function(i, name) {
-
             var item = pinfo["chart"]["operate"][name];
             
             var alias = item["name"];
@@ -776,11 +783,12 @@ function renderPanel(obj) {
             btn = getLinkObj(panelObj, "tool", "chart", "execute", item["name"], item["type"], alias, "att-tool-custom att-disable");
             if (item["button_label"]) $(btn).attr("data-button-label", item["button_label"]);
             if (item["force"]) $(btn).attr("data-force", "1");
-            if(item["display"] === "hide") btn.addClass("att-hidden");
+            if (item["display"] === "hide") btn.addClass("att-hidden");
 
             $(toolObj).append(btn);
         });
     }
+    
     if (pinfo["chart"] && pinfo["chart"]["insert"]) {
 
         $.each(pinfo["chart"]["insert_orders"], function(i, name) {

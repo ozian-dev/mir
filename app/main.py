@@ -1,37 +1,32 @@
-''' 
-# start
-
-python init.py
-
-venv
-
-python -m uvicorn app.main:app --reload --log-config ./ini/log.ini --port 7000 --reload-dir ../
-
-
-실제 서버 명령어 :
-/usr/local/bin/uvicorn app.main:app --reload --workers 5 --log-config ./ini/log.ini --port 9000 > /dev/null 2>&1 &
-'''
 import time
 import os
 import io
 import json
 import traceback
+import asyncio
+import logging
 
 from fastapi import FastAPI, Request, Response, Depends, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app import watcher
 from app.conf import const, log
 from app.router import api, auth, rest, check, custom, user, file
 from app.util import util_auth, util_library, util_file
+from app.job import run
 
 const.make_env()
-logger = log.get_logger()
 app = FastAPI()
 template = Jinja2Templates(directory=const.PATH_TEMPLATE)
 file_observer = None
+
+const.SCHEDULER = AsyncIOScheduler()
+const.SCHEDULER.add_job(run.every_hour, 'cron', minute=0)
+const.SCHEDULER.add_job(run.every_minute, 'cron', minute='*')
+logging.getLogger("apscheduler").setLevel(logging.WARNING)
 
 @app.on_event("startup") 
 def startup_event():
@@ -39,6 +34,10 @@ def startup_event():
     
     global file_observer
     file_observer = watcher.start_file_watcher(const.FILE_CONF, const.load_conf)
+
+    const.ASYNC_LOOP =  asyncio.get_running_loop()
+    const.SCHEDULER.start()
+    run.every_hour()
     
 @app.on_event("shutdown") 
 def shutdown_event(): 
@@ -68,7 +67,7 @@ async def add_process_prework(request: Request, call_next):
         if (is_login) :
             pass
         else :
-            logger.error("login check error\t" + str(request.cookies))
+            log.log_error('audit', "login check error\t" + str(request.cookies))
             content_type = ""
             if "Content-Type" in request.headers: 
                 content_type = request.headers["Content-Type"]
@@ -147,7 +146,7 @@ async def exception_handler(request, exc):
     return JSONResponse(content=response, status_code=200)
 
 
-app.include_router(auth.router, prefix="/auth", dependencies=[Depends(log.get_logger)])
+app.include_router(auth.router, prefix="/auth")
 app.include_router(api.router, prefix="/api")
 app.include_router(rest.router, prefix="/rest")
 app.include_router(check.router, prefix="/check")

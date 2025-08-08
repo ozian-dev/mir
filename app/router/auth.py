@@ -8,10 +8,10 @@ from app.util import util_auth, util_cipher, util_library
 
 router = APIRouter()
 
+
 @router.post("/login")
 async def login( request: Request,
-                 response: Response,
-                 logger = Depends(log.get_logger)
+                 response: Response
                 ) :
     
     ip = util_library.get_client_ip(request)
@@ -35,7 +35,7 @@ async def login( request: Request,
     if login_res is False :
         
         log_obj = { "@id":request_info['id'], "@level":"", "@grp":request_info['grp'], "@ip":ip, "login":"login_fail" }
-        util_library.log(logger, log_obj)
+        log.log_error('audit', log_obj)
         
         html = "<script>alert('incorrect id or password, please check again');history.go(-1)</script>"
         return Response(content=html)
@@ -54,7 +54,7 @@ async def login( request: Request,
     response.set_cookie(key=f"{const.APP_NAME}.l.g", value=request_info["grp"], domain=host_name, httponly=False)
 
     log_obj = { "@id":login_res['id'], "@level":login_res['level'], "@grp":request_info['grp'], "@ip":ip, "login":"login_ok" }
-    util_library.log(logger, log_obj)
+    log.log_info('audit', log_obj)
 
     return response 
 

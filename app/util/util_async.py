@@ -1,12 +1,8 @@
-
 import asyncio
-import logging
 import json
 
-from app.conf import const
-from app.util import util_db, util_library
-
-logger = logging.getLogger()
+from app.conf import const, log
+from app.util import util_db
 
 async def execute(info, params, callback):
     try:
@@ -66,7 +62,7 @@ async def callback(info, params: object=None, res_arr: object=None) :
     log_obj["params"] = params
     log_obj["res"] = res_arr
 
-    util_library.log(logger, params[0], log_obj)
+    log.log_info('root', params[0], log_obj)
 
     """
     # Socket communication is currently blocking

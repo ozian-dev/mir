@@ -4,9 +4,6 @@ from fastapi import APIRouter, Request
 from app.util import util_db, util_param, util_auth
 from app.conf import const
 
-import logging
-logger = logging.getLogger()
-
 router = APIRouter()
 
 @router.get("/check")

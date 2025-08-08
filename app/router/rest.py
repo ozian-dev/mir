@@ -1,10 +1,7 @@
 import json
 from fastapi import APIRouter, Request
-from app.util import util_db, util_response, util_panel, util_param, util_agency
+from app.util import util_db, util_response, util_panel, util_param, util_agent
 from app.conf import const
-
-import logging
-logger = logging.getLogger()
 
 router = APIRouter()
 
@@ -57,10 +54,9 @@ async def panel (request: Request) :
 
     panel, panel_json, params = util_param.get_init_info(request)
     if panel == None : return util_response.error("no panel")
-
     res = util_panel.get_panel (panel, panel_json, params)
     if ".t" in params and params[".t"] == "agent" :
-        stream = util_agency.startAgent(res, params)
+        stream = util_agent.startAgent(res, params)
         return stream
     else:
         return res
@@ -96,7 +92,7 @@ async def chat (request: Request) :
             return {'status':'ok', 'msg':'ok'}
         
         elif params['target'] == 'info':
-            prompt_json = util_agency.getAgentInfo(params["source"], params['@level'])
+            prompt_json = util_agent.getAgentInfo(params["source"], params['@level'])
             final_res = {}
             final_res['status'] = 'ok'
             final_res['data'] = {}
@@ -111,10 +107,8 @@ async def chat (request: Request) :
         res_db = util_db.select_db(const.CONF["start_db"]["idx"], const.SQLS["panel"], params)
         if len(res_db) == 0 : return None
 
-        panelObj = json.loads(res_db['data'][0]['json_panel_value'])
-        info = panelObj['chart']['agent']
-
-        stream = util_agency.chatAgent(info, params)
+        info = {'source':int(params['pmtidx'])}
+        stream = util_agent.chatAgent(info, params)
         return stream
 
 @router.post("/execute")
@@ -126,7 +120,7 @@ async def execute (request: Request) :
     if panel == None : return util_response.error("no panel")
     if "@data" not in post or "new" not in post["@data"] : return util_response.error("invalid params")
 
-    return await util_panel.execute_panel (panel_json, params, logger)
+    return await util_panel.execute_panel (panel_json, params)
 
 @router.get("/search")
 async def panel (request: Request) :

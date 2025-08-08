@@ -1,11 +1,12 @@
 import re
-import json
 import pytz
-
+import smtplib
 
 from fastapi import Request
 from datetime import datetime
 from fastapi import Request
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from app.conf import const
 from app.util import util_file
@@ -235,20 +236,6 @@ def get_client_ip (request: Request) :
     
     return client_ip
 
-###############################
-# logger functions
-###############################
-def log (logger, params, extra:object = None) :
-    
-    log_str = params["@ip"] + "\t" \
-            + params["@id"] + "\t" \
-            + params["@level"] + "\t" \
-            + json.dumps(params)
-            
-    if extra is not None : log_str += "\t" + json.dumps(extra)
-    
-    logger.audit(log_str)
-
 
 ###############################
 # time functions
@@ -270,4 +257,69 @@ def get_timezone_offset(timezone_str):
     offset = local_time.strftime('%z')
     
     return f"{offset[:3]}:{offset[3:]}"
+    
+"""
+cron_expr: string in the format 'minute hour day month weekday'
+now: a datetime object
+"""
+def match_cron_time(cron_expr):
+    now = datetime.now()
+    def match(value, field):
+        if field == '*':
+            return True
+        for part in field.split(','):
+            if '/' in part:
+                base, step = part.split('/')
+                base = int(base) if base != '*' else 0
+                step = int(step)
+                if (value - base) % step == 0:
+                    return True
+            elif '-' in part:
+                start, end = map(int, part.split('-'))
+                if start <= value <= end:
+                    return True
+            elif int(part) == value:
+                return True
+        return False
+
+    fields = cron_expr.strip().split()
+    if len(fields) != 5:
+        raise ValueError("The Cron expression must consist of five fields: 'minute hour day month weekday'.")
+
+    minute, hour, day, month, weekday = fields
+
+    return (match(now.minute, minute) and
+            match(now.hour, hour) and
+            match(now.day, day) and
+            match(now.month, month) and
+            match(now.weekday(), weekday))  # monday: 0 ~ sunday: 6
+
+
+###############################
+# email functions
+###############################
+
+def send_email(subject, body, from_email, to_email):
+
+    if 'smtp' not in const.CONF: 
+        raise RuntimeError("smtp config error")
+        
+    smtp_server = const.CONF['smtp']['server']
+    smtp_port = const.CONF['smtp']['port']
+    smtp_account = const.CONF['smtp']['account']
+    smtp_password = const.CONF['smtp']['password']
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html', _charset='utf-8'))
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=3) as server:
+            server.login(smtp_account, smtp_password)
+            server.send_message(msg)
+            server.quit()
+    except Exception as e:
+        raise RuntimeError("email send error")
     

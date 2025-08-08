@@ -3,8 +3,8 @@ import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from app.conf import log
+from app.job import run
 
-logger = log.get_logger()
 
 class JSONFileChangeHandler(FileSystemEventHandler):
     def __init__(self, filepath, on_change_callback):
@@ -14,7 +14,8 @@ class JSONFileChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:
             if os.path.abspath(event.src_path) == self.filepath:
-                logger.info(f"Conf file changed: {event.src_path}")
+                log.log_info('root', f"Conf file changed: {event.src_path}")
+                run.every_hour()
                 self.on_change_callback()
 
 def start_file_watcher(filepath, on_change_callback):

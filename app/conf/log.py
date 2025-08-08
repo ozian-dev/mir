@@ -1,16 +1,42 @@
 import logging
-import logging.config
+import json
 
-AUDIT_LOG_LEVEL = 50
-logging.addLevelName(AUDIT_LOG_LEVEL, "AUDIT")
+def get_logger(name: str) -> logging.Logger:
+    return logging.getLogger(name)
 
-def custom_level_func(self, message, *args, **kwargs):
-    if self.isEnabledFor(AUDIT_LOG_LEVEL):
-        self._log(AUDIT_LOG_LEVEL, message, args, **kwargs)
+###############################
+# logger functions
+###############################
+def log(log_name: str, mode: str, msg, extra: object = None):
 
-logging.Logger.audit = custom_level_func
+    logger = get_logger(log_name)
 
-logger = logging.getLogger()
+    log_str = msg
+    if isinstance(msg, dict):
+        log_str = (
+            f"[{log_name}]\t"
+            + msg.get("@ip", "-") + "\t"
+            + msg.get("@id", "-") + "\t"
+            + msg.get("@level", "-") + "\t"
+            + json.dumps(msg, ensure_ascii=False)
+        )
+    
+    if mode == 'info': logger.info(log_str)
+    elif mode == 'warning': logger.warning(log_str)
+    elif mode == 'error': logger.error(log_str)
+    elif mode == 'critical': logger.critical(log_str)
+    else: logger.debug(log_str)
 
-def get_logger() :
-    return logger
+
+def log_info(log_name: str, msg, extra: object = None):
+    log(log_name, 'info', msg, extra)
+
+def log_warn(log_name: str, msg, extra: object = None):
+    log(log_name, 'warning', msg, extra)
+
+def log_error(log_name: str, msg, extra: object = None):
+    log(log_name, 'error', msg, extra)
+
+def log_debug(log_name: str, msg, extra: object = None):
+    log(log_name, 'debug', msg, extra)
+

@@ -324,24 +324,13 @@ var playFnc = {
 
     chartTheadsTagent: function(obj){
 
-        var post = { 
-            "entity": "chart",
-            "mode": "chat",
-            "target": 'info',
-            "source": $(obj).attr("data-source"),
-            
-        };
-        var url = _p["const"]["chat"];
-        callAjax(url, function(resObj){
-            $("#pop6 .head .subtitle").html(" " + resObj['data']['source'] + " :: " + resObj['data']['name']);
-            $("#pop6 .head .subtitle").show();
-        }, 'POST', JSON.stringify(post));
-
-
         var panelObj = getPanelObj($(obj));
-        var url = getPanelUrl(panelObj, {".t":"agent"});
+        var url = getPanelUrl(panelObj, {".t":"agent", "pmtidx":$(obj).attr("data-idx")});
 
         initFnc["pop6"](obj);
+        $("#pop6 .head .subtitle").html(" " + $(obj).attr("data-source") + " :: " + $(obj).attr("data-name"));
+        $("#pop6 .head .subtitle").show();
+
         var space = $("#pop6 .space");
         var body = $("<div>").addClass("agent-body");
         var prompt = $("<div>").addClass("agent-prompt")
@@ -354,6 +343,7 @@ var playFnc = {
                 .attr('data-i', $(panelObj).attr('data-i'))
                 .attr('data-entity', $(panelObj).attr('data-entity'))
                 .attr('data-mode', 'chat')
+                .attr('data-idx', $(obj).attr("data-idx"))
                 .html("send")
                 ;
         $(prompt).append(sendBtn);
@@ -391,7 +381,7 @@ var playFnc = {
 
             typingTimer = setTimeout(function () {
                 typeNext();
-            }, 20);
+            }, 10);
         }
 
         eventSource.onmessage = function(event) {
@@ -436,12 +426,12 @@ var playFnc = {
     },
 
     chartTchat: function(obj){
-
         var post = { 
             "g":$(obj).attr("data-g"),
             "i": $(obj).attr("data-i"),
             "entity":$(obj).attr("data-entity"),
             "mode":$(obj).attr("data-mode"),    
+            "pmtidx":$(obj).attr("data-idx"),    
             "prompt": $(obj).prev().val().trim(),
         };
 
@@ -483,7 +473,7 @@ var playFnc = {
 
             typingTimer = setTimeout(function () {
                 typeNext();
-            }, 20);
+            }, 10);
         }
 
         var url = _p["const"]["chat"];

@@ -16,15 +16,14 @@ def load_conf():
     try:
         if os.path.exists(FILE_CONF) : 
             CONF = util_file.load_json_file(FILE_CONF)
-            if CONF["app"]["name"] == APP_NAME :
+            if "ver" not in CONF["app"] or  CONF["app"]["ver"] == "" :
                 version_file = "./ref/version.txt"
-                real_ver = util_file.load_file(version_file).strip()
-                if "ver" not in CONF["app"] or CONF["app"]["ver"] != real_ver:
-                    CONF["app"]["ver"] = util_file.load_file(version_file).strip()
-                    util_file.write_json_file(CONF, FILE_CONF, 4)
+                CONF["app"]["ver"] = util_file.load_file(version_file).strip()
+        else:
+            tmp_path = f"../../{FILE_CONF}"
+            CONF = util_file.load_json_file(tmp_path)
     except Exception as e:
         pass
-
 
 APP_NAME = "mir"
 
@@ -85,7 +84,7 @@ SQLS["db_type"] = """
     select name from code where code1='02' and code2 in ( select substr(type,3, 2) from source where idx = #{idx} )
     """
 SQLS["panel"] = """
-    select midx, idx, title, json_panel_value from panel where idx = #{idx} and levelu >= #{level} 
+    select grp, midx, idx, title, json_panel_value from panel where idx = #{idx} and levelu >= #{level} 
     """
 SQLS["panel_view"] = """
     select midx, idx, title, json_panel_value from panel where idx=${idx} and levelv >= ${level} and (grp=${grp} or share=1)
@@ -110,7 +109,7 @@ SQLS["view"] = """
     select title, json_view_value from view where idx=${.v} and live='Y' and levelv >= ${@level}
     """
 SQLS["prompt"] = """
-    select json_prompt_value from prompt where idx=${idx} and live='Y' and levelv >= ${@level}
+    select title, json_prompt_value from prompt where idx=${idx} and live='Y' and levelv >= ${@level}
     """
 SQLS["ajob_list"] = """
     select idx, status, started, ended 
@@ -134,3 +133,5 @@ WS_USER = {}
 # llm: google, openai, anthropic
 CHAT_USER = {}
 
+SCHEDULER = None
+ASYNC_LOOP = None

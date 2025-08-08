@@ -5,8 +5,8 @@ import math
 from collections import defaultdict
 from collections.abc import Iterable
 
-from app.conf import const
-from app.util import util_db, util_param, util_response, util_library, util_async, util_file, util_agency
+from app.conf import const, log
+from app.util import util_db, util_param, util_response, util_library, util_async, util_file
 
 def get_panel_db (params:object) :
 
@@ -38,7 +38,7 @@ def get_panel (panel:object, panel_json:object, params:object) :
     # widget & chart must be called in order because widget's .m value affects the behavior of chart.
     if "widget" in panel_json : final_res["widget"] = get_panel_widget(panel_json, params)
     if "chart" in panel_json : final_res["chart"] = get_panel_chart(panel_json, params)
-    
+
     if "action" in panel_json : 
         final_res["action"] = panel_json["action"]
         for item in final_res["action"] :
@@ -369,6 +369,24 @@ def get_panel_chart (panel_json:object, params:object) :
     if "view" in res : 
         for view_item in res["view"] : del (view_item["query"])
 
+    if "agent" in res : 
+        source_str = ','.join(map(str, res['agent']['source']))
+        prompt_query = f"select idx,title, json_prompt_value from prompt where idx in ({source_str}) and live='Y' and levelv >= '{params['@level']}'"
+        res_agent = util_db.select_db(const.CONF["start_db"]["idx"], prompt_query)
+
+        prompt_obj = []
+        for row in res_agent['data']:
+            tmp_json = json.loads(row['json_prompt_value'])
+            tmp = {}
+            tmp['idx'] = row['idx']
+            tmp['title'] = row['title']
+            tmp['source'] = tmp_json['llm']['source']
+            tmp['name'] = tmp_json['llm']['name']
+            prompt_obj.append(tmp)
+
+        res['agent'] = prompt_obj
+
+
     return res
 
 def group_sort(data, group, sort=None) :
@@ -443,7 +461,7 @@ def get_view (params:object) :
     
     return final_res
 
-async def execute_panel (panel_json:object, params:object, logger):
+async def execute_panel (panel_json:object, params:object):
 
     data_source = panel_json["datasource"]
 
@@ -522,7 +540,9 @@ async def execute_panel (panel_json:object, params:object, logger):
     if is_async == False :
         query_arr = target_obj["query"]
         res_arr = util_db.execute_db(data_source, query_arr, data, run_type, split)
-        util_library.log(logger, params)
+
+        print(params)
+        log.log_info('audit', params)
 
     else :
         res_arr = None

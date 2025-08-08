@@ -1,5 +1,3 @@
-
-import logging
 import json
 import mimetypes
 import shutil
@@ -15,7 +13,6 @@ from PIL import Image as PilImage
 from app.conf import const
 from app.util import util_library, util_panel, util_response, util_param, util_db, util_file
 
-logger = logging.getLogger()
 router = APIRouter()
 
 @router.post("/excel")
@@ -71,7 +68,7 @@ async def upload_file(request: Request):
         panel, panel_json, params = util_param.get_init_info(request, post)
         if panel == None : return util_response.error("invalid access")
 
-        return await util_panel.execute_panel (panel_json, params, logger)
+        return await util_panel.execute_panel (panel_json, params)
 
     else :
         custom = {}
@@ -172,8 +169,6 @@ async def upload_file(request: Request):
         final_res["mode"] = params["mode"]
         final_res["type"] = params["type"]
         final_res["target"] = params["target"]
-
-        #util_library.log(logger, params, data_new)
 
         return final_res
 

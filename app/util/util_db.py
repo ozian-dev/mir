@@ -1,17 +1,16 @@
 import mysql.connector
 import hashlib
-import logging
 import re
 import copy
+import json
 
 from decimal import Decimal as decimal
 from datetime import date, datetime
 from google.cloud import bigquery
+from elasticsearch import Elasticsearch
 
 from app.util import util_file, util_library
 from app.conf import const
-
-logger = logging.getLogger()
 
 def get_start_db (file = None) :
     if file is None :
@@ -52,6 +51,8 @@ def select_db (i: int, sql: str, params: object = None, ttl: int = 0, is_raw: bo
             res_db = select_db_mysql (db_info, sql, params, is_raw)
         elif db_info["type"] == "bigquery" :
             res_db = select_db_bigquery (db_info, sql, params, is_raw)
+        elif db_info["type"] == "elasticsearch" :
+            res_db = select_db_elasticsearch (db_info, sql, params, is_raw)
 
         if ttl != 0 : util_file.write_json_file(res_db, cache_file_name)
 
@@ -110,6 +111,97 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
     return result_list
 
 
+def select_db_elasticsearch (db_info: object, sql: str, params: object = None, is_raw: bool = False) :
+
+    url = f"http://{db_info['user']}:{db_info['password']}@{db_info['host']}:{db_info['port']}"
+    es = Elasticsearch(hosts=url)
+
+    sql = get_parsed_query(sql, params)
+    query_obj = json.loads(sql)
+
+    res_es = es.search(
+        index=db_info['database'],
+        body=query_obj
+    )
+
+    key_name = list(query_obj["aggs"].keys())[0]
+    bucket_name = list(query_obj["aggs"][key_name]["aggs"].keys())[0]
+    agg_name = ""
+
+    if "aggs" in query_obj["aggs"][key_name]["aggs"][bucket_name] :
+        agg_name = list(query_obj["aggs"][key_name]["aggs"][bucket_name]["aggs"].keys())[0]
+
+    res = res_es.body
+
+    result = []
+    buckets = res['aggregations'][key_name]['buckets']
+
+    for bucket in buckets:
+        bkt = f"k-{bucket['key']}"
+        intervals = bucket[bucket_name]['buckets']
+        
+        for interval in intervals:
+            x = interval['key_as_string']
+            value = interval['doc_count']
+            if agg_name != "" : value = interval[agg_name]['value']
+            
+            # Find or create a dict for this timestamp
+            entry = next((item for item in result if item['x'] == x), None)
+            if not entry:
+                entry = {'x': x}
+                result.append(entry)
+
+            # Add value for this cid to the dict
+            entry[bkt] = value
+
+    return result
+
+
+def select_db_elasticsearch (db_info: object, sql: str, param: object = None) :
+
+    url = f"http://{db_info['user']}:{db_info['password']}@{db_info['host']}:{db_info['port']}"
+    es = Elasticsearch(hosts=url)
+
+    sql = get_parsed_query(sql, params)
+    query_obj = json.loads(query)
+
+    res_es = es.search(
+        index=db_info['database'],
+        body=query_obj
+    )
+
+    key_name = list(query_obj["aggs"].keys())[0]
+    bucket_name = list(query_obj["aggs"][key_name]["aggs"].keys())[0]
+    agg_name = ""
+
+    if "aggs" in query_obj["aggs"][key_name]["aggs"][bucket_name] :
+        agg_name = list(query_obj["aggs"][key_name]["aggs"][bucket_name]["aggs"].keys())[0]
+
+    res = res_es.body
+
+    result = []
+    buckets = res['aggregations'][key_name]['buckets']
+
+    for bucket in buckets:
+        bkt = f"k-{bucket['key']}"
+        intervals = bucket[bucket_name]['buckets']
+        
+        for interval in intervals:
+            x = interval['key_as_string']
+            value = interval['doc_count']
+            if agg_name != "" : value = interval[agg_name]['value']
+            
+            # Find or create a dict for this timestamp
+            entry = next((item for item in result if item['x'] == x), None)
+            if not entry:
+                entry = {'x': x}
+                result.append(entry)
+
+            # Add value for this cid to the dict
+            entry[bkt] = value
+
+    return result
+
 ## execute functions
 
 def execute_db (i: int, sqls: object, params: object = None, commit: bool = True, split: object = None, prework: object = None) :
@@ -117,15 +209,12 @@ def execute_db (i: int, sqls: object, params: object = None, commit: bool = True
     return execute_db_mysql (db_info, sqls, params, commit, split, prework)
 
 '''
-    예약어 :
-
-    @db_id_{loop_cnt} -> sqls level 임
-    @sys_seq -> post["data"] level 임
-
+    reserved keyword :
+    @db_id_{loop_cnt} -> sqls level
+    @sys_seq -> post["data"] level
 '''
 def execute_db_mysql (db_info: object, sqls: object, params: object = None, commit: bool = True, split: object = None, prework: object = None) :
 
-    # table update 와 같은 경우, 여러 data 가 올수 있다. 즉, post 의 data 항목이 array 로 되어있다.
     if params is None : params = [{}]
 
     timezone_offset = util_library.get_timezone_offset(db_info["timezone"])

@@ -1,3 +1,8 @@
+### [1.3.0] 2025.08.08
+- [added] added job scheduling function.
+- [changed] changed the logging logic.
+- [changed] changed the loading logic for conf.json.
+
 ### [1.2.1] 2025.07.24
 - [changed] changed prompt panel to full sharing.
 
