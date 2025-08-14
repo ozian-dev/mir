@@ -26,6 +26,8 @@ def load_conf():
         pass
 
 APP_NAME = "mir"
+APP_PID = 0
+APP_PORT = 0
 
 PATH_CONF = "_conf"
 PATH_CONF_CSS = "_conf/style"

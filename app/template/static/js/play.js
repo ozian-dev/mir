@@ -325,7 +325,6 @@ var playFnc = {
     chartTheadsTagent: function(obj){
 
         var panelObj = getPanelObj($(obj));
-        var url = getPanelUrl(panelObj, {".t":"agent", "pmtidx":$(obj).attr("data-idx")});
 
         initFnc["pop6"](obj);
         $("#pop6 .head .subtitle").html(" " + $(obj).attr("data-source") + " :: " + $(obj).attr("data-name"));

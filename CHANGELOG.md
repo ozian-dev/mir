@@ -1,5 +1,10 @@
+### [1.3.2] 2025.08.14
+- [changed] changed agent template & response format.
+- [fixed] fixed a bug in agent mode.
+- [fixed] fixed duplicate scheduler execution in a multi-process environment.
+
 ### [1.3.1] 2025.08.08
-- [changed] changed Agent Execution
+- [changed] changed Agent Execution.
 
 ### [1.3.0] 2025.08.08
 - [added] added job scheduling function.

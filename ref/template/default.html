@@ -11,7 +11,7 @@
             <div style="font-size: 14px; color: #666;">Generated: {{ date | safe }}</div>
         </header>
 
-        {% for item2 in item1.res %}
+        {% for item2 in item1.response %}
         <section style="margin-bottom: 40px;">
         <h2 style="font-size: 20px; margin-bottom: 10px; border-left: 4px solid dodgerblue; padding-left: 10px;">
             {{ item2.title }}
@@ -21,7 +21,7 @@
                 <span style="font-weight: bold; color: #333;">{{ item2.source | safe }} :: {{ item2.name | safe }}</span>
             </p>
             <p style="margin: 10px 0;">
-                <span style="font-weight: bold; color: #333;">{{ item2.res | safe }}</span>
+                <span style="font-weight: bold; color: #333;">{{ item2.answer | safe }}</span>
             </p>
         </div>
         </section>

@@ -1,6 +1,11 @@
+"""
+pkill -f "uvicorn.*app.main:app.*--port.*7000"
+python -m uvicorn app.main:app --workers 3 --log-config ./ini/log.ini --port 7000
+"""
 import time
 import os
 import io
+import sys
 import json
 import traceback
 import asyncio
@@ -23,11 +28,6 @@ app = FastAPI()
 template = Jinja2Templates(directory=const.PATH_TEMPLATE)
 file_observer = None
 
-const.SCHEDULER = AsyncIOScheduler()
-const.SCHEDULER.add_job(run.every_hour, 'cron', minute=0)
-const.SCHEDULER.add_job(run.every_minute, 'cron', minute='*')
-logging.getLogger("apscheduler").setLevel(logging.WARNING)
-
 @app.on_event("startup") 
 def startup_event():
     app.mount("/" + const.ALIAS_STATIC, StaticFiles(directory=const.PATH_TEMPLATE_STATIC), name=const.ALIAS_STATIC)
@@ -35,10 +35,19 @@ def startup_event():
     global file_observer
     file_observer = watcher.start_file_watcher(const.FILE_CONF, const.load_conf)
 
+    args = sys.argv
+    const.APP_PORT = int(args[args.index("--port") + 1]) if "--port" in args else None
+    const.APP_PID = os.getpid()
+
+    const.SCHEDULER = AsyncIOScheduler()
+    const.SCHEDULER.add_job(run.every_hour, 'cron', minute=0)
+    const.SCHEDULER.add_job(run.every_minute, 'cron', minute='*')
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    
     const.ASYNC_LOOP =  asyncio.get_running_loop()
     const.SCHEDULER.start()
     run.every_hour()
-    
+
 @app.on_event("shutdown") 
 def shutdown_event(): 
     global file_observer

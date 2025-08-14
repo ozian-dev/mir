@@ -5,6 +5,7 @@ import json
 import markdown2
 import asyncio
 import subprocess
+import os
 
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
@@ -14,30 +15,7 @@ from app.util import util_panel, util_db, util_agent, util_library
 
 template = Jinja2Templates(directory=f"{const.PATH_CONF}/template")
 
-"""
-DROP TABLE IF EXISTS job;
-CREATE TABLE job (
-    idx int(11) NOT NULL AUTO_INCREMENT,
-    title varchar(50) DEFAULT NULL COMMENT 'job title',
-    schedule varchar(50) DEFAULT NULL COMMENT 'crontab schedule format',
-    mode varchar(4) NOT NULL DEFAULT '0501',
-    json_job_value text DEFAULT NULL,
-    live varchar(1) DEFAULT 'Y' COMMENT 'use Y/N',
-    updated timestamp NOT NULL DEFAULT current_timestamp(),
-    PRIMARY KEY (idx)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-;
-insert into job (title, schedule, mode, json_job_value) values
-('Daily Report', '0 * * * *', '0501', '{"panel":[{"idx":115,"prompt":[1,1]},{"idx":115,"prompt":[1,1]}],"from":"no-reply@tpmn.io","to":"hyunwoo@tpmn.io","template":"default"}')
-;
-
-INSERT INTO code(code1,code2,name) VALUES('05','01','agent');
-INSERT INTO code(code1,code2,name) VALUES('05','02','sql');
-INSERT INTO code(code1,code2,name) VALUES('05','03','script');
-"""
-
-
-def isScheduled():
+def is_scheduled():
     if 'scheduler' in const.CONF['app'] and const.CONF['app']['scheduler']:
         return True
     else:
@@ -51,12 +29,13 @@ def every_hour():
         row['json'] = json.loads(row['json_job_value'])
         del(row['json_job_value'])
     const.AGENT_JOB = res['data']
+
     log.log_info('scheduler', f"[AGENT_JOB] reloaded")
 
-def every_minute():
 
-    if isScheduled() == False:
-        return
+def every_minute():
+    if is_scheduled() == False: return
+    if is_run_process() == False: return
 
     for job in const.AGENT_JOB:
         if util_library.match_cron_time(job['schedule']):
@@ -73,6 +52,8 @@ def every_minute():
                     const.ASYNC_LOOP.call_soon_threadsafe(
                         lambda job=job: asyncio.create_task(run_job_script(job))
                     )
+
+
 
 async def run_job_agent(job):
     log.log_info('scheduler', f"[{job['title']}] started.")
@@ -104,20 +85,20 @@ async def run_job_agent(job):
 
         context = {}
         context['title'] = panel['title']
-        context['res'] = []
+        context['response'] = []
 
         for prompt_idx in panel_item['prompt']:
             
             panel['chart']['agent'] = {'source': prompt_idx}
+            params['pmtidx'] = prompt_idx
             
             res_agent = util_agent.startAgent (panel, params, 'call')
-            res_agent['res'] = markdown2.markdown(res_agent['response'])
-            del(res_agent['response'])
+            res_agent['answer'] = markdown2.markdown(res_agent['answer'])
 
-            context['res'].append(res_agent)
+            context['response'].append(res_agent)
 
         contexts['panel'].append(context)
-
+    
     body_template = template.env.get_template(f"{job['json']['template']}.html")
     body = body_template.render(**contexts)
 
@@ -126,7 +107,8 @@ async def run_job_agent(job):
 
     util_library.send_email(contexts['title'], body, from_email, to_email)
 
-    log.log_info('scheduler', f"[{job['title']}] commpleted")
+    log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] commpleted")
+
 
 async def run_job_sql(job):
     if 'datasource' not in job['json'] : return
@@ -135,10 +117,10 @@ async def run_job_sql(job):
     log.log_info('scheduler', f"[{job['title']}] started.")
     try : 
         util_db.execute_db(job['json']['datasource'], job['json']['query'])
-        log.log_info('scheduler', f"[{job['title']}] commpleted")
+        log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] commpleted")
 
     except Exception as e: 
-        log.log_error('scheduler', f"[{job['title']}] failed\n{e}")
+        log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{e}")
 
 
 async def run_job_script(job):
@@ -163,15 +145,40 @@ async def run_job_script(job):
 
         if stdout:
             if stdout.strip() != '' :
-                log.log_info('scheduler', f"[{job['title']}][STDOUT] {stdout}")
+                log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}][STDOUT] {stdout}")
 
         if stderr:
-            log.log_error('scheduler', f"[{job['title']}] failed\n{stderr}")
+            log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{stderr}")
         else:
-            log.log_info('scheduler', f"[{job['title']}] commpleted")
+            log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] commpleted")
 
     except subprocess.CalledProcessError as e:
-        log.log_error('scheduler', f"[{job['title']}] failed\n{e.stderr.strip()}")
+        log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{e.stderr.strip()}")
 
     except Exception as e:
-        log.log_error('scheduler', f"[{job['title']}] failed\n{e}")
+        log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{e}")
+
+
+def is_run_process():
+
+    port = const.APP_PORT
+    if sys.platform.startswith("win"):
+        # Windows
+        # The Windows version has not been verified to work properly.
+        cmd = f'netstat -ano | findstr ":{port}"'
+        result = subprocess.check_output(cmd, shell=True, text=True)
+        pids = set()
+        for line in result.strip().splitlines():
+            parts = line.split()
+            if len(parts) >= 5 and parts[1].endswith(f":{port}"):
+                pids.add(int(parts[-1]))
+    else:
+        # macOS/Linux
+        cmd = f"lsof -i :{port} -sTCP:LISTEN -t"
+        result = subprocess.check_output(cmd, shell=True, text=True)
+        pids = [int(pid) for pid in result.strip().splitlines()]
+
+    pids.remove(os.getppid())
+
+    if pids[-1] == const.APP_PID : return True
+    else : return False

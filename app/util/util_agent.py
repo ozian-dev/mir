@@ -20,13 +20,11 @@ def startAgent(data, params, mode: str = 'stream'):
     user_prompt = util_db.get_parsed_query(prompt_json['user'], params)
     system_prompt = util_db.get_parsed_query(prompt_json['system'], params)
 
-    """
     # just for LLM test
-    user_prompt = 'hi'
+    user_prompt = 'hi! how are you'
     system_prompt = f"What is the date today? Please answer in {const.CONF['locale']['lang']}."
     prompt_json['llm']['source'] = 'google'
     prompt_json['llm']['name'] = 'gemini-2.5-flash'
-    """
 
     llm = prompt_json['llm']['source']
     model = prompt_json['llm']['name']
@@ -81,7 +79,7 @@ def startAgent(data, params, mode: str = 'stream'):
                 'source': prompt_json['llm']['source'],
                 'name': prompt_json['llm']['name'],
                 'title': prompt_json['title'],
-                'response': answer,
+                'answer': answer,
             }
             return res_answer
 

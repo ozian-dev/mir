@@ -34,6 +34,8 @@ zetetic_sql_file = 'db/sql.zetetic.txt'
 
 util_file.make_directory('_conf')
 util_file.make_directory('_conf/keys')
+util_file.make_directory('_conf/style')
+util_file.make_directory('_conf/template')
 util_file.make_directory(log_file)
 
 conf = {}
@@ -129,6 +131,7 @@ if os.path.isfile(conf_file) is False:
     conf["app"] = {}
     conf["app"]["name"] = APP
     conf["app"]["ver"] = VER
+    conf["app"]["scheduler"] = False
     conf["locale"] = {}
     conf["locale"]["lang"] = LANG
     conf["keys"] = {}
@@ -172,6 +175,16 @@ if os.path.isfile(conf_file) is False:
     if not os.path.exists(custom_path):
         os.makedirs(custom_path)
     shutil.copy("./ref/sample_custom.py", f"{custom_path}/")
+
+    custom_path = f"../mir_scheduler"
+    if not os.path.exists(custom_path):
+        os.makedirs(custom_path)
+    shutil.copy("./ref/mir_scheduler/run_job_script.py", f"{custom_path}/")
+
+    custom_path = f"_conf/template"
+    if not os.path.exists(custom_path):
+        os.makedirs(custom_path)
+    shutil.copy("./ref/template/default.html", f"{custom_path}/")
 
 else:
 
