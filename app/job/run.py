@@ -179,6 +179,8 @@ def is_run_process():
         pids = [int(pid) for pid in result.strip().splitlines()]
 
     pids.remove(os.getppid())
+    pids.pop(0)
+    pids.sort()
 
     if pids[-1] == const.APP_PID : return True
     else : return False
