@@ -1,7 +1,9 @@
-
+import sys
 import json
 import math
-
+import importlib
+import ast
+from pathlib import Path
 from collections import defaultdict
 from collections.abc import Iterable
 
@@ -217,10 +219,12 @@ def get_panel_chart (panel_json:object, params:object) :
     if "execute" in res :
         for item in res["execute"]:
             if "query" in item : del item["query"]
+            if "postwork" in item : del item["postwork"]
 
     if "insert" in res :
         for item in res["insert"]:
             if "query" in item : del item["query"]
+            if "postwork" in item : del item["postwork"]
             if "prework" in item : del item["prework"]
             if "post" in item : del item["post"]
             if "image" in item : del item["image"]
@@ -540,8 +544,15 @@ async def execute_panel (panel_json:object, params:object):
     if is_async == False :
         query_arr = target_obj["query"]
         res_arr = util_db.execute_db(data_source, query_arr, data, run_type, split)
+        
+        if 'postwork' in target_obj:
+            is_ok = True
+            for row in res_arr:
+                if row['result'] != True:
+                    is_ok = False
+            if is_ok:
+                run_postwork(target_obj['postwork'], params, res_arr)
 
-        print(params)
         log.log_info('audit', params)
 
     else :
@@ -791,3 +802,41 @@ def is_valid_post(panel_json, params, data) :
                         if len(v_str) < code : raise Exception(f"invalid data : {name} of '{define_obj[k]['alias']}'")
 
         row_cnt += 1
+
+
+def run_postwork(fnc_list, params, results):
+    
+    fnc_path = Path(__file__).resolve().parent.parent.parent.parent / "mir_function"
+    if str(fnc_path) not in sys.path:
+        sys.path.append(str(fnc_path))
+
+    for fnc in fnc_list:
+        tree = ast.parse(fnc, mode="eval")
+        call_node = tree.body
+
+        import_file = call_node.func.value.id
+        func_name = call_node.func.attr
+
+        module_file = fnc_path / f"{import_file}.py"
+        spec = importlib.util.spec_from_file_location(import_file, module_file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        func = getattr(module, func_name)
+
+        args = []
+        for arg in call_node.args:
+            if isinstance(arg, ast.Constant):
+                args.append(arg.value)
+            elif isinstance(arg, ast.Name):
+                if arg.id == "params":
+                    args.append(params)
+                elif arg.id == "results":
+                    args.append(results)
+                else:
+                    raise ValueError(f"Unknown variable: {arg.id}")
+            else:
+                raise ValueError(f"Unsupported argument type: {ast.dump(arg)}")
+
+        func(*args)
+
+    log.log_info('audit', f"[postwork]\t{params['@id']}\t{json.dumps(fnc_list)}")

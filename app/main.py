@@ -127,6 +127,13 @@ async def login(request: Request):
     color = const.STYLE[const.CONF["style"]["color"]]["sub"]
     return template.TemplateResponse("login.html",{"app":const.CONF["app"], "cookie":const.APP_NAME, "request":request, "color":color})
 
+app.include_router(auth.router, prefix="/auth")
+app.include_router(api.router, prefix="/api")
+app.include_router(rest.router, prefix="/rest")
+app.include_router(check.router, prefix="/check")
+app.include_router(user.router, prefix="/user")
+app.include_router(file.router, prefix="/file")
+app.include_router(custom.router, prefix="/custom")
 
 @app.exception_handler(Exception)
 async def exception_handler(request, exc):
@@ -153,18 +160,6 @@ async def exception_handler(request, exc):
         "traceback": "   ".join(error_lines)
     }
     return JSONResponse(content=response, status_code=200)
-
-
-app.include_router(auth.router, prefix="/auth")
-app.include_router(api.router, prefix="/api")
-app.include_router(rest.router, prefix="/rest")
-app.include_router(check.router, prefix="/check")
-app.include_router(user.router, prefix="/user")
-app.include_router(file.router, prefix="/file")
-app.include_router(custom.router, prefix="/custom")
-
-
-
 
 
 # web socket server

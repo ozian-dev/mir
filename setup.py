@@ -186,6 +186,11 @@ if os.path.isfile(conf_file) is False:
         os.makedirs(custom_path)
     shutil.copy("./ref/template/default.html", f"{custom_path}/")
 
+    custom_path = f"../mir_function"
+    if not os.path.exists(custom_path):
+        os.makedirs(custom_path)
+    shutil.copy("./ref/mir_function/custom_util.py", f"{custom_path}/")
+
 else:
 
     conf = util_file.load_json_file(conf_file)

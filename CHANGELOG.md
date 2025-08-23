@@ -1,3 +1,6 @@
+### [1.3.3] 2025.08.23
+- [added] added the postwork(trigger) feature.
+
 ### [1.3.2] 2025.08.14
 - [changed] changed agent template & response format.
 - [fixed] fixed a bug in agent mode.

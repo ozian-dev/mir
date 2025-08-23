@@ -2,7 +2,7 @@
 
 env=$1
 port=${2:-8000}
-workers=${3:-10} # workers 값을 세 번째 인자로 받으며, 기본값은 10
+workers=${3:-10} # Accepts workers as the third argument, with a default value of 10.
 app_path="app.main:app"
 log_config="./ini/log.ini"
 

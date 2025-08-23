@@ -27,7 +27,6 @@ def log(log_name: str, mode: str, msg, extra: object = None):
     elif mode == 'critical': logger.critical(log_str)
     else: logger.debug(log_str)
 
-
 def log_info(log_name: str, msg, extra: object = None):
     log(log_name, 'info', msg, extra)
 
