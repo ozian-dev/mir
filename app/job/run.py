@@ -1,15 +1,18 @@
 import sys
 sys.path.append('../../')
 
+import re
+import os
 import json
 import markdown2
 import asyncio
 import subprocess
-import os
 
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from babel.dates import format_date
+from pathlib import Path
+
 from app.conf import const, log
 from app.util import util_panel, util_db, util_agent, util_library
 
@@ -34,8 +37,10 @@ def every_hour():
 
 
 def every_minute():
-    if is_scheduled() == False: return
+    
+    if 'scheduler' not in const.CONF['app'] or const.CONF['app']['scheduler'] == False: return
     if is_run_process() == False: return
+    if is_scheduled() == False: return
 
     for job in const.AGENT_JOB:
         if util_library.match_cron_time(job['schedule']):
@@ -56,7 +61,7 @@ def every_minute():
 
 
 async def run_job_agent(job):
-    log.log_info('scheduler', f"[{job['title']}] started.")
+    log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] started")
 
     contexts = {}
     contexts['date'] = format_date(datetime.now(), format='long', locale=const.CONF['locale']['lang'])
@@ -87,13 +92,40 @@ async def run_job_agent(job):
         context['title'] = panel['title']
         context['response'] = []
 
+        sql_param = {'idx': panel_item['idx']}
+        sql = """
+            select
+                g.idx as grp,
+                m.idx as menu,
+                concat ( g.name, ' > ', m.menu1, ' > ', m.menu2, ' > ', p.title ) as navi
+            from panel p
+            left join ( select idx, menu1, menu2 from menu ) m on m.idx = p.midx 
+            left join ( select idx, name from grp ) g on g.idx = p.grp 
+            where p.idx = #{idx}
+        """
+        res_navi = util_db.select_db(const.CONF['start_db']['idx'], sql, sql_param)
+        context['navi'] = res_navi['data'][0]['navi']
+        context['link'] = f"/?.g={res_navi['data'][0]['grp']}#/rest/workplace?.g={res_navi['data'][0]['grp']}&.i={res_navi['data'][0]['menu']}"
         for prompt_idx in panel_item['prompt']:
             
             panel['chart']['agent'] = {'source': prompt_idx}
             params['pmtidx'] = prompt_idx
-            
+
             res_agent = util_agent.startAgent (panel, params, 'call')
-            res_agent['answer'] = markdown2.markdown(res_agent['answer'])
+            
+            res_agent['answer'] = markdown2.markdown(
+                res_agent['answer'], 
+                extras=['tables', 'fenced-code-blocks', 'strike', 'target-blank-links']
+            )
+            res_agent['answer'] = re.sub(r'<th[^>]*style="text-align:[^"]*"[^>]*>', 
+                lambda m: re.sub(r'style="text-align:[^"]*"', 'style="text-align:center;padding:5px;"', m.group(0)), 
+                res_agent['answer'])
+            res_agent['answer'] = re.sub(r'<td[^>]*style="text-align:[^"]*"[^>]*>', 
+                lambda m: re.sub(r'style="text-align:[^"]*"', 'style="text-align:right;padding:5px;"', m.group(0)), 
+                res_agent['answer'])
+            res_agent['answer'] = re.sub(r"<table>", 
+                '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;">', 
+                res_agent['answer'])
 
             context['response'].append(res_agent)
 
@@ -114,7 +146,7 @@ async def run_job_sql(job):
     if 'datasource' not in job['json'] : return
     if 'query' not in job['json'] : return
 
-    log.log_info('scheduler', f"[{job['title']}] started.")
+    log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] started")
     try : 
         util_db.execute_db(job['json']['datasource'], job['json']['query'])
         log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] commpleted")
@@ -127,7 +159,7 @@ async def run_job_script(job):
     if 'script' not in job['json']:
         return
 
-    log.log_info('scheduler', f"[{job['title']}] started.")
+    log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] started")
     script_path = f"../mir_scheduler/{job['json']['script']}.py"
     
     try:
@@ -160,27 +192,15 @@ async def run_job_script(job):
 
 
 def is_run_process():
+    pids_path = Path(const.PATH_DATA_PIDS)
+    pids_info = [
+        {"pid": f.name, "ctime_ns": f.stat().st_mtime_ns}
+        for f in pids_path.glob("*")
+        if f.is_file() and not f.name.startswith(".")
+    ]
 
-    port = const.APP_PORT
-    if sys.platform.startswith("win"):
-        # Windows
-        # The Windows version has not been verified to work properly.
-        cmd = f'netstat -ano | findstr ":{port}"'
-        result = subprocess.check_output(cmd, shell=True, text=True)
-        pids = set()
-        for line in result.strip().splitlines():
-            parts = line.split()
-            if len(parts) >= 5 and parts[1].endswith(f":{port}"):
-                pids.add(int(parts[-1]))
-    else:
-        # macOS/Linux
-        cmd = f"lsof -i :{port} -sTCP:LISTEN -t"
-        result = subprocess.check_output(cmd, shell=True, text=True)
-        pids = [int(pid) for pid in result.strip().splitlines()]
-
-    pids.remove(os.getppid())
-    pids.pop(0)
-    pids.sort()
-
-    if pids[-1] == const.APP_PID : return True
+    if const.APP_PID == pids_info[0]['pid'] : 
+        log.log_info('scheduler', f"[{const.APP_PID}] run a scheduled job")
+        return True
     else : return False
+    

@@ -37,7 +37,8 @@ def startup_event():
 
     args = sys.argv
     const.APP_PORT = int(args[args.index("--port") + 1]) if "--port" in args else None
-    const.APP_PID = os.getpid()
+    const.APP_PID = str(os.getpid())
+    open(f"{const.PATH_DATA_PIDS}/{const.APP_PID}", "a").close()
 
     const.SCHEDULER = AsyncIOScheduler()
     const.SCHEDULER.add_job(run.every_hour, 'cron', minute=0)
@@ -54,6 +55,7 @@ def shutdown_event():
     if file_observer:
         file_observer.stop()
         file_observer.join()
+    os.remove(f"{const.PATH_DATA_PIDS}/{const.APP_PID}")
 
 @app.middleware("http")
 async def add_process_prework(request: Request, call_next):

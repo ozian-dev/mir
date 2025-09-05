@@ -100,13 +100,18 @@ $("body")
 
         $("#pop6").slideUp();
 
-        var post = { 
-            "entity": "chart",
-            "mode": "chat",
-            "target": 'del',
-        };
-        var url = _p["const"]["chat"];
-        callAjax(url, function(){}, 'POST', JSON.stringify(post));
+        if ($("#pop6 .head .fnc-close-btn").attr("data-idx")) {
+
+            var post = { 
+                "entity": "chart",
+                "mode": "chat",
+                "target": 'del',
+                "i": $("#pop6").attr("data-i"),
+                "idx": $("#pop6 .head .fnc-close-btn").attr("data-idx"),
+            };
+            var url = _p["const"]["chat"];
+            callAjax(url, function(){}, 'POST', JSON.stringify(post));
+        }
 
     } else if ($(this).attr("title") == "console-close") {
         

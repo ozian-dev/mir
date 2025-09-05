@@ -1,3 +1,8 @@
+### [1.3.4] 2025.09.05
+- [changed] changed the data input method in the LLM interface to a file upload.
+- [changed] changed scheduler execution process selection logic in a multi-process environment.
+- [changed] changed logger_root level (INFO->NOTSET).
+
 ### [1.3.3] 2025.08.23
 - [added] added the postwork(trigger) feature.
 

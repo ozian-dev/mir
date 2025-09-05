@@ -25,6 +25,7 @@ fi
 
 source ../bin/activate
 python -m pip install -r ./requirements.txt
+rm -f ./_data/pids/*
 
 if [ "$env" == "dev" ]; then
     python -m uvicorn $app_path --reload --reload-dir ../ --log-config $log_config --port $port

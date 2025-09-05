@@ -198,7 +198,8 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 #pop6 .space .agent-prompt .send {display:flex;width:80px;height:100%;font-size:15px;align-items:center;justify-content:center;margin-left:10px;color:white;background-color:dodgerblue;cursor:pointer;}
 #pop6 .space .agent-prompt .disable {color:lightgrey !important;background-color:white !important;border:1px solid lightgrey;}
 
-#pop6 .head .agent-run {position:absolute;left:0;top:5px;display:flex;width:140px;height:35px;font-size:17px;align-items:center;justify-content:center;margin-left:10px;color:white;background-color:dodgerblue;cursor:pointer;font-weight:bold;}
+#pop6 .head .agent-run {position:absolute;left:10px;top:10px;font-weight:bold;color:dodgerblue;}
+#pop6 .head .agent-run:hover {color:white;}
 
 .form > .info {margin-bottom:15px;position:relative;}
 .form > .body {margin-bottom:15px;position:relative;}

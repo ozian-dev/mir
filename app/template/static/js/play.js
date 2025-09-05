@@ -353,9 +353,8 @@ var playFnc = {
         $("#pop6").toggle("slide", {direction:"right"}, 350, function(){
             $(space).scrollTop(0);
         });
-
         var runBtn = 
-                $("<a>").addClass("agent-run fnc-link")
+                $("<a>").addClass("fnc-link att-btn att-width-140 agent-run")
                 .attr('data-g', $(panelObj).attr('data-g'))
                 .attr('data-i', $(panelObj).attr('data-i'))
                 .attr('data-entity', 'chart')

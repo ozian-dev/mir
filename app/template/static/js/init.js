@@ -37,12 +37,17 @@ var initFnc = {
         $("#pop6 .head .subtitle").hide();    
         $("#pop6 .space").html("");
 
+        $("#pop6").attr("data-g", $(btnObj).attr("data-g"))
+            .attr("data-i", $(btnObj).attr("data-i"))
+
         if($(btnObj).attr("data-type") == 'agent') {
             $("#pop6 .head .title").html("Agent");
             $("#pop6").width(1000);
+            $("#pop6 .head .fnc-close-btn").attr("data-idx", $(btnObj).attr("data-idx"));
             
         } else {
             $("#pop6 .head .title").html("View");
+            $("#pop6 .head .fnc-close-btn").attr("data-idx", "");
             $("#pop6").width(600);
         }
     }

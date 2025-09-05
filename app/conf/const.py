@@ -8,9 +8,11 @@ def make_env():
     util_file.make_directory (PATH_DATA_LOG)
     util_file.make_directory (PATH_DATA_CACHE)
     util_file.make_directory (PATH_DATA_ASSET)
+    util_file.make_directory (PATH_DATA_SESSION)
     util_file.make_directory (PATH_DATA_UPLOAD)
     util_file.make_directory (PATH_DATA_TEPM)
-
+    util_file.make_directory (PATH_DATA_PIDS)
+    
 def load_conf():
     global CONF
     try:
@@ -26,7 +28,7 @@ def load_conf():
         pass
 
 APP_NAME = "mir"
-APP_PID = 0
+APP_PID = ""
 APP_PORT = 0
 
 PATH_CONF = "_conf"
@@ -40,8 +42,10 @@ PATH_DATA = "_data"
 PATH_DATA_LOG = PATH_DATA + "/log"
 PATH_DATA_CACHE = PATH_DATA + "/cache"
 PATH_DATA_ASSET = PATH_DATA + "/asset"
+PATH_DATA_SESSION = PATH_DATA + "/session"
 PATH_DATA_UPLOAD = PATH_DATA + "/uploads"
 PATH_DATA_TEPM = PATH_DATA + "/temp"
+PATH_DATA_PIDS = PATH_DATA + "/pids"
 
 PATH_TEMPLATE = "app/template"
 PATH_TEMPLATE_STATIC = PATH_TEMPLATE + "/static"
@@ -131,9 +135,6 @@ SQLS["ajob_update_fail"] = """
     """
 
 WS_USER = {}
-
-# llm: google, openai, anthropic
-CHAT_USER = {}
 
 SCHEDULER = None
 ASYNC_LOOP = None

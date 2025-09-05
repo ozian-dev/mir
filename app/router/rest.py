@@ -88,7 +88,7 @@ async def chat (request: Request) :
 
     if 'target' in params:
         if params['target'] == 'del':
-            if params['@id'] in const.CHAT_USER: del (const.CHAT_USER[params['@id']])
+            util_agent.clear_session(params)
             return {'status':'ok', 'msg':'ok'}
         
         elif params['target'] == 'info':
