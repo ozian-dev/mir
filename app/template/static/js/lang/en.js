@@ -26,5 +26,6 @@ _m["en"] = {
     "upload": "file upload",
     "run": "in progress",
     "chartinfogreen": "the green legend represents the right Y-axis.",
-    "chartinfodbclick": "double-click to show only the corresponding legend chart."
+    "chartinfodbclick": "double-click to show only the corresponding legend chart.",
+    "notifymobile": "Not supported on mobile devices.",
 }

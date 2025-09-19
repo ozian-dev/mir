@@ -2,7 +2,7 @@ import asyncio
 import json
 
 from app.conf import const, log
-from app.util import util_db
+from app.util import util_db, util_push
 
 async def execute(info, params, callback):
     try:
@@ -47,35 +47,29 @@ async def call(info, params: object=None):
 async def callback(info, params: object=None, res_arr: object=None) :
 
     if params is not None and '@ajob_idx' in info :
-        ajob_params = {"idx":info["@ajob_idx"]}
-        ajob_query = const.SQLS["ajob_update"]
-        rows = util_db.execute_db(const.CONF["start_db"]["idx"], [ajob_query], [ajob_params])
+        ajob_params = {'idx':info['@ajob_idx']}
+        ajob_query = const.SQLS['ajob_update']
+        rows = util_db.execute_db(const.CONF['start_db']['idx'], [ajob_query], [ajob_params])
 
     if params is None or len(params) < 1 : params = [{}]
-
-    params[0]["@ip"] = info["@ip"]
-    params[0]["@id"] = info["@id"]
-    params[0]["@level"] = info["@level"]
+    
+    params[0]['@ip'] = info['@ip']
+    params[0]['@id'] = info['@id']
+    params[0]['@level'] = info['@level']
     
     log_obj = {}
-    log_obj["info"] = info
-    log_obj["params"] = params
-    log_obj["res"] = res_arr
-
+    log_obj['info'] = info
+    log_obj['params'] = params
+    log_obj['res'] = res_arr
     log.log_info('root', params[0], log_obj)
 
-    """
-    # Socket communication is currently blocking
-    for cid in const.WS_USER[info["@id"]] :
+    data = {
+        'ui': params[0]['@ui'],
+        'uid': params[0]['@id'],
+        'grp': params[0]['.g'],
+        'pid': params[0]['.i'],
+        'target': info['name'],
+    }
 
-        res_obj = {
-            "status": "ok",
-            "cid": cid,
-            "task_alias": info["alias"],
-            "task_name": f"action.{info["name"]}",
-            "msg": info["completed"],
-        }
-
-        if "forward" in info : res_obj["forward"] = info["forward"]
-        await const.WS_USER[info["@id"]][cid].send_text(json.dumps(res_obj))
-    """
+    if util_push.is_activated():
+        util_push.send_msg(data, info["completed"])

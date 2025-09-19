@@ -737,3 +737,14 @@ function getTableFromJson (jsonData) {
 function scrollToBottom(obj) {
     $(obj).scrollTop($(obj)[0].scrollHeight);
 }
+
+function getWeekDay(str) {
+    const date = new Date(str);
+    const dayNumber = date.getDay();  
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    if ( _l == 'ko' ) {
+        days = ["일", "월", "화", "수", "목", "금", "토"];
+    }
+    str = str + ' (' + days[dayNumber] + ')';
+    return str;
+}

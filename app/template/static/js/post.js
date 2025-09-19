@@ -493,5 +493,29 @@ var postFnc = {
         }, 'POST', JSON.stringify(postData));
     },
 
+
+
+    directTeditT: function(obj){
+        
+        var jsonData = editorJson.getValue();
+        var text = JSON.stringify(JSON.parse(jsonData), null, 4);
+     
+        var postData = {
+            "entity": $(obj).attr("data-entity"),
+            "mode": $(obj).attr("data-mode"),
+            "target": $(obj).attr("data-target"),
+            "text": text,
+        }
+
+        var url = _p["const"]["direct"];
+        callAjax(url, function(resObj){
+            modal("ok");
+            var menuId = resObj['i'];
+            $("#gm .menu .level-1 .level-2 a[data-i='" + menuId + "']").click();
+        }, 'POST', JSON.stringify(postData));
+
+
+    },
+
 };
 

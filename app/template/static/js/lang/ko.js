@@ -26,5 +26,6 @@ _m["ko"] = {
     "upload": "파일 업로드",
     "run": "진행중",
     "chartinfogreen": "녹색 범례는 오른쪽 Y축을 나타냅니다.",
-    "chartinfodbclick": "더블클릭하시면 해당 범례 차트만 표시됩니다."
+    "chartinfodbclick": "더블클릭하시면 해당 범례 차트만 표시됩니다.",
+    "notifymobile": "모바일 디바이스에서는 지원치 않습니다.",
 }

@@ -131,9 +131,8 @@ if (isSafari()) {
 <script src="/static/ext/sql.formatter.15.3.0.min.js"></script>
 <script src="/static/ext/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+
 <script>
-
-
 // utility function
 ////////////////////////////////////////////////////////////////////
 var _p = {
@@ -147,6 +146,7 @@ var _p = {
         "execute": "/rest/execute",
         "chat": "/rest/chat",
         "search": "/rest/search",
+        "direct": "/rest/direct",
         "uploadExcel": "/file/excel",
         "uploadFile": "/file/upload",
         "downloadFile": "/file/download?.g=",
@@ -178,7 +178,9 @@ var _p = {
     },
     "chartObj": {},
     "scrollObj": {},
-    "actionTask": {}
+    "actionTask": {},
+    "push": "{{ app.get('push', {}).get('enable', false) | safe }}",
+    "is_pushable": "{{ is_pushable | safe }}",
 };
 
 _p["transParamRev"] = Object.fromEntries(Object.entries(_p["transParam"]).map(([key, value]) => [value, key]));
@@ -198,7 +200,7 @@ if (queryParams[".g"]) {
     _p["group"] = $.cookie(lastVisitGroupCookieName);
 }
 
-_p["user"] = decodeURIComponent($.cookie("{{ cookie }}."+_p["group"]+".i"));
+_p["user"] = decodeURIComponent($.cookie("{{ app['name'] }}."+_p["group"]+".i"));
 var webSocketIo;
 
 $(document).ready(function() {
@@ -219,7 +221,7 @@ $(document).ready(function() {
                     $("#gh .id").addClass("fnc-user-edit").attr("href","#");
                 }
             });
-            webSocketIo = WebSocketIO();
+            setPushEnv();
         }
     });
 
@@ -453,7 +455,6 @@ function actMenu() {
     
     _p["mode"] = "click";
 }
-
 
 
 // call function
@@ -692,7 +693,21 @@ _htmls["widget-noti"] = `
 `;
 
 
+_htmls["direct-edit"] = `
+<div class="direct">
+    <div class="body" id="editjsonconf">
+        <div class="row">
+            <textarea class="att-input att-input-textarea"></textarea>
+        </div>
+    </div>
+    <div class="tail"><a class="fnc-link att-btn att-width-140" data-entity="direct" data-mode="edit" data-type="" data-target="" data-post="1" href="#">save</a></div>
+</div>
+`;
+
+
+
 {{ js_obj["init"]|safe }}
+{{ js_obj["push"]|safe }}
 {{ js_obj["event"]|safe }}
 {{ js_obj["play"]|safe }}
 {{ js_obj["post"]|safe }}
@@ -701,79 +716,6 @@ _htmls["widget-noti"] = `
 {{ js_obj["table"]|safe }}
 {{ js_obj["util"]|safe }}
 {{ js_obj["mobile"]|safe }}
-
-</script>
-
-<script>
-
-function WebSocketIO() {
-
-    var wsProtocol = (window.location.protocol === 'https:') ? 'wss' : 'ws';
-    var sUrl = wsProtocol + "://" + window.location.host + "/ws/" + encodeURIComponent(_p["user"]);
-    var ws = new WebSocket(sUrl);
-    var cid = "";
-
-    ws.onopen = function(event) {
-        console.log("ws.onopen: connected");
-    };
-
-    ws.onclose = function(event) {
-        if (event.code==1006) return;
-        setTimeout(function() {
-            window.webSocketIo = WebSocketIO();
-        }, 1000);
-    };
-
-    ws.onerror = function(event) {
-        console.log("ws.onerror: websocket error:", event);
-    };
-
-    ws.onmessage = function(ws) {
-
-        try {
-
-            msgObj = JSON.parse(event.data);
-            msgStr = msgObj["msg"];
-
-            if (  msgObj["task_name"] &&  msgObj["task_name"] != "" ) {
-                if ( _p["actionTask"][msgObj["task_name"]] ) {
-
-                    msgStr =  "**" + msgObj["task_alias"] + "** " + msgStr;
-                    if (msgObj["status"] == "ok") {
-                       modal (msgStr, false);
-
-                       if ( "forward" in msgObj ) {
-                            var panelObj = $("#pan" + msgObj["forward"]);
-                            $(panelObj).find(".head .tools .att-tool-reload").click();
-                       }
-
-                    } else if (msgObj["status"] == "error") {
-                        modal("server error<hr>" + msgStr, false);
-                    }
-                    delete (_p["actionTask"][msgObj["task_name"]]);
-                }
-            } else {
-                if (msgObj["status"] == "hello") cid = msgObj["cid"];
-            }
-        } catch (e) {};
-    };
-
-    function sendMsg(event) {
-        if (ws.readyState !== WebSocket.OPEN) {
-            return false;
-        } else {
-            ws.send("hello");
-            event.preventDefault();
-        }
-        return false;
-    }
-
-    return {
-        sendMsg: function(event) {
-            return sendMsg(event);
-        }
-    }
-}
 
 </script>
 
@@ -790,3 +732,4 @@ function handleGlobalError(message, source, lineno, colno, error) {
 }
 window.onerror = handleGlobalError;
 </script>
+

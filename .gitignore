@@ -169,3 +169,5 @@ app/template/backup
 
 .DS_Store
 z.*
+
+**/__init__.py

@@ -1,6 +1,6 @@
 
 import os
-from app.util import util_file
+from app.util import util_file, util_push
 
 def make_env():
     util_file.make_directory (PATH_KEY)
@@ -9,6 +9,7 @@ def make_env():
     util_file.make_directory (PATH_DATA_CACHE)
     util_file.make_directory (PATH_DATA_ASSET)
     util_file.make_directory (PATH_DATA_SESSION)
+    util_file.make_directory (PATH_DATA_PUSH)
     util_file.make_directory (PATH_DATA_UPLOAD)
     util_file.make_directory (PATH_DATA_TEPM)
     util_file.make_directory (PATH_DATA_PIDS)
@@ -27,6 +28,7 @@ def load_conf():
     except Exception as e:
         pass
 
+
 APP_NAME = "mir"
 APP_PID = ""
 APP_PORT = 0
@@ -43,6 +45,7 @@ PATH_DATA_LOG = PATH_DATA + "/log"
 PATH_DATA_CACHE = PATH_DATA + "/cache"
 PATH_DATA_ASSET = PATH_DATA + "/asset"
 PATH_DATA_SESSION = PATH_DATA + "/session"
+PATH_DATA_PUSH = PATH_DATA + "/push"
 PATH_DATA_UPLOAD = PATH_DATA + "/uploads"
 PATH_DATA_TEPM = PATH_DATA + "/temp"
 PATH_DATA_PIDS = PATH_DATA + "/pids"
@@ -138,3 +141,13 @@ WS_USER = {}
 
 SCHEDULER = None
 ASYNC_LOOP = None
+WEB_PUSH = False
+
+
+CUSTOM_WS = {
+    "-1": {
+        "mode": "edit",
+        "format": "json",
+        "target": "_conf/conf.json"
+    }
+}

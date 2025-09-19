@@ -96,6 +96,31 @@ def get_file_modified_time_gap (file_path: str, is_raw: bool = False) :
         else : return f"{gap} min. ago"
 
 
+def save_with_backup(new_content: str, file_path: str, max_backups: int = 10):
+    dir_name = os.path.dirname(file_path) or "."
+    base_name = os.path.basename(file_path)
+    name, ext = os.path.splitext(base_name)
+
+    if os.path.exists(file_path):
+        timestamp = datetime.now().strftime("%y%m%d.%H%M%S")
+        backup_name = f"{name}{ext}.{timestamp}"
+        backup_path = os.path.join(dir_name, backup_name)
+
+        shutil.copy2(file_path, backup_path)
+
+        backups = sorted(
+             [f for f in os.listdir(dir_name) if f.startswith(name + ext + ".")]
+        )
+        while len(backups) > max_backups:
+            oldest = backups.pop(0)
+            os.remove(os.path.join(dir_name, oldest))
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(new_content)
+
+
+
+
 def get_extension(filename):
     return filename.rsplit('.', 1)[-1].lower()
 

@@ -1,7 +1,14 @@
+### [1.4.0] 2025.09.19
+- [changed] changed from the Web Socket method to the Web Push method.
+- [added] added an option('display_day') to display the day of the week when the display value is set to 'date'.
+- [added] added edit functionality for conf.json file.
+- [fixed] fixed jQuery Permissions Policy warning blocking unload.
+- [fixed] fixed a bug where the default values were not set in the agent scheduler.
+
 ### [1.3.4] 2025.09.05
 - [changed] changed the data input method in the LLM interface to a file upload.
 - [changed] changed scheduler execution process selection logic in a multi-process environment.
-- [changed] changed logger_root level (INFO->NOTSET).
+- [changed] changed logger_root level. (INFO → NOTSET)
 
 ### [1.3.3] 2025.08.23
 - [added] added the postwork(trigger) feature.

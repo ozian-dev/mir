@@ -71,7 +71,6 @@ function renderMenu(obj) {
             .attr("data-g", item["grp"])
             .attr("data-i", item["idx"])
             .html(item["menu2"]);
-
         $(level2).append(tmpObj);
         
     });
@@ -653,13 +652,24 @@ function renderWorkplace(obj) {
 
     // all work place init
     $("#gw .panel").remove();
+    $("#gw").html("");
     _p["p"] = {"size":obj["data"].length, "i":{}};
     _p["chartObj"] = {};
     _p["scrollObj"] = {};
     widgetCharts = {};
 
-    $.each(obj["data"], function(i, item) {
+    if ( "work" in obj && obj["work"] == "direct" ) {
+        if (_p["device"] == "p" ) {
+            var mode = obj["ws"]["mode"] 
+            var fncName = "direct" + mode.charAt(0).toUpperCase() + mode.slice(1);
+            renderFnc[fncName](obj["ws"])
+        } else {
+            $("#gw").append( _m[_l]["notifymobile"]);
+        }
+        return;
+    }
 
+    $.each(obj["data"], function(i, item) {
         var panelObj = $(_htmls["panel"])
         $(panelObj).attr("id", "pan" + item["idx"]);
         $(panelObj).attr("data-seq", i);
@@ -1145,9 +1155,12 @@ function renderPanelHtml(panelObj, obj) {
     $(iframeObj).height(iframeHeight);
 
     $(iframeObj).on('load', function() {
-        var iframeDoc = $(this).contents();
-        iframeDoc.find('html').html(obj["html"]["content"]);
+        var iframeDoc = this.contentDocument || this.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(obj["html"]["content"]);
+        iframeDoc.close();
     });
+    
     $(htmlObj).html(iframeObj);
 }
 
@@ -1639,7 +1652,6 @@ var renderFnc = {
 
         var table = $("<table>");
         var cinfo = _p["p"]["i"][$(panelObj).attr("data-i")]["chart"];
-
         $.each(obj["chart"]["values"], function(i,row) {
 
             var tr = $("<tr>").addClass("row stripe");
@@ -2104,6 +2116,9 @@ var renderFnc = {
         return val;
     },
     stringTdate: function(head, info, td, row, val) {
+        if ( 'display_day' in info && info['display_day'] ) {
+            val = getWeekDay(val);
+        }
         val = renderFnc["allTlink"](head, info, td, row, val);
         return val;
     },
@@ -2365,6 +2380,12 @@ var renderFnc = {
 
         // 1st column data of values
         var xLabel = chartInfo["values"].map(row => row[0]);
+        var xInfo = chartInfo["heads"][chartInfo["heads_orders"][0]];
+        if ("display" in xInfo && xInfo["display"] == "date" && "display_day" in xInfo && xInfo["display_day"]) {
+            for (var i=0; i<xLabel.length; i++) {
+                xLabel[i] = getWeekDay(xLabel[i]);
+            }
+        }
         // 1st column removed data of head
         var dataLabel = chartInfo["heads_orders"].slice(1);
         // values of removed 1st column
@@ -2651,5 +2672,21 @@ var renderFnc = {
             });
         }
         createCustomLegend(_p["chartObj"][chartId]);        
+    },
+
+    directEdit: function(info) {
+
+        if (_p["device"] == "p" ) {
+            
+            if (info["format"] == "json") {
+                $("#gw").append(_htmls["direct-edit"]);
+                $("#editjsonconf").html(info["text"])
+                callJsonEditor("editjsonconf");
+                $("#gw .direct .tail .att-btn").attr("data-target", info["i"]);
+            }
+        
+        } else {
+            $("#gw").append( _m[_l]["notifymobile"]);
+        }
     }
 };

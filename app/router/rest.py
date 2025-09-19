@@ -1,6 +1,6 @@
 import json
 from fastapi import APIRouter, Request
-from app.util import util_db, util_response, util_panel, util_param, util_agent
+from app.util import util_db, util_file, util_response, util_panel, util_param, util_agent
 from app.conf import const
 
 router = APIRouter()
@@ -14,6 +14,16 @@ async def menu (request: Request) :
     query = const.SQLS["menu"]
     rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
 
+    if params[".g"] == 1 and params["@level"] == '0110':
+        conf = {
+            "idx": -1,
+            "grp": 1,
+            "menu1": "Commons Admin",
+            "menu2": "conf.json",
+            "share": 1
+        }
+        rows['data'].insert(-1, conf)
+
     final_res = {}
     final_res["status"] = "ok"
     final_res["data"] = rows["data"]
@@ -24,29 +34,34 @@ async def menu (request: Request) :
 async def workplace (request: Request) :
 
     params = util_param.get_init_info(request, only_params = True)
-
     param = {"grp":params[".g"], "idx":params[".i"], "level":params["@level"]}
-    query = const.SQLS["panel_list"]
-    if(params[".i"] != 1) : query += " and live='Y' ";
-    query += " order by midx, arrange ";
-    rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
 
     final_res = {}
-    final_res["data"] = []
+    if param["grp"] == 1 and param['idx'] < 0 and params["@level"] == "0110":
+        final_res["data"] = []
+        final_res["work"] = "direct"
+        final_res["ws"] = util_panel.get_custom_workspace(f"{param['idx']}")
 
-    for row in rows["data"]:
-        title = row["title"]
-        idx = row["idx"]
+    else:
+        query = const.SQLS["panel_list"]
+        if(params[".i"] != 1) : query += " and live='Y' ";
+        query += " order by midx, arrange ";
+        rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
 
-        tmp_obj = {}
-        tmp_obj["title"] = title
-        tmp_obj["grp"] = params[".g"]
-        tmp_obj["idx"] = idx
+        final_res["data"] = []
 
-        final_res["data"].append(tmp_obj)
-        
+        for row in rows["data"]:
+            title = row["title"]
+            idx = row["idx"]
+
+            tmp_obj = {}
+            tmp_obj["title"] = title
+            tmp_obj["grp"] = params[".g"]
+            tmp_obj["idx"] = idx
+
+            final_res["data"].append(tmp_obj)
+            
     final_res["status"] = "ok"
- 
     return final_res
 
 @router.get("/panel")
@@ -125,7 +140,6 @@ async def execute (request: Request) :
 @router.get("/search")
 async def panel (request: Request) :
 
-
     panel, panel_json, params = util_param.get_init_info(request)
 
     search = panel_json["chart"]["search"][params["target"]]
@@ -140,5 +154,25 @@ async def panel (request: Request) :
     final_res["status"] = "ok"
     final_res["msg"] = "success"
     final_res["data"] = res_db["data"]
+
+    return final_res
+
+
+
+@router.post("/direct")
+async def direct (request: Request) :
+    post = await request.json()
+    params = util_param.get_init_info(request, post, True)
+
+    if params['@level'] == '0110': 
+        ws = const.CUSTOM_WS[params["target"]]
+        if ws["mode"] == "edit":
+            util_file.save_with_backup(params["text"], ws["target"])
+
+
+    final_res = {}
+    final_res["status"] = "ok"
+    final_res["msg"] = "success"
+    final_res["i"] = params["target"]
 
     return final_res

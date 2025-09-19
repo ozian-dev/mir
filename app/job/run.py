@@ -14,7 +14,7 @@ from babel.dates import format_date
 from pathlib import Path
 
 from app.conf import const, log
-from app.util import util_panel, util_db, util_agent, util_library
+from app.util import util_param, util_panel, util_db, util_agent, util_library
 
 template = Jinja2Templates(directory=f"{const.PATH_CONF}/template")
 
@@ -79,6 +79,7 @@ async def run_job_agent(job):
         }
         rows = util_db.select_db(1, const.SQLS["panel"], params)
 
+
         panel = rows['data'][0]
         panel_json = json.loads(rows['data'][0]['json_panel_value'])
 
@@ -86,6 +87,7 @@ async def run_job_agent(job):
         params['.g'] = panel['grp']
         params['.i'] = panel['idx']
         params['@level'] = params['level']
+        params = util_param.get_panel_defaults(panel_json, params)
         panel = util_panel.get_panel (panel, panel_json, params)
 
         context = {}
@@ -123,9 +125,9 @@ async def run_job_agent(job):
             res_agent['answer'] = re.sub(r'<td[^>]*style="text-align:[^"]*"[^>]*>', 
                 lambda m: re.sub(r'style="text-align:[^"]*"', 'style="text-align:right;padding:5px;"', m.group(0)), 
                 res_agent['answer'])
-            res_agent['answer'] = re.sub(r"<table>", 
-                '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;">', 
-                res_agent['answer'])
+
+            res_agent['answer'] = res_agent['answer'].replace("<td>", '<td style="padding:5px;">')
+            res_agent['answer'] = res_agent['answer'].replace("<table>", '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;">')
 
             context['response'].append(res_agent)
 

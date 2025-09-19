@@ -10,8 +10,9 @@ import json
 import traceback
 import asyncio
 import logging
+import uuid
 
-from fastapi import FastAPI, Request, Response, Depends, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -20,7 +21,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app import watcher
 from app.conf import const, log
 from app.router import api, auth, rest, check, custom, user, file
-from app.util import util_auth, util_library, util_file
+from app.util import util_auth, util_library, util_file, util_push
 from app.job import run
 
 const.make_env()
@@ -48,6 +49,8 @@ def startup_event():
     const.ASYNC_LOOP =  asyncio.get_running_loop()
     const.SCHEDULER.start()
     run.every_hour()
+
+    util_push.check_ready()
 
 @app.on_event("shutdown") 
 def shutdown_event(): 
@@ -95,6 +98,10 @@ async def add_process_prework(request: Request, call_next):
 
     # last visited group
     response.set_cookie(key="mir.v.g", value=group, domain=request.base_url.hostname, httponly=False)
+    unique_id = request.cookies.get("ui")
+    if unique_id == None:
+        unique_id = str(uuid.uuid4()).replace("-", "")
+    response.set_cookie (key="ui", value=unique_id, domain=request.base_url.hostname, httponly=True, max_age=60*60*24*365)
 
     return response
 
@@ -109,7 +116,21 @@ async def root(request: Request, response: Response):
     const.CONF["locale"]["lang_js"] = \
         util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/lang/{const.CONF['locale']['lang']}.js")
 
-    return template.TemplateResponse("index.html",{"app":const.CONF["app"], "locale":const.CONF["locale"], "cookie":const.APP_NAME, "request":request, "device":device, "css":css_obj, "js_obj":js_obj})
+    is_pushable = False
+    if util_push.is_activated():
+        is_pushable = util_push.exist_subscription(request)
+
+    context = {
+        "app": const.CONF["app"],
+        "locale": const.CONF["locale"],
+        "is_pushable": is_pushable, 
+        "request": request,
+        "device": device,
+        "css": css_obj,
+        "js_obj": js_obj,
+    }
+
+    return template.TemplateResponse("index.html", context)
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
@@ -164,6 +185,30 @@ async def exception_handler(request, exc):
     return JSONResponse(content=response, status_code=200)
 
 
+@app.get("/zsw.js")
+async def zsw():
+    return FileResponse(
+        os.path.join("app","template", "static", "ext", "zsw.js"),
+        media_type="application/javascript",
+        headers={"Service-Worker-Allowed": "/"}
+    )
+
+@app.post("/subscribe")
+async def subscribe(request: Request):
+    await util_push.subscribe(request)
+    return {"status":"ok"}
+    
+@app.get("/vapid_public_key")
+def get_vapid_public_key():
+    return {"vapidPublicKey": const.CONF['app']['push']['public']}
+
+
+"""
+When removing WebSocket-related functionality, the following files need to be cleaned up.
+./app/util/util_async.py
+./app/main.py
+./app/conf/const.py
+"""
 # web socket server
 @app.websocket("/ws/{user}")
 async def websocket_endpoint(websocket: WebSocket, user: str = "anonymous"):
@@ -187,3 +232,4 @@ async def websocket_endpoint(websocket: WebSocket, user: str = "anonymous"):
 
     except WebSocketDisconnect:
         del const.WS_USER[user][client_id]
+

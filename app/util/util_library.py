@@ -211,6 +211,7 @@ def get_js (request: Request) :
 
     js_obj = {}
     js_obj["init"]   = util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/init.js")
+    js_obj["push"]   = util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/push.js")
     js_obj["event"]  = util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/event.js")
     js_obj["play"]   = util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/play.js")
     js_obj["post"]   = util_file.load_file (f"{const.PATH_TEMPLATE_STATIC}/js/post.js")

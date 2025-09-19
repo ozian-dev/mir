@@ -840,3 +840,18 @@ def run_postwork(fnc_list, params, results):
         func(*args)
 
     log.log_info('audit', f"[postwork]\t{params['@id']}\t{json.dumps(fnc_list)}")
+
+
+def get_custom_workspace(key):
+    if key not in const.CUSTOM_WS:
+        raise Exception("invalid access")
+
+    res = {}
+    custom = const.CUSTOM_WS[key]
+    if custom["mode"] == "edit":
+        res["i"] = int(key)
+        res["mode"] = custom["mode"]
+        res["format"] = custom["format"]
+        res["text"] = util_file.load_file(custom["target"])
+
+    return res

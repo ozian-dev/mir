@@ -167,7 +167,7 @@ $("body")
     if (_p["mode"] == "click") putHistory(url); 
     callAjax(url, renderWorkplace);
 
-    if (_p["device"] =="m") {
+    if (_p["device"] == "m") {
         $("#gh .fnc-side-fold").click();
     }
 

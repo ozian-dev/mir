@@ -90,6 +90,7 @@ def startAgent(data, params, mode: str = 'stream'):
                 init_session(session_history_file, system_prompt, parts, full_answer)
 
             except Exception as e:
+                print('response_stream')
                 print(e)
                 yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
         
