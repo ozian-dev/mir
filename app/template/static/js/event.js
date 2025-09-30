@@ -187,6 +187,9 @@ $("body")
         });
     }
 })
+.on ("click", ".fnc-side-fold-text", function() {
+    $(this).parent().parent().find('.item .fnc-side-fold').click();
+})
 .on ("click", ".fnc-user-edit", function() {
 
     $("#pop1").slideUp();

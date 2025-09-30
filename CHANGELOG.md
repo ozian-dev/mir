@@ -1,3 +1,7 @@
+### [1.4.1] 2025.09.30
+- [changed] changed it so that clicking the workplace title folds the menu.
+- [fixed] fixed the user ID cookie name error.
+
 ### [1.4.0] 2025.09.19
 - [changed] changed from the Web Socket method to the Web Push method.
 - [added] added an option('display_day') to display the day of the week when the display value is set to 'date'.

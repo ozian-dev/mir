@@ -153,11 +153,9 @@ async def tool (request: Request) :
 @router.post("/tool")
 async def tool (request: Request) :
     post = await request.json()
-    return await check_tool(request, post)
+    return await check_tool(post)
 
-@router.post("/tool")
-async def check_tool(request: Request, post: object): 
-
+async def check_tool(post: object): 
     res = util_db.type_db_mysql (int(post["datasource"]), post["query"])
     
     final_res = {}

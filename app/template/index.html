@@ -34,7 +34,7 @@ if (isSafari()) {
         <div class="col2">
             <div class="row1 gh" id="gh">
                 <div class="item"><a href="#" class="fold fnc-side-fold"></a></div>
-                <div class="item"><a class="title att-text-size-auto"></a></div>
+                <div class="item"><a href="#" class="title att-text-size-auto fnc-side-fold-text"></a></div>
                 <div class="item"><a class="id"></a></div>
                 <div class="item"><a href="#" class="att-icon att-icon-logout" target="_win"></a></div>
             </div>
@@ -200,7 +200,7 @@ if (queryParams[".g"]) {
     _p["group"] = $.cookie(lastVisitGroupCookieName);
 }
 
-_p["user"] = decodeURIComponent($.cookie("{{ app['name'] }}."+_p["group"]+".i"));
+_p["user"] = decodeURIComponent($.cookie("mir."+_p["group"]+".i"));
 var webSocketIo;
 
 $(document).ready(function() {
