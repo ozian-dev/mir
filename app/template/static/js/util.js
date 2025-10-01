@@ -562,12 +562,11 @@ function callJsonEditor(target) {
             renderPop3(prompt, "prompt", info);
             return ;  
         }
-    
+        
         if ( candidate != "" ) {
-
             try {
                 var count = (candidate.match(/select|from|insert|into|update|set|delete|where|call/gi)||[]).length;
-                if (count>1) {
+                if (count>0) {
                     sqlEditLineNum = pos.row;
                     sqlEditQueryOrg = candidate;
 
@@ -575,47 +574,51 @@ function callJsonEditor(target) {
                     var queryLists = findObjWithKey(fullObj, "query");
                     var seed = candidate.toLowerCase().replaceAll(" ", "").trim();
                     var datasource = fullObj["datasource"];
-
+                    
+                    var isValid = false;
                     for (var i=0 ; i<queryLists.length ; i++ ) {
-
+                        if (isValid) break;
+                        
                         item = queryLists[i];
                         if (typeof item["query"] === "string") {
-
                             if ( item["query"].toLowerCase().replaceAll(" ", "").trim() === seed ) {
                                 if ( item["datasource"] ) {
                                     datasource = item["datasource"];
-                                    break;
                                 }
+                                isValid = true;
+                                break;
                             }
                         } else {
-                            
                             for (var j=0 ; j<item["query"].length ; j++ ) {
-
                                 if ( item["query"][j].toLowerCase().replaceAll(" ", "").trim() .trim() === seed ) {
                                     if ( item["datasource"] ) {
                                         datasource = item["datasource"];
-                                        break;
                                     }
+                                    isValid = true;
+                                    break;
                                 }
                             }
                         }
                     }
-
-                    if (datasource) {
-                        var url = _p["const"]["datasource"] + datasource;
-                        callAjax ( url, function(resObj) {
-                            var db_info = {"idx": datasource, "type":resObj["type"]}; 
+                    if (isValid) {
+                        if (datasource) {
+                            var url = _p["const"]["datasource"] + datasource;
+                            callAjax ( url, function(resObj) {
+                                var db_info = {"idx": datasource, "type":resObj["type"]}; 
+                                renderPop3(sqlEditQueryOrg, "sql", db_info);
+                            });
+                        } else {
+                            var db_info = {"idx": null, "type":"mysql"}; 
                             renderPop3(sqlEditQueryOrg, "sql", db_info);
-                        });
-                    } else {
-                        var db_info = {"idx": null, "type":"mysql"}; 
-                        renderPop3(sqlEditQueryOrg, "sql", db_info);
+                        }
                     }
                 } else {
                     sqlEditLineNum = -1;
                     sqlEditQueryOrg = "";       
                 }
-            } catch (e3) {}
+            } catch (e3) {
+                console.log("sql detect error");
+            }
         } else {
             sqlEditLineNum = -1;
             sqlEditQueryOrg = "";
