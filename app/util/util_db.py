@@ -107,7 +107,14 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
             for key, value in row.items()
         }
         result_list.append(row_dict)
-
+    
+    if is_raw:
+        cols = list(result_list[0].keys())
+        data = [[item[col] for col in cols] for item in result_list]
+        result_list = {
+            "cols": cols,
+            "data": data
+        }
     return result_list
 
 
