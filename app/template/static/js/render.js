@@ -658,17 +658,6 @@ function renderWorkplace(obj) {
     _p["scrollObj"] = {};
     widgetCharts = {};
 
-    if ( "work" in obj && obj["work"] == "direct" ) {
-        if (_p["device"] == "p" ) {
-            var mode = obj["ws"]["mode"] 
-            var fncName = "direct" + mode.charAt(0).toUpperCase() + mode.slice(1);
-            renderFnc[fncName](obj["ws"])
-        } else {
-            $("#gw").append( _m[_l]["notifymobile"]);
-        }
-        return;
-    }
-
     $.each(obj["data"], function(i, item) {
         var panelObj = $(_htmls["panel"])
         $(panelObj).attr("id", "pan" + item["idx"]);
@@ -696,12 +685,6 @@ function renderPanel(obj) {
     setPanelInfo(obj);
     var pinfo = _p["p"]["i"][pid];
 
-    if (pinfo["chart"]) {
-        $(panelObj).attr("data-entity", "chart");
-    } else if (pinfo["form"]) {
-        $(panelObj).attr("data-entity", "form");
-    }
-
     if (pinfo["html"] && pinfo["html"] != "") {
         renderPanelHtml(panelObj, obj);
         $(panelObj).find(".html").show();
@@ -712,17 +695,24 @@ function renderPanel(obj) {
     }
 
     if (pinfo["chart"]) {
+        $(panelObj).attr("data-entity", "chart");
+
         $(panelObj).find(".search").css("display", "flex");
         $(panelObj).find(".search .act").remove();
         $(panelObj).find(".chart").show();
+         $(panelObj).attr("data-type", pinfo["chart"]["type"]);
     }
+
     if (pinfo["form"]) {
+        $(panelObj).attr("data-entity", "form");
+
         $(panelObj).find(".form").show();
     }
 
-    if (pinfo["chart"]) {
-        $(panelObj).attr("data-type", pinfo["chart"]["type"]);
+    if (pinfo["work"] && pinfo["work"] != "") {
+        renderPanelWork(panelObj, obj);
     }
+
 
     $(panelObj).find(".pidxinfo").attr("id", getUniqueId());
     $(panelObj).find(".pidxinfo .row .val").html(pid);
@@ -1447,6 +1437,92 @@ function renderPanelWidgetList (widget, witem, panelObj, obj) {
         $(list).append(tr);
     }
 }
+
+function renderPanelWork(panelObj, obj){
+    if (_p["device"] != "p" ) {
+        $(panelObj).append("<br>" + _m[_l]["notifymobile"]);
+        return;
+    }
+    $(panelObj).find(".work").attr("data-mode", obj["work"]["mode"]);
+    $(panelObj).find(".work .direct").remove();
+
+    for (var i=0; i<_p["editorConf"].length; i++) {
+        var id = _p["editorConf"][i];
+        if ($("#"+id).length > 0) {
+            modal(_m[_l]["duplicatedwork"], false);
+            return;
+        }
+        $(panelObj).find(".work").append($("<div>").addClass("direct").attr("id", id));
+    }
+
+    var mode = obj["work"]["mode"]
+    var fncName = "work" + mode.charAt(0).toUpperCase() + mode.slice(1);
+    renderFnc[fncName](panelObj, obj);
+
+}
+
+function renderPanelWorkTable(panelObj, obj) {
+
+    var pid = $(panelObj).attr("data-i");
+
+    var msgObj = $(panelObj).find(".work .msg");
+    $(msgObj).html("");
+    $(panelObj).find(".search").hide();
+    $(panelObj).find(".search .custom").html("");
+    $(panelObj).find(".chart").html("");
+
+    if (obj["r_code"] != 200) {
+        modal(obj["msg"], false);
+        return;
+    }
+    if (obj["data"].length == 0) {
+        modal(_m[_l]["noresult"], false);
+        return;
+    }
+
+    var chart = {}
+    chart["type"] = "table";
+    chart["height"] = 500;
+    chart["heads"] = {};
+    chart["heads_orders"] = [];
+    chart["tools"] = 2;
+    chart["last_update"] = "just now";
+    
+    for (const key in obj["data"][0]) {
+        var item = {};
+        item["name"] = key;
+        item["type"] = "string";
+        if (obj["data"][0][key] && typeof obj["data"][0][key] === "number") item["type"] = "number";
+
+        chart["heads"][key] = item;
+        chart["heads_orders"].push(key);
+    }
+
+    var values = [];
+    for(var i=0; i<obj["data"].length; i++) {
+        var tmp = []
+        for (var j=0; j< chart["heads_orders"].length; j++) {
+            tmp.push(obj["data"][i][chart["heads_orders"][j]]);
+        }
+        values.push(tmp);
+    }
+    
+    _p["p"]["i"][pid]["chart"] = chart;
+    obj["chart"] = chart;
+    obj["chart"]["values"] = values;
+
+    $(panelObj).attr("data-type", "table");
+    var btn = getLinkObj(panelObj, "tool", "work", "sqlTexcel", "", "excel", "excel", "att-tool-excel");
+    $(panelObj).find(".search .custom").html(btn);
+    $(panelObj).find(".search").css("display", "flex").show();
+    $(panelObj).find(".chart").show();
+
+    renderPanelTable(panelObj, obj)
+
+}
+
+
+
 
 
 function renderDataUpdate (panelObj, obj) {
@@ -2674,19 +2750,101 @@ var renderFnc = {
         createCustomLegend(_p["chartObj"][chartId]);        
     },
 
-    directEdit: function(info) {
+    workSql: function(panelObj, obj) {
+        var workObj = $(panelObj).find(".work");
+        $(workObj).attr("data-datasource", obj["work"]["datasource"]);
+        $(workObj).attr("data-database", obj["work"]["database"]);
+        $(workObj).find(".direct").html();
 
-        if (_p["device"] == "p" ) {
-            
-            if (info["format"] == "json") {
-                $("#gw").append(_htmls["direct-edit"]);
-                $("#editjsonconf").html(info["text"])
-                callJsonEditor("editjsonconf");
-                $("#gw .direct .tail .att-btn").attr("data-target", info["i"]);
-            }
+        var dataSourceView = $("<span class='info'>datasource: #<span class='name'></span>(<span class='type'></span>)</span>");
+        $(dataSourceView).find(".name").html(obj["work"]["datasource"]);
+        $(dataSourceView).find(".type").html(obj["work"]["database"]);
         
+        var toolsLeft = $(workObj).find(".tools .left").html(dataSourceView);
+        var toolsRight = $(workObj).find(".tools .right").html("");
+        var btn1 = '<a href="#" data-entity="work" data-mode="sql" data-type="run"   class="att-icon fnc-link att-icon-run" title="run"></a>';
+        var btn2 = '<a href="#" data-entity="work" data-mode="sql" data-type="align" class="att-icon fnc-link att-icon-align" title="align"></a>';
+        var btn3 = '<a href="#" data-entity="work" data-mode="sql" data-type="copy"  class="att-icon fnc-link att-icon-copy" title="copy"></a>';
+
+        $(toolsRight).append(btn1).append(btn2).append(btn3);
+        $(toolsRight).find("a").attr("data-datasource", obj["work"]["datasource"]);
+        $(toolsRight).find("a").attr("data-database", obj["work"]["database"]);
+        $(toolsRight).find("a").attr("data-run-type", "select");
+        
+        callSqlEditor("editsqlconf", "", {"type":obj["work"]["database"]});
+
+        $(workObj).show();
+        $("#editsqlconf").show();
+
+        if ( obj["work"]["items"] ) {
+            var select =  $("<select>").addClass("att-input-select").attr("name", "items");
+            $(select).append( $("<option value='' data-run-type='select'>none</none>") );
+            $(toolsRight).prepend(select);
+
+            for (var i=0; i<obj["work"]["items"].length; i++) {
+                var item = obj["work"]["items"][i];
+                var option = $("<option>")
+                    .val(item["query"])
+                    .attr("data-run-type", item["type"])
+                    .attr("data-datasource", item["datasource"])
+                    .attr("data-database", item["database"])
+                    .html(item["name"])
+                $(select).append(option);
+            }
+        } 
+    },
+
+    workFile: function(panelObj, obj) {
+ 
+        var workObj = $(panelObj).find(".work");
+
+        var dataSourceView = $("<span class='info'>file: <span class='name'></span>(<span class='type'></span>)</span>");
+        $(dataSourceView).find(".name").html(obj["work"]["items"][0]["name"]);
+        $(dataSourceView).find(".type").html(obj["work"]["items"][0]["type"]);
+        
+        var toolsLeft = $(workObj).find(".tools .left").html(dataSourceView);
+        var toolsRight = $(workObj).find(".tools .right").html("");
+        var btn1 = '<a href="#" data-entity="work" data-mode="file" data-type="run"   class="att-icon fnc-link att-icon-save" title="save"></a>';
+        var btn2 = '<a href="#" data-entity="work" data-mode="file" data-type="align" class="att-icon fnc-link att-icon-align" title="align"></a>';
+        var btn3 = '<a href="#" data-entity="work" data-mode="file" data-type="copy"  class="att-icon fnc-link att-icon-copy" title="copy"></a>';
+
+        $(toolsRight).append(btn1).append(btn2).append(btn3);
+        $(toolsRight).find("a").attr("data-name", obj["work"]["items"][0]["name"]);
+        $(toolsRight).find("a").attr("data-file-type", obj["work"]["items"][0]["type"]);
+        $(toolsRight).find("a").attr("data-context", obj["work"]["items"][0]["context"]);
+
+        var context =  obj["work"]["items"][0]["context"];
+        if (obj["work"]["items"][0]["type"] == "json") {                            
+            $("#editjsonconf").html(context)
+            callJsonEditor("editjsonconf");
+            $("#editjsonconf").show();
+
+        } else if (obj["work"]["items"][0]["type"] == "html") {
+            callHtmlEditor("edithtmlconf", context);
+            $("#edithtmlconf").show();
+
         } else {
-            $("#gw").append( _m[_l]["notifymobile"]);
+            callTextEditor("edittextconf", context);
+            $("#edittextconf").show();
+
         }
-    }
+
+        $(workObj).show();
+
+        if ( obj["work"]["items"] ) {
+            var select =  $("<select>").addClass("att-input-select").attr("name", "items");
+            $(toolsRight).prepend(select);
+
+            for (var i=0; i<obj["work"]["items"].length; i++) {
+                var item = obj["work"]["items"][i];
+                var option = $("<option>")
+                    .val(item["name"])
+                    .attr("data-file-type", item["type"])
+                    .attr("data-context", item["context"])
+                    .html(item["name"])
+                $(select).append(option);
+            }
+        } 
+    },
+
 };

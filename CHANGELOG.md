@@ -1,3 +1,9 @@
+### [1.5.0] 2025.10.11
+- [added] added query registration and execution feature.
+- [added] added file editing feature
+- [changed] changed so that editing of the conf.json file is also handled by the same feature
+- [fixed] fixed bug in SQL editing via double-click
+
 ### [1.4.1] 2025.09.30
 - [changed] changed it so that clicking the workplace title folds the menu.
 - [fixed] fixed the user ID cookie name error.

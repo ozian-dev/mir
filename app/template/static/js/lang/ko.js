@@ -28,4 +28,6 @@ _m["ko"] = {
     "chartinfogreen": "녹색 범례는 오른쪽 Y축을 나타냅니다.",
     "chartinfodbclick": "더블클릭하시면 해당 범례 차트만 표시됩니다.",
     "notifymobile": "모바일 디바이스에서는 지원치 않습니다.",
+    "noresult": "결과가 없습니다.",
+    "duplicatedwork": "'work' component는 workplace에서 한번만 사용할수 있습니다.",
 }

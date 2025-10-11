@@ -1,6 +1,7 @@
 import mysql.connector
 import hashlib
 import re
+import os
 import copy
 import json
 
@@ -88,7 +89,6 @@ def select_db_mysql (db_info: object, sql: str, params: object = None, is_raw: b
     conn.close()
 
     return result
-
 
 def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw: bool = False) :
 
@@ -449,9 +449,12 @@ def get_cache_file_name (i: int, sql: str, params: object = None, is_raw: bool =
 
 def is_cached(i: int, sql: str, params: object = None, ttl: int = 0, is_raw: bool = False) :
     
-    if ttl == 0 : return False
-
     cache_file_name = get_cache_file_name(i, sql, params, is_raw)
+
+    if ttl == 0 : 
+        if os.path.exists(cache_file_name): util_file.delete_file(cache_file_name)
+        return False
+ 
     gap = util_file.get_file_modified_time_gap(cache_file_name, True)
 
     if gap == "none" : return False

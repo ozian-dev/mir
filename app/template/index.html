@@ -131,6 +131,8 @@ if (isSafari()) {
 <script src="/static/ext/sql.formatter.15.3.0.min.js"></script>
 <script src="/static/ext/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.10.2/js/lib/beautify-html.min.js"></script>
+<!-- script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.js"></script -->
 
 <script>
 // utility function
@@ -185,6 +187,7 @@ var _p = {
 
 _p["transParamRev"] = Object.fromEntries(Object.entries(_p["transParam"]).map(([key, value]) => [value, key]));
 _p["device"] = "{{ device }}";
+_p["editorConf"] = ["editsqlconf", "editjsonconf", "edithtmlconf", "edittextconf"];
 
 var _l = "{{ locale['lang']|safe }}";
 var _m = {};
@@ -510,6 +513,12 @@ _htmls["panel"] = `
         <div class="title"></div>
         <div class="update"></div>
         <div class="tools"></div>
+    </div>
+    <div class="work">
+        <div class="tools">
+            <div class="left"></div>
+            <div class="right"></div>
+        </div>
     </div>
     <div class="html"></div>
     <div class="widget"></div>

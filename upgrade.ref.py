@@ -16,6 +16,8 @@ import sys
 sys.path.append('./app/util')
 from app.util import util_db
 
+##### for version 1.1.0
+
 sql = """
 CREATE TABLE prompt (
   idx int(11) NOT NULL AUTO_INCREMENT,
@@ -44,6 +46,8 @@ INSERT INTO prompt(idx,grp,title,levelv,levelu,share,json_prompt_value) VALUES (
 util_db.import_db_mysql(0, sql)
 
 print(f"++ The database addition for version 1.1.0 has been completed.")
+
+##### for version 1.3.0
 
 sql = """
 CREATE TABLE job (
@@ -76,3 +80,19 @@ INSERT INTO job (idx,title,schedule,mode,json_job_value,live) VALUES
 
 util_db.import_db_mysql(0, sql)
 print(f"++ The database addition for version 1.3.0 has been completed.")
+
+##### for version 1.5.0
+
+sql = """
+INSERT INTO menu(idx,grp,menu1,menu2,arrange,levelv,levelu,share) VALUES (130,1, 'Commons Admin', 'Files', 75,'0110','0110',1) ;
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,130,27,'Edit Files',10,'0110','0110',1,
+'{"work":{"mode":"file","items":[{"name":"conf.json","file":"_conf/conf.json","type":"json"},{"name":"template/default.html","file":"_conf/template/default.html","type":"html"},{"name":"LICENSE","file":"LICENSE","type":"text"}]}}');
+
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,200,160,'SQL Lists',220,'0120','0120',1,
+'{"work":{"mode":"sql","datasource":1,"items":[{"name":"group lists","type":"select","datasource":1,"query":"select * from grp"},{"name":"menu lists","type":"select","query":"select * from menu"},{"name":"panel lists","type":"select","query":"select * from panel"}]}}');
+
+"""
+
+util_db.import_db_mysql(0, sql)
+print(f"++ The database addition for version 1.5.0 has been completed.")

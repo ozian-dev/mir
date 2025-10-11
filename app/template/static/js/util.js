@@ -502,6 +502,39 @@ function findObjWithKey(jsonObj, targetKey = "sql") {
     return objectsWithSql;
 }
 
+function findObjWithKeyExt(jsonObj, targetKey = "sql") {
+    var ext_arr = ["baseline", "base", "target"];
+    const objectsWithSql = [];
+
+    function findObjectsRecursively(obj) {
+        if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    if (key === targetKey && (typeof value === 'string' || Array.isArray(value))) {
+                        objectsWithSql.push(obj);
+                    } else if (key === targetKey && typeof value === 'object') {
+                        for ( k in value ) {
+                            if (ext_arr.includes(k)) {
+                                objectsWithSql.push({'query': value[k]});
+                            }
+                        }
+                    } else if (typeof value === 'object' && value !== null) {
+                        findObjectsRecursively(value);
+                    }
+                }
+            }
+        } else if (Array.isArray(obj)) {
+            for (const item of obj) {
+                findObjectsRecursively(item);
+            }
+        }
+    }
+
+    findObjectsRecursively(jsonObj);
+    return objectsWithSql;
+}
+
 
 
 
@@ -510,11 +543,47 @@ function findObjWithKey(jsonObj, targetKey = "sql") {
 
 var editorJson;
 var editorSql;
+var editorHtml;
+var editorText;
 var sqlEditLineNum;
 var sqlEditQueryOrg;
 
+function cleanConfEditorObj(target) {
+
+    if (!_p["editorConf"].includes(target)) return;
+
+    var parentObj = $("#" + target).parent();
+    $("#" + target).remove();
+
+    if (editorSql && target == "editsqlconf") {
+        editorSql.destroy();
+        editorSql.container.remove();
+
+    } else if (editorJson && target == "editjsonconf") {
+        editorJson.container.remove();
+        $("#" + target).remove();
+    
+    } else if (editorHtml && target == "edithtmlconf") {
+        editorHtml.destroy();
+        editorHtml.container.remove();
+    
+    } else if (editorText && target == "edittextconf") {
+        editorText.destroy();
+        editorText.container.remove();
+    } 
+    
+    $(parentObj).append($("<div class='direct' id='"+target+"'>"));
+
+}
+
 function callJsonEditor(target) {
 
+    if ( target == "editjsonconf" ) {
+        var jsonStr = $("#" + target).html();
+        cleanConfEditorObj("editjsonconf");
+        $("#" + target).html(jsonStr);
+    }
+    
     editorJson = ace.edit(target);
     editorJson.getSession().setMode("ace/mode/json");
     editorJson.setTheme("ace/theme/tomorrow");
@@ -527,9 +596,7 @@ function callJsonEditor(target) {
         editorJson.setValue(format+"\n\n\n");
     } catch (e) { modal("invalid json:<br/>" + e, false); return; }
 
-    var firstLine = editorJson.getSession().getDocument().getLine(0);
     editorJson.gotoLine(1, 0, true);
-
     editorJson.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
     editorJson.on("dblclick", function(e) {
 
@@ -571,9 +638,11 @@ function callJsonEditor(target) {
                     sqlEditQueryOrg = candidate;
 
                     var fullObj = JSON.parse(editorJson.getValue());
-                    var queryLists = findObjWithKey(fullObj, "query");
+                    var queryLists = findObjWithKeyExt(fullObj, "query");
                     var seed = candidate.toLowerCase().replaceAll(" ", "").trim();
+
                     var datasource = fullObj["datasource"];
+                    if (!datasource) datasource = fullObj["work"]["datasource"];
                     
                     var isValid = false;
                     for (var i=0 ; i<queryLists.length ; i++ ) {
@@ -608,7 +677,7 @@ function callJsonEditor(target) {
                                 renderPop3(sqlEditQueryOrg, "sql", db_info);
                             });
                         } else {
-                            var db_info = {"idx": null, "type":"mysql"}; 
+                            var db_info = {"idx": null, "type":""}; 
                             renderPop3(sqlEditQueryOrg, "sql", db_info);
                         }
                     }
@@ -617,6 +686,7 @@ function callJsonEditor(target) {
                     sqlEditQueryOrg = "";       
                 }
             } catch (e3) {
+                console.log(e3);
                 console.log("sql detect error");
             }
         } else {
@@ -628,6 +698,8 @@ function callJsonEditor(target) {
 
 function callSqlEditor(target, sql, info) {
 
+    cleanConfEditorObj("editsqlconf");
+
     editorSql = ace.edit(target);
     editorSql.getSession().setMode("ace/mode/sql");
     editorSql.setTheme("ace/theme/tomorrow");
@@ -636,12 +708,39 @@ function callSqlEditor(target, sql, info) {
 
     try {
         editorSql.setValue( getFormattedSql(sql, info["type"]) );
-        
     } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
 
-    var firstLine = editorSql.getSession().getDocument().getLine(0);
     editorSql.gotoLine(1, 0, true);
     editorSql.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
+
+}
+
+function callHtmlEditor(target, html) {
+
+    cleanConfEditorObj("edithtmlconf");
+
+    editorHtml = ace.edit(target);
+    editorHtml.getSession().setMode("ace/mode/html");
+    editorHtml.setTheme("ace/theme/tomorrow");
+    editorHtml.getSession().setTabSize(2);
+    editorHtml.getSession().setUseSoftTabs(true); 
+    editorHtml.getSession().setUseWrapMode(true);
+    editorHtml.setValue(html);
+    editorHtml.gotoLine(1, 0, true);
+}
+
+function callTextEditor(target, text) {
+
+    cleanConfEditorObj("edittextconf");
+    
+    editorText = ace.edit(target);
+    editorText.getSession().setMode("ace/mode/text");
+    editorText.setTheme("ace/theme/tomorrow");
+    editorText.getSession().setTabSize(2);
+    editorText.getSession().setUseSoftTabs(true); 
+    editorText.getSession().setUseWrapMode(true);
+    editorText.setValue(text);
+    editorText.gotoLine(1, 0, true);
 }
 
 function escapeSqlFormater (mode, sql) {
@@ -708,7 +807,6 @@ function getHtmlEntity(str) {
     }
 }
 
-
 function getTableFromJson (jsonData) {
     
     if (jsonData.length < 1) return "" ;
@@ -750,4 +848,47 @@ function getWeekDay(str) {
     }
     str = str + ' (' + days[dayNumber] + ')';
     return str;
+}
+
+
+
+
+
+function downloadFile(url, requestData) {
+    (async () => {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) {
+                console.log('download failed (' + response.status + ')');
+            }
+
+            const blob = await response.blob();
+            const disposition = response.headers.get('Content-Disposition');
+            let filename = 'download.xlsx';
+            if (disposition && disposition.includes('filename=')) {
+                filename = disposition.split('filename=')[1].replace(/['"]/g, '');
+            }
+
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = downloadUrl;
+            a.download = filename;
+            a.target = '_win';
+            document.body.appendChild(a);
+            a.click();
+
+            setTimeout(() => {
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+            }, 300);
+        } catch (err) {
+            alert(err.message);
+        }
+    })();
 }

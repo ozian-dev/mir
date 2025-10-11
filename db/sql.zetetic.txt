@@ -37,6 +37,9 @@ INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_valu
 INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,200,155,'HTML Embedding',210,'0120','0120',1,
 '{"html":{"height":100,"content":"<!DOCTYPE html><html><head><meta charset=\\"UTF-8\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><title>Welcome to MIR</title><style>body{text-align:center;width:95%}h1{font-size:40px;text-align:center;color:dodgerblue;animation:bounce 1.5s infinite;height:40px}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}</style></head><body><h1>Welcome to Zetetic Company 🎉</h1></body></html>"}}');
 
+INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,share,json_panel_value) VALUES (1,200,160,'SQL Lists',220,'0120','0120',1,
+'{"work":{"mode":"sql","datasource":1,"items":[{"name":"group lists","type":"select","datasource":1,"query":"select * from grp"},{"name":"menu lists","type":"select","query":"select * from menu"},{"name":"panel lists","type":"select","query":"select * from panel"}]}}');
+
 INSERT INTO panel(grp,midx,idx,title,arrange,levelv,levelu,json_panel_value) VALUES (1,100,200,'Notice',100,'0120','0120',
 '{"datasource":1,"widget":[{"datasource":1,"type":"list","name":"Notice","link":["/#/rest/workplace?.g=1&.i=40"],"query":"SELECT idx as pkey, title, date_format(created,\'%Y-%m-%d\') as created FROM notice WHERE grp = #{@grp} order by idx desc limit 4","list":{"col1":{"name":"title","link":{"type":"view","rule":{"id":1,"key":{"pkey":"idx"}}}},"col2":{"name":"created"}}}]}');
 

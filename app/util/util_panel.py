@@ -40,6 +40,8 @@ def get_panel (panel:object, panel_json:object, params:object) :
     # widget & chart must be called in order because widget's .m value affects the behavior of chart.
     if "widget" in panel_json : final_res["widget"] = get_panel_widget(panel_json, params)
     if "chart" in panel_json : final_res["chart"] = get_panel_chart(panel_json, params)
+    if "work" in panel_json : 
+        final_res["work"] = get_panel_work(panel_json["work"], params)
 
     if "action" in panel_json : 
         final_res["action"] = panel_json["action"]
@@ -390,8 +392,27 @@ def get_panel_chart (panel_json:object, params:object) :
 
         res['agent'] = prompt_obj
 
-
     return res
+
+
+def get_panel_work(panel_json:object, params:object) :
+
+    if panel_json["mode"] == "sql":
+        db_info = util_db.get_db(panel_json["datasource"])
+        panel_json["database"] = db_info["type"]
+        if "items" in panel_json:
+            for item in panel_json["items"]:
+                if "datasource" in item:
+                    db_info = util_db.get_db(item["datasource"])
+                    item["database"] = db_info["type"]
+
+    elif panel_json["mode"] == "file":
+        for item in panel_json["items"]:
+            context = util_file.load_file(item["file"])
+            item["context"] = context
+            del(item["file"])
+            
+    return panel_json
 
 def group_sort(data, group, sort=None) :
 
@@ -588,6 +609,28 @@ async def execute_panel (panel_json:object, params:object):
     return final_res
 
 
+
+async def execute_work (panel_json:object, params:object):
+
+    if (params["mode"] == "file"):
+        file = ""
+        for row in panel_json["work"]["items"]:
+            if row["name"] == params["target"]:
+                file = row["file"] 
+                break
+        util_file.write_file(params["@data"]["new"][0]["context"], file)
+
+    final_res = {}
+    final_res["status"] = "ok"
+    final_res["grp"] = params[".g"]
+    final_res["pid"] =  params[".i"]
+    final_res["entity"] = params["entity"]
+    final_res["mode"] = params["mode"]
+    final_res["target"] = params["target"]
+
+    return final_res
+
+
 def is_different (data1, data2) : 
 
     local_cnt = 0 
@@ -616,9 +659,8 @@ def get_db_idx (panel_obj:object, item:object) :
     return call_db_idx
 
 def set_query_values (panel_obj:object, values_obj:object, params:object) :
-    
-    db_idx = get_db_idx (panel_obj, values_obj)
 
+    db_idx = get_db_idx (panel_obj, values_obj)
     values_res = util_db.select_db(db_idx, values_obj["query"], params, 0, True)
     values_obj["data"] = util_library.get_obj(values_res["data"]["data"])
     values_obj["length"] = len(values_res["data"]["cols"]) - 1

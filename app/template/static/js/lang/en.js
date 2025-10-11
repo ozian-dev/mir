@@ -27,5 +27,7 @@ _m["en"] = {
     "run": "in progress",
     "chartinfogreen": "the green legend represents the right Y-axis.",
     "chartinfodbclick": "double-click to show only the corresponding legend chart.",
-    "notifymobile": "Not supported on mobile devices.",
+    "notifymobile": "not supported on mobile devices.",
+    "noresult": "no results",
+    "duplicatedwork": "the 'work' component can only be used once in the workplace.",
 }

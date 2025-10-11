@@ -1113,6 +1113,139 @@ var playFnc = {
         $("#pop5 .head .fnc-close-btn").click();
     },
 
+    workTsql: function(obj){
+
+        var type = $(obj).attr("data-type");
+
+        if (type == "run") {
+            if (!editorSql.getValue().trim()) {
+                modal( _m[_l]["noquery"], false);
+                return;
+            }
+
+            var panelObj = getPanelObj(obj);
+            var postData = getPostData (panelObj, obj, obj);
+
+            postData["query"] = editorSql.getValue().trim();
+            postData["datasource"] = $(obj).attr("data-datasource");
+            postData["run"] = "test";
+            postData["type"] = $(obj).attr("data-run-type");
+            postData["target"] = "";
+            postData["forward"] = "";
+            postData["@data"]["new"].push({"datasource": $(obj).attr("data-datasource")});
+
+            var url = _p["const"]["query"];
+
+            if ($(obj).attr("data-format")) {
+                postData["format"] = $(obj).attr("data-format");
+                $(obj).attr("data-format", "");
+                downloadFile(url, postData);
+
+            } else {
+                callAjax(url, function(res){
+                    renderPanelWorkTable(panelObj, res);
+                }, "POST", JSON.stringify(postData));
+            }
+        } else if (type == "align") {
+            try {
+                var sql = editorSql.getValue();
+                editorSql.setValue( getFormattedSql (sql, $(obj).attr("data-database")));
+            } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
+            editorSql.gotoLine(1, 0, true);
+        
+        } else if (type == "copy") {
+            var copyStr = editorSql.getValue();
+            var textarea = $("<textarea>").val(copyStr);
+            $("body").append(textarea);
+            $(textarea).select();
+            document.execCommand('copy');
+            $(textarea).remove();
+            modal(_m[_l]["copy"]);
+        }
+    },
+    workTsqlTexcel: function(obj){
+        
+        var runBtn = $(obj).parent().parent().parent().find(".work .tools .right a[data-type=run]");
+        $(runBtn).attr("data-format", "excel");
+        $(runBtn).click();
+    },
+
+    workTfile: function(obj){
+
+        var type = $(obj).attr("data-type");
+        var fileType = $(obj).attr("data-file-type");
+
+        if (type == "run") {
+
+            var panelObj = getPanelObj(obj);
+
+            var type =  $(obj).attr("data-file-type");
+            var fncName = "editor" + type.charAt(0).toUpperCase() + type.slice(1) + ".getValue()";
+            var context = eval(fncName);
+
+            if (type == "json") context = JSON.stringify(JSON.parse(context), null, 4);
+
+
+            var postData = getPostData (panelObj, obj, obj);
+            postData["target"] = $(obj).attr("data-name");
+            postData["@data"]["new"].push({"context": context});
+
+            var url = _p["const"]["execute"];
+            callAjax(url, function(resObj){
+                modal("ok");
+
+                $(panelObj).find(".head .tools a[data-type=reload]").click();
+                var target = resObj["target"];
+                function checkLoop() {
+                    if ($(panelObj).find(".progress").is(':hidden')) {
+                        $(panelObj).find(".work .tools .right select[name=items]").val(target).trigger('change');
+                    } else {
+                        setTimeout(checkLoop, 50); 
+                    }
+                }
+                checkLoop();
+
+            }, 'POST', JSON.stringify(postData));
+
+        } else if (type == "align") {
+
+            if (fileType == "json"){
+                try {
+                    var jsonData = editorJson.getValue();
+                    var format = JSON.stringify(JSON.parse(jsonData), null, 4);
+                    editorJson.setValue(format+"\n\n\n");
+                    editorJson.gotoLine(1, 0, true);
+
+                } catch (e) { modal("invalid json:<br/>" + e, false); return; }
+
+            } else if (fileType == "html") {
+                var html = editorHtml.getValue();
+                var formattedHtml = html_beautify(html, {
+                    indent_size: 2,
+                    indent_with_tabs: false,
+                    wrap_line_length: 0,
+                    preserve_newlines: true
+                });
+
+                editorHtml.setValue(formattedHtml, -1);
+                editorHtml.clearSelection();
+                editorHtml.renderer.updateFull();
+            }
+        
+        } else if (type == "copy") {
+            
+            var copyStr = "";
+            if (fileType == "json") copyStr= editorJson.getValue();
+            else if (fileType == "html") copyStr= editorHtml.getValue();
+            
+            var textarea = $("<textarea>").val(copyStr);
+            $("body").append(textarea);
+            $(textarea).select();
+            document.execCommand('copy');
+            $(textarea).remove();
+            modal(_m[_l]["copy"]);
+        }
+    },
 
 
 };

@@ -870,8 +870,87 @@ $("body")
     }
 })
 
+// direcct function
+////////////////////////////////////////////////////////////////////
 
+.on ("change", ".panel .work .tools .right .att-input-select", function(e) {
 
+    var workObj = $(this).parent().parent().parent();
+    var workMode = $(workObj).attr("data-mode");
+    $(workObj).find(".direct").hide();
+    
+    if (workMode == "sql") {
 
+        var sql = $(this).attr("data-value");
+
+        var icons =  $(this).parent().parent().find(".right a");
+        var options = $(this).find("option");
+        var datasource = $(this).parent().parent().parent().attr("data-datasource");
+        var database = $(this).parent().parent().parent().attr("data-database");
+
+        for (var i=0; i<options.length; i++) {
+            var option = options[i];
+            
+            if ($(option).val() == sql) {
+                if ($(option).attr("data-database")) database = $(option).attr("data-database");
+                if ($(option).attr("data-datasource")) datasource = $(option).attr("data-datasource");
+
+                $(icons).attr("data-run-type", $(option).attr("data-run-type"));
+                $(icons).attr("data-datasource", datasource);
+                $(icons).attr("data-database", database);
+
+                break;
+            }
+        }
+        $(this).parent().parent().find(".left .name").html(datasource);
+        $(this).parent().parent().find(".left .type").html(database);
+
+        callSqlEditor("editsqlconf", sql, {"type":database});
+        $("#editsqlconf").show();
+        $(this).parent().parent().find(".right a[data-type=align]").click();
+    
+
+    } else if ( workMode == "file") {
+
+        var name = $(this).attr("data-value");
+        var type = "";
+        var context = "";
+
+        var icons =  $(this).parent().parent().find(".right a");
+        var options = $(this).find("option");
+        
+        for (var i=0; i<options.length; i++) {
+            var option = options[i];
+            if ($(option).val() == name) {
+                $(icons).attr("data-name", name);
+                $(icons).attr("data-context", $(option).attr("data-context"));
+                $(icons).attr("data-file-type", $(option).attr("data-file-type"));
+
+                type = $(option).attr("data-file-type");
+                context = $(option).attr("data-context");
+
+                break;
+            }
+        }
+
+        $(this).parent().parent().find(".left .name").html(name);
+        $(this).parent().parent().find(".left .type").html(type);
+
+        if (type == "json") {
+            $("#editjsonconf").html(context);
+            callJsonEditor("editjsonconf");
+            $("#editjsonconf").show();
+
+        } else if (type == "html") {
+            callHtmlEditor("edithtmlconf", context);
+            $("#edithtmlconf").show();
+
+        } else if (type == "text") {
+            callTextEditor("edittextconf", context);
+            $("#edittextconf").show();
+        }
+    }
+
+})
 
 ;

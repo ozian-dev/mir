@@ -14,16 +14,6 @@ async def menu (request: Request) :
     query = const.SQLS["menu"]
     rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
 
-    if params[".g"] == 1 and params["@level"] == '0110':
-        conf = {
-            "idx": -1,
-            "grp": 1,
-            "menu1": "Commons Admin",
-            "menu2": "conf.json",
-            "share": 1
-        }
-        rows['data'].insert(-1, conf)
-
     final_res = {}
     final_res["status"] = "ok"
     final_res["data"] = rows["data"]
@@ -37,29 +27,24 @@ async def workplace (request: Request) :
     param = {"grp":params[".g"], "idx":params[".i"], "level":params["@level"]}
 
     final_res = {}
-    if param["grp"] == 1 and param['idx'] < 0 and params["@level"] == "0110":
-        final_res["data"] = []
-        final_res["work"] = "direct"
-        final_res["ws"] = util_panel.get_custom_workspace(f"{param['idx']}")
 
-    else:
-        query = const.SQLS["panel_list"]
-        if(params[".i"] != 1) : query += " and live='Y' ";
-        query += " order by midx, arrange ";
-        rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
+    query = const.SQLS["panel_list"]
+    if(params[".i"] != 1) : query += " and live='Y' ";
+    query += " order by midx, arrange ";
+    rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
 
-        final_res["data"] = []
+    final_res["data"] = []
 
-        for row in rows["data"]:
-            title = row["title"]
-            idx = row["idx"]
+    for row in rows["data"]:
+        title = row["title"]
+        idx = row["idx"]
 
-            tmp_obj = {}
-            tmp_obj["title"] = title
-            tmp_obj["grp"] = params[".g"]
-            tmp_obj["idx"] = idx
+        tmp_obj = {}
+        tmp_obj["title"] = title
+        tmp_obj["grp"] = params[".g"]
+        tmp_obj["idx"] = idx
 
-            final_res["data"].append(tmp_obj)
+        final_res["data"].append(tmp_obj)
             
     final_res["status"] = "ok"
     return final_res
@@ -135,7 +120,10 @@ async def execute (request: Request) :
     if panel == None : return util_response.error("no panel")
     if "@data" not in post or "new" not in post["@data"] : return util_response.error("invalid params")
 
-    return await util_panel.execute_panel (panel_json, params)
+    if params["entity"] == "work":
+        return await util_panel.execute_work (panel_json, params) 
+    else:
+        return await util_panel.execute_panel (panel_json, params)
 
 @router.get("/search")
 async def panel (request: Request) :

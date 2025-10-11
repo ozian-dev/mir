@@ -64,7 +64,6 @@ def response_excel(data):
     response.headers["Content-Transfer-Encoding"] = "binary"
 
     excel_file.close()
-
     return response
 
 

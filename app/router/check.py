@@ -56,7 +56,6 @@ async def check_query(request: Request, post: object):
     rows = util_db.select_db(const.CONF["start_db"]["idx"], query, param)
     
     if len(rows["data"]) == 0 : return util_response.error("no panel")
-
     data_source = int(post["datasource"])
 
     """
@@ -64,12 +63,16 @@ async def check_query(request: Request, post: object):
     checked_query = post["query"].strip().lower()
     if checked_query.startswith("select") :  execute_mode = "select"
     """
+
+    # {'.g': 1, '.i': 2089, '@id': 'super', '@level': '0110', '@uid': 1, '@grp': 1, '@grp_name': 'mir', '.o': 0, '@ip': '127.0.0.1', '@lang': 'en', '@ui': '3a88c768e65240d9946108add1c2c5e2', 'entity': 'work', 'mode': 'sql', 'target': '', 'run': 'test', 'forward': '', '@data': {'new': [], 'old': []}, '@custom': {}, 'query': 'SELECT\n  *\nFROM\n  panel', 'datasource': '1', 'type': 'select'}
+
     execute_mode = "select"
+    if params["mode"] == "sql":
+        execute_mode = params["type"]
 
     data_arr = []
     if len(post["@data"]["new"]) > 0 : 
         data_arr = util_panel.get_exec_data (post["@data"]["new"], params)
-
 
     final_res = {}
     try :
@@ -83,6 +86,24 @@ async def check_query(request: Request, post: object):
                     data[col] = data_arr[0][col]
             data = util_param.trans_type_predefined_params(data)
             db_res = util_db.select_db(data_source, post["query"], data)
+
+            if "format" in params and params["format"] == "excel":
+                data_obj = {}
+                data_obj["title"] = "data"
+                data_obj["chart"] = {}
+                data_obj["chart"]["heads"] = []
+                data_obj["chart"]["values"] = []
+
+                local_cnt = 0
+                for row in db_res["data"]:
+                    tmp = []
+                    for key, val in row.items():
+                        tmp.append(val)
+                        if local_cnt == 0 : data_obj["chart"]["heads"].append({"name": key})
+                    data_obj["chart"]["values"].append(tmp)
+                    local_cnt += 1
+
+                return util_response.response_excel(data_obj)
 
             final_res["status"] = "ok"
             final_res["r_code"] = 200
