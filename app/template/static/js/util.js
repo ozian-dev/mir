@@ -700,20 +700,20 @@ function callJsonEditor(target) {
 function callSqlEditor(target, sql, info) {
 
     cleanConfEditorObj("editsqlconf");
+    
     editorSql = ace.edit(target);
-    setTimeout(function(){
-        editorSql.getSession().setMode("ace/mode/sql");
-        editorSql.setTheme("ace/theme/tomorrow");
-        editorSql.getSession().setTabSize(4);
-        editorSql.getSession().setUseWrapMode(true);
+    editorSql.getSession().setMode("ace/mode/sql");
+    editorSql.setTheme("ace/theme/tomorrow");
+    editorSql.getSession().setTabSize(4);
+    editorSql.getSession().setUseWrapMode(true);
 
-        try {
-            editorSql.setValue( getFormattedSql(sql, info["type"]) );
-        } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
+    try {
+        editorSql.setValue( getFormattedSql(sql, info["type"]) );
+    } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
 
-        editorSql.gotoLine(1, 0, true);
-        editorSql.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
-    }, 50);
+    editorSql.gotoLine(1, 0, true);
+    editorSql.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
+
 }
 
 function callHtmlEditor(target, html) {
