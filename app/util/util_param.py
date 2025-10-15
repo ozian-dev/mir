@@ -216,6 +216,13 @@ def parse_date_period ( date_str ) :
             first_day, last_day = calendar.monthrange(int(tmp_arr[0]), int(tmp_arr[1]))
             end_date = f"{tmp_arr[0]}-{tmp_arr[1]}-{last_day}"
 
+        # --- Last year 추가 ---
+        elif date_str == "Last_year":
+            last_year = util_library.get_time().year - 1
+            start_date = f"{last_year}-01-01"
+            end_date = f"{last_year}-12-31"
+        # --------------------
+
         elif date_str == "This_year":
             start_date = util_library.get_time().strftime("%Y-01-01")
             end_date = today
