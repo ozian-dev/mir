@@ -712,8 +712,7 @@ function callSqlEditor(target, sql, info) {
     } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
 
     editorSql.gotoLine(1, 0, true);
-    editorSql.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
-
+    //editorSql.on("guttermousedown", function(e){if(e.getDocumentPosition().row === 0){}});
 }
 
 function callHtmlEditor(target, html) {

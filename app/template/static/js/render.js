@@ -2791,7 +2791,15 @@ var renderFnc = {
                     .html(item["name"])
                 $(select).append(option);
             }
-        } 
+        }
+
+        setTimeout(() => {
+            if ( $("#editsqlconf").html() == "" ) {
+                console.log("#editsqlconf reloaded");
+                $(panelObj).find(".head .tools a.att-tool-reload").click();
+            }
+        }, 100);
+
     },
 
     workFile: function(panelObj, obj) {
@@ -2844,7 +2852,9 @@ var renderFnc = {
                     .html(item["name"])
                 $(select).append(option);
             }
-        } 
+        }
+
+
     },
 
 };
