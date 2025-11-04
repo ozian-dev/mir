@@ -297,11 +297,23 @@ $("body")
             } catch(e) {}
 
         }, 5000);
+
+        modal(_m[_l]["doubleclickcopy"]);
     }
 })
 .on ("mouseout", ".fnc-text-view-out", function() {
     $(this).slideUp(function() {$(this).remove();});
 })
+.on ("dblclick", ".fnc-text-view-out", function() {
+    var textarea = $("<textarea>").val($(this).text());
+    $("body").append(textarea);
+    $(textarea).select();
+    document.execCommand('copy');
+    $(textarea).remove();
+    modal(_m[_l]["copy"]);
+})
+
+
 .on ("keyup", ".fnc-data-find", function() { 
 
     var panelObj = getPanelObj($(this));

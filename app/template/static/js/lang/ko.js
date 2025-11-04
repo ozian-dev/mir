@@ -30,4 +30,5 @@ _m["ko"] = {
     "notifymobile": "모바일 디바이스에서는 지원치 않습니다.",
     "noresult": "결과가 없습니다.",
     "duplicatedwork": "'work' component는 workplace에서 한번만 사용할수 있습니다.",
+    "doubleclickcopy": "더블클릭하시면 해당 내용이 클립보드에 복사됩니다.",
 }

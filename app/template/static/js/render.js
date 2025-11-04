@@ -764,7 +764,8 @@ function renderPanel(obj) {
             
             var alias = item["name"];
             if (item["alias"]) alias = item["alias"];
-            btn = getLinkObj(panelObj, "tool", "chart", "operate", item["name"], item["type"], alias, "att-tool-table att-select-group");        
+            btn = getLinkObj(panelObj, "tool", "chart", "operate", item["name"], item["type"], alias, "att-tool-table att-select-group");
+            if (item["button_label"]) $(btn).attr("data-button-label", item["button_label"]);
             $(toolObj).append(btn);
         });
 
@@ -2277,7 +2278,7 @@ var renderFnc = {
     },
     stringTjson: function(head, info, td, row, val) {
         val =  getHtmlEntity(val);
-        $(td).find(".value").addClass("att-content");
+        $(td).find(".value").addClass("att-content fnc-text-view");
         return val;
     },
     stringTflow: function(head, info, td, row, val) {
@@ -2403,8 +2404,10 @@ var renderFnc = {
                     idx = head.indexOf(info["name"]);
                 }
                 
-                var linkObj = $("<a>").addClass("outlink").attr("href", row[idx]).attr("target","_blank").html(val);
-                val = $(linkObj).prop("outerHTML");
+                if (row[idx] && row[idx] != "") { 
+                    var linkObj = $("<a>").addClass("outlink").attr("href", row[idx]).attr("target","_blank").html(val);
+                    val = $(linkObj).prop("outerHTML");
+                }
                 
             } else if (info["link"]["type"] == "view") {
                 if ( !info["link"]["rule"] || !info["link"]["rule"]["key"] || !info["link"]["rule"]["id"] ) return val;

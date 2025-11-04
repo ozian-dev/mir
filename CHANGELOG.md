@@ -1,3 +1,9 @@
+### [1.5.1] 2025.11.04
+- [added] added button_label support in operate
+- [added] added popup display for text/json cells and clipboard copy on double-click
+- [changed] removed outlink attribute when URL is missing
+- [changed] extended dynamic import to support submodules (e.g., "aaa.bbb") in api and custom
+
 ### [1.5.0] 2025.10.11
 - [added] added query registration and execution feature.
 - [added] added file editing feature

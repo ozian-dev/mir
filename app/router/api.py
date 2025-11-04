@@ -9,11 +9,12 @@ from app.conf import const
 
 router = APIRouter()
 
-@router.post("/{call_api}")
+@router.post("/{call_api:path}")
 async def post_api (request: Request, call_api: str) :
 
     if call_api == "group" : return get_group()
-    
+
+    if "/" in call_api: call_api = call_api.replace("/",".")
     root_dir = dirname(dirname(dirname(dirname(abspath(__file__)))))
     sys.path.append(root_dir)
 
@@ -22,9 +23,8 @@ async def post_api (request: Request, call_api: str) :
 
     return await module.run(request)
 
-@router.get("/{call_api}")
+@router.get("/{call_api:path}")
 async def get_api (request: Request, call_api: str, response: Response):
-
     if call_api == "group" : return get_group()
     """
     elif call_api == "g1r1p" : 
@@ -40,7 +40,8 @@ async def get_api (request: Request, call_api: str, response: Response):
             return JSONResponse(content=get_group(), headers=headers)
         else: raise(Exception("invalid access"))
     """
-
+    
+    if "/" in call_api: call_api = call_api.replace("/",".")
     root_dir = dirname(dirname(dirname(dirname(abspath(__file__)))))
     sys.path.append(root_dir)
 

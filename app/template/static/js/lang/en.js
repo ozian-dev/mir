@@ -30,4 +30,5 @@ _m["en"] = {
     "notifymobile": "not supported on mobile devices.",
     "noresult": "no results",
     "duplicatedwork": "the 'work' component can only be used once in the workplace.",
+    "doubleclickcopy": "double-click to copy the content to your clipboard.",
 }

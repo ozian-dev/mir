@@ -6,9 +6,10 @@ from app.conf import const
 
 router = APIRouter()
 
-@router.post("/{call_custom}")
+@router.post("/{call_custom:path}")
 async def post_custom (request: Request, call_custom: str) :
 
+    if "/" in call_custom: call_custom = call_custom.replace("/",".")
     root_dir = dirname(dirname(dirname(dirname(abspath(__file__)))))
     sys.path.append(root_dir)
 
@@ -17,9 +18,10 @@ async def post_custom (request: Request, call_custom: str) :
 
     return await module.run(request)
 
-@router.get("/{call_custom}")
+@router.get("/{call_custom:path}")
 async def get_custom (request: Request, call_custom: str) :
 
+    if "/" in call_custom: call_custom = call_custom.replace("/",".")
     root_dir = dirname(dirname(dirname(dirname(abspath(__file__)))))
     sys.path.append(root_dir)
 
