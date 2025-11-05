@@ -49,6 +49,7 @@ def execute (db_info:object, sqls:object, params:object = None) :
     except Exception as e:
         print(e)
         conn.rollback()
+        raise Exception(f"MySql execute error: {e}")
 
     finally:
         if cursor: cursor.close()
