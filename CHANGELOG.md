@@ -1,3 +1,6 @@
+### [1.5.2] 2025.11.06
+- [changed] changed script scheduler to run asynchronously
+
 ### [1.5.1] 2025.11.04
 - [added] added button_label support in operate
 - [added] added popup display for text/json cells and clipboard copy on double-click

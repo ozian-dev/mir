@@ -165,18 +165,16 @@ async def run_job_script(job):
     script_path = f"../mir_scheduler/{job['json']['script']}.py"
     
     try:
-        result = subprocess.run(
-            ["python", script_path],
-            shell=False,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+        process = await asyncio.create_subprocess_exec(
+            "python", script_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
         )
 
-        stdout = result.stdout.strip()
-        stderr = result.stderr.strip()
-
+        stdout, stderr = await process.communicate()
+        stdout = stdout.decode().strip()
+        stderr = stderr.decode().strip()  
+        
         if stdout:
             if stdout.strip() != '' :
                 log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}][STDOUT] {stdout}")
@@ -185,9 +183,6 @@ async def run_job_script(job):
             log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{stderr}")
         else:
             log.log_info('scheduler', f"[{const.APP_PID}][{job['title']}] commpleted")
-
-    except subprocess.CalledProcessError as e:
-        log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{e.stderr.strip()}")
 
     except Exception as e:
         log.log_error('scheduler', f"[{const.APP_PID}][{job['title']}] failed\n{e}")
