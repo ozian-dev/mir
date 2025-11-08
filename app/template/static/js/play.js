@@ -81,7 +81,8 @@ var playFnc = {
         if (!actInfo && $(obj).hasClass("att-selected-item")) {
             var btnName = "save";
             if($(obj).attr("data-button-label") && $(obj).attr("data-button-label") != "") btnName = $(obj).attr("data-button-label");
-            var btn = getLinkObj(panelObj, "btn", "chart", "operate", $(obj).attr("data-target"), $(obj).attr("data-type"), btnName, "", {"post":"1"});
+            var btn = getLinkObj(panelObj, "btn", "chart", "operate", $(obj).attr("data-target"), $(obj).attr("data-type"), btnName, "", 
+            {"post":"1", "button-label":btnName});
             $(act).append(btn);
         }
 

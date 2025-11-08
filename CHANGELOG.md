@@ -1,3 +1,6 @@
+### [1.5.3] 2025.11.08
+- [added] added selected item count display in operate select type
+
 ### [1.5.2] 2025.11.06
 - [changed] changed script scheduler to run asynchronously
 
@@ -38,7 +41,7 @@
 - [fixed] fixed duplicate scheduler execution in a multi-process environment.
 
 ### [1.3.1] 2025.08.08
-- [changed] changed Agent Execution.
+- [changed] changed agent Execution.
 
 ### [1.3.0] 2025.08.08
 - [added] added job scheduling function.

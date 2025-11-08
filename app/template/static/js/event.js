@@ -574,6 +574,11 @@ $("body")
 
 .on ("click", ".fnc-select-toggle", function() {
     $(this).toggleClass('att-selected-item');
+    var panelObj = getPanelObj(this);
+    var actBtn = $(panelObj).find(".search .act .att-btn");
+    var cnt = $(this).parent().parent().parent().find("tr td a.att-selected-item").length;
+    $(actBtn).html($(actBtn).attr("data-button-label"));
+    if (cnt > 0) $(actBtn).append(" ("+cnt+")");
 })
 
 .on ("click", ".fnc-select-all", function() {
@@ -586,6 +591,12 @@ $("body")
         $(this).addClass("att-selected-item");
         $(this).parent().parent().parent().find(".fnc-selects-td .fnc-select-toggle").addClass("att-selected-item");
     }
+
+    var panelObj = getPanelObj(this);
+    var actBtn = $(panelObj).find(".search .act .att-btn");
+    var cnt = $(this).parent().parent().parent().find("tr td a.att-selected-item").length;
+    $(actBtn).html($(actBtn).attr("data-button-label"));
+    if (cnt > 0) $(actBtn).append(" ("+cnt+")");
 })
 
 .on ("click", ".fnc-select-multi-add", function() {
