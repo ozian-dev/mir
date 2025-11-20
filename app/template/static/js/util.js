@@ -395,7 +395,7 @@ function setPanelInfo(obj) {
 
     trans2obj(pInfo);
 
-    if ( pInfo["chart"] ) {
+    if (pInfo["chart"]) {
         // 0:disable, 1:ready, 2:activated
         pInfo["chart"]["tools"] = {};
         pInfo["chart"]["tools"]["operate"] = 0;
@@ -414,7 +414,17 @@ function setPanelInfo(obj) {
                 }
             }
         }
-
+    } else if (pInfo["form"]) {
+        if (pInfo["form"]["heads_orders"]) {
+            for (var i=0; i<pInfo["form"]["heads_orders"].length; i++) {
+                var headName = pInfo["form"]["heads_orders"][i];
+                var info = pInfo["form"]["heads"][headName];
+                if (info["values"] && info["values"]["data"]) {
+                    pInfo["form"]["heads"][headName]["values"]["data_rev"] 
+                        = switchKeyVal(info["values"]["data"]);
+                }
+            }
+        }
     }
 
     _p["p"]["i"][obj["pid"]] = pInfo;

@@ -1,3 +1,8 @@
+### [1.5.4] 2025.11.20
+- [changed] enabled choice type in form heads
+- [fixed] fixed JSON dump bug caused by object type error.
+- [removed] removed all WebSocket-related features
+
 ### [1.5.3] 2025.11.08
 - [added] added selected item count display in operate select type
 
@@ -7,7 +12,7 @@
 ### [1.5.1] 2025.11.04
 - [added] added button_label support in operate
 - [added] added popup display for text/json cells and clipboard copy on double-click
-- [changed] removed outlink attribute when URL is missing
+- [removed] removed outlink attribute when URL is missing
 - [changed] extended dynamic import to support submodules (e.g., "aaa.bbb") in api and custom
 
 ### [1.5.0] 2025.10.11
@@ -206,7 +211,7 @@
 - [changed] adjusted menu border radius.
 
 ### [1.0.12] 2025.01.09
-- [changed] removed the logic for aligning the tooltip to the top.
+- [removed] removed the logic for aligning the tooltip to the top.
 
 ### [1.0.11] 2025.01.09
 - [fixed] adjusted chart tooltip top position 

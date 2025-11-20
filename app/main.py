@@ -201,35 +201,3 @@ async def subscribe(request: Request):
 @app.get("/vapid_public_key")
 def get_vapid_public_key():
     return {"vapidPublicKey": const.CONF['app']['push']['public']}
-
-
-"""
-When removing WebSocket-related functionality, the following files need to be cleaned up.
-./app/util/util_async.py
-./app/main.py
-./app/conf/const.py
-"""
-# web socket server
-@app.websocket("/ws/{user}")
-async def websocket_endpoint(websocket: WebSocket, user: str = "anonymous"):
-
-    client_host = websocket.client.host
-    client_port = websocket.client.port
-    client_id = f"{client_host}:{client_port}"
-
-    if user in const.WS_USER and client_id in const.WS_USER[user]:
-        await websocket.close(code=1008)
-        return
-
-    await websocket.accept()
-    await websocket.send_text( json.dumps({"status":"hello", "cid":client_id, "msg":f"hello! {user}"}) )
-    if user not in const.WS_USER : const.WS_USER[user] = {}
-    const.WS_USER[user][client_id] = websocket
-
-    try:
-        while True:
-            msg = await websocket.receive_text()
-
-    except WebSocketDisconnect:
-        del const.WS_USER[user][client_id]
-

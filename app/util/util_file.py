@@ -42,6 +42,11 @@ def write_json_file(data, file_path, indent:int=None):
         if indent is None : json.dump(data, file)
         else : json.dump(data, file, indent=indent)
 
+def write_json_file_force(data, file_path, indent:int=None):
+    with open(file_path, 'w') as file:
+        if indent is None : json.dump(data, file, default=str)
+        else : json.dump(data, file, default=str, indent=indent)
+
 def load_file(file_path):
     with open(file_path, 'r') as file:
         return file.read()

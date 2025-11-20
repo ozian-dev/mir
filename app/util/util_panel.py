@@ -86,8 +86,7 @@ def get_panel (panel:object, panel_json:object, params:object) :
         return util_response.response_excel(final_res)
 
     else :
-        
-        if "chart" in final_res :
+        if "chart" in final_res or "form" in final_res :
             final_res["meta"] = {}
             final_res["meta"]["trans_obj"] = [
                 # important : order & '*' can use only once
@@ -100,6 +99,7 @@ def get_panel (panel:object, panel_json:object, params:object) :
                 "obj.chart.insert.*.columns",
                 "obj.chart.heads",
                 "obj.chart.ops",
+                "obj.form.heads",
                 #"obj.form.items"
             ]
 

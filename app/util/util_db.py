@@ -55,7 +55,11 @@ def select_db (i: int, sql: str, params: object = None, ttl: int = 0, is_raw: bo
         elif db_info["type"] == "elasticsearch" :
             res_db = select_db_elasticsearch (db_info, sql, params, is_raw)
 
-        if ttl != 0 : util_file.write_json_file(res_db, cache_file_name)
+        if ttl != 0 : 
+            if db_info["type"] == "bigquery" : 
+                util_file.write_json_file_force(res_db, cache_file_name)
+            else:
+                util_file.write_json_file(res_db, cache_file_name)
 
     last_update = "just now"
     if ttl != 0 : last_update = util_file.get_file_modified_time_gap(cache_file_name)
@@ -115,6 +119,7 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
             "cols": cols,
             "data": data
         }
+
     return result_list
 
 

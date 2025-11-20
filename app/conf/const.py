@@ -137,12 +137,9 @@ SQLS["ajob_update_fail"] = """
     update ajob set status = 2, ended = now() where idx=#{idx}
     """
 
-WS_USER = {}
-
 SCHEDULER = None
 ASYNC_LOOP = None
 WEB_PUSH = False
-
 
 CUSTOM_WS = {
     "-1": {
