@@ -901,15 +901,7 @@ var playFnc = {
     pop2Tcopy: function(obj){
         var jsonStr = editorJson.getValue();
         jsonStr = JSON.stringify(JSON.parse(jsonStr), null, 4);
-
-        var textarea = $("<textarea>").val(jsonStr);
-        $("body").append(textarea);
-        $(textarea).select();
-        document.execCommand('copy');
-        $(textarea).remove();
-
-        modal(_m[_l]["copy"]);
-
+        copyText(jsonStr);
     },  
     pop2Tapply: function(obj){
 
@@ -1039,14 +1031,7 @@ var playFnc = {
         } catch (e) {
             copyStr = $('#pop3 .space .att-input-textarea').val();
         }
-
-        var textarea = $("<textarea>").val(copyStr);
-        $("body").append(textarea);
-        $(textarea).select();
-        document.execCommand('copy');
-        $(textarea).remove();
-
-        modal(_m[_l]["copy"]);
+        copyText(copyStr);
     },  
     pop3Tapply: function(obj) {
 
@@ -1158,12 +1143,7 @@ var playFnc = {
         
         } else if (type == "copy") {
             var copyStr = editorSql.getValue();
-            var textarea = $("<textarea>").val(copyStr);
-            $("body").append(textarea);
-            $(textarea).select();
-            document.execCommand('copy');
-            $(textarea).remove();
-            modal(_m[_l]["copy"]);
+            copyText(copyStr);
         }
     },
     workTsqlTexcel: function(obj){
@@ -1240,13 +1220,7 @@ var playFnc = {
             var copyStr = "";
             if (fileType == "json") copyStr= editorJson.getValue();
             else if (fileType == "html") copyStr= editorHtml.getValue();
-            
-            var textarea = $("<textarea>").val(copyStr);
-            $("body").append(textarea);
-            $(textarea).select();
-            document.execCommand('copy');
-            $(textarea).remove();
-            modal(_m[_l]["copy"]);
+            copyText(copyStr);
         }
     },
 

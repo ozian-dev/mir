@@ -1713,11 +1713,22 @@ function removeEffectRow(obj) {
 
 function toHtml(str) {
 
-    var div = $("<div>").addClass("markdown-body").html(marked.parse(str));
+    const html = marked.parse(str, { gfm: true, breaks: true });
+    var div = $("<div>").addClass("markdown-body").html(html);
 
     $(div).find("a").addClass("att-color-dodgerblue").attr("target", "_blank");
     $(div).find("strong").addClass("att-highlight");
     $(div).find("em").addClass("att-highlight");
+
+    $(div).find("pre code[class^='language-']").each(function(index, item) {
+        var clz = $(item).attr("class").split(/\s+/);
+        for(var i=0; i<clz.length; i++) {
+            if (clz[i].startsWith("language-")) {
+                var type = clz[i].replace("language-", "");
+                $(item).parent().prepend($("<lang>").addClass("fnc-code-copy").html(type));
+            }
+        }
+    });
     
     return div;
 }

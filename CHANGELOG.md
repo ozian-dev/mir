@@ -1,25 +1,29 @@
+### [1.5.5] 2025.11.25
+- [changed] refactored using copyText function.
+- [added] added CSS for .markdown-body pre, lang and code.
+
 ### [1.5.4] 2025.11.20
-- [changed] enabled choice type in form heads
+- [changed] enabled choice type in form heads.
 - [fixed] fixed JSON dump bug caused by object type error.
 - [removed] removed all WebSocket-related features
 
 ### [1.5.3] 2025.11.08
-- [added] added selected item count display in operate select type
+- [added] added selected item count display in operate select type.
 
 ### [1.5.2] 2025.11.06
-- [changed] changed script scheduler to run asynchronously
+- [changed] changed script scheduler to run asynchronously.
 
 ### [1.5.1] 2025.11.04
-- [added] added button_label support in operate
-- [added] added popup display for text/json cells and clipboard copy on double-click
-- [removed] removed outlink attribute when URL is missing
-- [changed] extended dynamic import to support submodules (e.g., "aaa.bbb") in api and custom
+- [added] added button_label support in operate.
+- [added] added popup display for text/json cells and clipboard copy on double-click.
+- [removed] removed outlink attribute when URL is missing.
+- [changed] extended dynamic import to support submodules (e.g., "aaa.bbb") in api and custom.
 
 ### [1.5.0] 2025.10.11
 - [added] added query registration and execution feature.
-- [added] added file editing feature
-- [changed] changed so that editing of the conf.json file is also handled by the same feature
-- [fixed] fixed bug in SQL editing via double-click
+- [added] added file editing feature.
+- [changed] changed so that editing of the conf.json file is also handled by the same feature.
+- [fixed] fixed bug in SQL editing via double-click.
 
 ### [1.4.1] 2025.09.30
 - [changed] changed it so that clicking the workplace title folds the menu.

@@ -305,12 +305,7 @@ $("body")
     $(this).slideUp(function() {$(this).remove();});
 })
 .on ("dblclick", ".fnc-text-view-out", function() {
-    var textarea = $("<textarea>").val($(this).text());
-    $("body").append(textarea);
-    $(textarea).select();
-    document.execCommand('copy');
-    $(textarea).remove();
-    modal(_m[_l]["copy"]);
+    copyText($(this).text());
 })
 
 
@@ -976,4 +971,10 @@ $("body")
 
 })
 
+// markdown function
+////////////////////////////////////////////////////////////////////
+.on ("click", ".fnc-code-copy", function() {
+    var copyStr =$(this).next().text();
+    copyText(copyStr);
+})
 ;

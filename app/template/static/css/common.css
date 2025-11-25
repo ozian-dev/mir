@@ -539,9 +539,13 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 .markdown-body img {max-width:400px;margin:10px 10px 10px 0;border:1px solid whitesmoke;}
 .markdown-body hr {margin:15px 0;size:1px;}
 .markdown-body table {border-collapse:collapse;width:100%;margin:5px 0;}
-.markdown-body th, .markdown-body td {border:1px solid lightgrey;padding:2px 4px;white-space:nowrap; }
+.markdown-body th, .markdown-body td {border:1px solid lightgrey;padding:2px 4px;white-space:nowrap;}
 .markdown-body th {text-align:center;}
 .markdown-body td {text-align:right;}
+.markdown-body pre {background:whitesmoke;padding:15px;padding-top:30px;position:relative;overflow-x:auto;}
+.markdown-body pre lang {position:absolute;top:5px;left:15px;color:silver;cursor:pointer;}
+.markdown-body pre lang::after {content:"⿻";margin-left:5px;font-size:11px;}
+.markdown-body pre code {white-space:pre;}
 
 .tooltip { background:rgba(245,245,245,0.95);color:white;display:none;pointer-events:none;position:absolute;padding:8px;left:0;top:0;border-radius:10px;border:1px solid gray;z-index:40;}
 .tooltip * {font-size:12px;}

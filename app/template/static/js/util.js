@@ -860,6 +860,14 @@ function getWeekDay(str) {
     return str;
 }
 
+function copyText(str) {
+    var textarea = $("<textarea>").val(str);
+    $("body").append(textarea);
+    $(textarea).select();
+    document.execCommand('copy');
+    $(textarea).remove();
+    modal(_m[_l]["copy"]);
+}
 
 
 
