@@ -24,7 +24,7 @@ async def execute(info, params, callback):
             "task_name": f"action.{info["name"]}",
             "msg": str(e),
         }
-        log.log_info('async', json.dumps(res_obj))
+        log.log_info('root', json.dumps(res_obj))
             
 async def call(info, params: object=None):
 
@@ -63,13 +63,12 @@ async def callback(info, params: object=None, res_arr: object=None) :
     log_obj['res'] = res_arr
     log.log_info('root', params[0], log_obj)
 
-    data = {
-        'ui': params[0]['@ui'],
-        'uid': params[0]['@id'],
-        'grp': params[0]['.g'],
-        'pid': params[0]['.i'],
-        'target': info['name'],
-    }
-
     if util_push.is_activated():
+        data = {
+            'ui': params[0]['@ui'],
+            'uid': params[0]['@id'],
+            'grp': params[0]['.g'],
+            'pid': params[0]['.i'],
+            'target': info['name'],
+        }
         util_push.send_msg(data, info["completed"])

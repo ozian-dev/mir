@@ -30,5 +30,5 @@ rm -f ./_data/pids/*
 if [ "$env" == "dev" ]; then
     python -m uvicorn $app_path --reload --reload-dir ../ --log-config $log_config --port $port
 elif [ "$env" == "prod" ]; then
-    python -m uvicorn $app_path --workers $workers --log-config $log_config --port $port > /dev/null 2>&1 &
+    python -m uvicorn $app_path --workers $workers --log-config $log_config --port $port &
 fi
