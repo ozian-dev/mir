@@ -6,6 +6,7 @@ from app.util import util_db, util_push
 
 async def execute(info, params, callback):
     try:
+        print(params)
         query_arr = info["query"]
         res_arr = await asyncio.to_thread(util_db.execute_db, info["datasource"], query_arr, params)
         await callback(info, params, res_arr)
@@ -16,15 +17,15 @@ async def execute(info, params, callback):
             ajob_query = const.SQLS["ajob_update_fail"]
             rows = util_db.execute_db(const.CONF["start_db"]["idx"], [ajob_query], [ajob_params])
 
-        for cid in const.WS_USER[info["@id"]] :
-            res_obj = {
-                "status": "error",
-                "cid": cid,
-                "task_alias": info["alias"],
-                "task_name": f"action.{info["name"]}",
-                "msg": str(e) ,
-            }
-            await const.WS_USER[info["@id"]][cid].send_text(json.dumps(res_obj))
+        res_obj = {
+            "action": "async",
+            "status": "error",
+            "pid": params[0][".i"],
+            "task_alias": info["alias"],
+            "task_name": f"action.{info["name"]}",
+            "msg": str(e) ,
+        }
+        log.log_info('async', json.dumps(res_obj))
             
 async def call(info, params: object=None):
 

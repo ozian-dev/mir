@@ -1,3 +1,6 @@
+### [1.5.6] 2025.12.03
+- [added] added async job error logging.
+
 ### [1.5.5] 2025.11.25
 - [changed] refactored using copyText function.
 - [added] added CSS for .markdown-body pre, lang and code.
