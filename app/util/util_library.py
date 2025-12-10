@@ -202,7 +202,7 @@ def get_css (request: Request, device) :
         css_obj["custom"] += util_file.load_file(css)
 
     style = const.CONF["style"]["color"]
-    if style not in ["blue", "red", "green", "black"]: style = "blue"; 
+    if style not in const.STYLE: style = "blue"; 
     css_obj["common"] = css_obj["common"].replace("{{{background_color_logo}}}",   const.STYLE[style]["main"])
     css_obj["common"] = css_obj["common"].replace("{{{background_color_header}}}", const.STYLE[style]["sub"])
 

@@ -1,3 +1,6 @@
+### [1.5.7] 2025.12.10
+- [added] added mauve and grey themes.
+
 ### [1.5.6] 2025.12.03
 - [added] added async job error logging.
 

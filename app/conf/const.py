@@ -57,8 +57,10 @@ ALIAS_STATIC = "static"
 STYLE = {
     "blue"  : { "main" : "#4A58C0", "sub" : "#6070E0" },
     "red"   : { "main" : "#E54F49", "sub" : "#F46548" },
-    "green" : { "main" : "#109D69", "sub" : "#1FBD68" },
+    "green" : { "main" : "#249988", "sub" : "#2EB8A3" },
+    "mauve" : { "main" : "#A2486B", "sub" : "#B55A7A" },
     "black" : { "main" : "#000000", "sub" : "#555555" },
+    "grey"  : { "main" : "#A0A0A0", "sub" : "#909090" },
 }
 
 CONF = {}
