@@ -4,11 +4,10 @@ import re
 import os
 import copy
 import json
-
+import requests
 from decimal import Decimal as decimal
 from datetime import date, datetime
 from google.cloud import bigquery
-from elasticsearch import Elasticsearch
 
 from app.util import util_file, util_library
 from app.conf import const
@@ -87,7 +86,7 @@ def select_db_mysql (db_info: object, sql: str, params: object = None, is_raw: b
     if is_raw : 
         return {"data":rows, "cols":columns}
 
-    result = get_result (columns, rows)
+    result = get_result_mysql (columns, rows)
 
     cursor.close()
     conn.close()
@@ -122,97 +121,31 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
 
     return result_list
 
+def select_db_elasticsearch (db_info: object, query: str, params: object = None) :
 
-def select_db_elasticsearch (db_info: object, sql: str, params: object = None, is_raw: bool = False) :
+    url = f"http://{db_info['host']}:{db_info['port']}/{db_info['database']}/_search"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
 
-    url = f"http://{db_info['user']}:{db_info['password']}@{db_info['host']}:{db_info['port']}"
-    es = Elasticsearch(hosts=url)
-
-    sql = get_parsed_query(sql, params)
-    query_obj = json.loads(sql)
-
-    res_es = es.search(
-        index=db_info['database'],
-        body=query_obj
-    )
-
-    key_name = list(query_obj["aggs"].keys())[0]
-    bucket_name = list(query_obj["aggs"][key_name]["aggs"].keys())[0]
-    agg_name = ""
-
-    if "aggs" in query_obj["aggs"][key_name]["aggs"][bucket_name] :
-        agg_name = list(query_obj["aggs"][key_name]["aggs"][bucket_name]["aggs"].keys())[0]
-
-    res = res_es.body
-
-    result = []
-    buckets = res['aggregations'][key_name]['buckets']
-
-    for bucket in buckets:
-        bkt = f"k-{bucket['key']}"
-        intervals = bucket[bucket_name]['buckets']
-        
-        for interval in intervals:
-            x = interval['key_as_string']
-            value = interval['doc_count']
-            if agg_name != "" : value = interval[agg_name]['value']
-            
-            # Find or create a dict for this timestamp
-            entry = next((item for item in result if item['x'] == x), None)
-            if not entry:
-                entry = {'x': x}
-                result.append(entry)
-
-            # Add value for this cid to the dict
-            entry[bkt] = value
-
-    return result
-
-
-def select_db_elasticsearch (db_info: object, sql: str, param: object = None) :
-
-    url = f"http://{db_info['user']}:{db_info['password']}@{db_info['host']}:{db_info['port']}"
-    es = Elasticsearch(hosts=url)
-
-    sql = get_parsed_query(sql, params)
+    query = get_parsed_query(query, params)
     query_obj = json.loads(query)
+    if "aggs" not in query_obj:
+        raise Exception("For elasticsearch, only queries with aggregations are supported.")
+   
 
-    res_es = es.search(
-        index=db_info['database'],
-        body=query_obj
+    response = requests.post(
+        url,
+        auth=(db_info['user'], db_info['password']),
+        headers=headers,
+        json=query
     )
 
-    key_name = list(query_obj["aggs"].keys())[0]
-    bucket_name = list(query_obj["aggs"][key_name]["aggs"].keys())[0]
-    agg_name = ""
+    res = response.json()
+    res_final = get_result_elasticsearch(query_obj, res)
 
-    if "aggs" in query_obj["aggs"][key_name]["aggs"][bucket_name] :
-        agg_name = list(query_obj["aggs"][key_name]["aggs"][bucket_name]["aggs"].keys())[0]
-
-    res = res_es.body
-
-    result = []
-    buckets = res['aggregations'][key_name]['buckets']
-
-    for bucket in buckets:
-        bkt = f"k-{bucket['key']}"
-        intervals = bucket[bucket_name]['buckets']
-        
-        for interval in intervals:
-            x = interval['key_as_string']
-            value = interval['doc_count']
-            if agg_name != "" : value = interval[agg_name]['value']
-            
-            # Find or create a dict for this timestamp
-            entry = next((item for item in result if item['x'] == x), None)
-            if not entry:
-                entry = {'x': x}
-                result.append(entry)
-
-            # Add value for this cid to the dict
-            entry[bkt] = value
-
-    return result
+    return res_final
 
 ## execute functions
 
@@ -292,7 +225,7 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
     return result_arr
 
 
-def get_result ( columns, data ) :
+def get_result_mysql ( columns, data ) :
     
     result = []
     for row in data:
@@ -311,6 +244,32 @@ def get_result ( columns, data ) :
         result.append(tmp)
 
     return result
+
+
+def get_result_elasticsearch(query, res):
+    if "aggs" not in query:
+        raise Exception("For elasticsearch, only queries with aggregations are supported.")
+    
+    init_obj = {}
+    for k, v in query["aggs"].items():
+        init_obj[f"{k}._x"] = None
+        init_obj[f"{k}._count"] = None
+        for k1, v1 in v["aggs"].items():
+            init_obj[f"{k}.{k1}"] = None
+
+    res_obj = {}
+    for k, v in res["aggregations"].items():
+        data=v["buckets"]
+        for row in data:
+            if row["key_as_string"] not in res_obj: res_obj[row["key_as_string"]] = copy.deepcopy(init_obj)
+            tmp = res_obj[row["key_as_string"]]
+            for k1, v1 in row.items():
+                if k1 == "key_as_string": tmp[f"{k}._x"] = v1
+                elif k1 == "doc_count": tmp[f"{k}._count"] = v1
+                elif k1 == "key": pass
+                else: tmp[f"{k}.{k1}"] = v1["value"]
+
+    return list(res_obj.values())
 
 
 def get_mysql_field_type(code):

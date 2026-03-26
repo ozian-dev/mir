@@ -1,3 +1,6 @@
+### [1.5.8] 2026.03.26
+- [added] added Elasticsearch functionality.
+
 ### [1.5.7] 2025.12.10
 - [added] added mauve and grey themes.
 
