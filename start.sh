@@ -18,9 +18,15 @@ else
     exit 1
 fi
 
+echo "Executing: pkill -f \"uvicorn.*$app_path.*--port.*$port\""
 pkill -f "uvicorn.*$app_path.*--port.*$port"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     pkill -f "Python.app/Contents/MacOS/.*spawn_main"
+else
+    # Linux 및 기타 환경: 일반적인 spawn_main 조준
+    echo "Detected Linux/Unix: Killing multiprocessing workers..."
+    echo "pkill -f \"spawn_main\""
+    pkill -f "spawn_main"
 fi
 
 source ../bin/activate
