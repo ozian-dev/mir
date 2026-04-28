@@ -2,11 +2,13 @@ import mysql.connector
 import hashlib
 import re
 import os
+import sys
 import copy
 import json
 import requests
 from decimal import Decimal as decimal
 from datetime import date, datetime
+from urllib.parse import quote
 from google.cloud import bigquery
 
 from app.util import util_file, util_library
@@ -52,7 +54,7 @@ def select_db (i: int, sql: str, params: object = None, ttl: int = 0, is_raw: bo
         elif db_info["type"] == "bigquery" :
             res_db = select_db_bigquery (db_info, sql, params, is_raw)
         elif db_info["type"] == "elasticsearch" :
-            res_db = select_db_elasticsearch (db_info, sql, params, is_raw)
+            res_db = select_db_elasticsearch (db_info, sql, params)
 
         if ttl != 0 : 
             if db_info["type"] == "bigquery" : 
@@ -123,17 +125,17 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
 
 def select_db_elasticsearch (db_info: object, query: str, params: object = None) :
 
-    url = f"http://{db_info['host']}:{db_info['port']}/{db_info['database']}/_search"
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-
+    index = quote(db_info['database'])
+    url = f"http://{db_info['host']}:{db_info['port']}/{index}/_search"
     query = get_parsed_query(query, params)
     query_obj = json.loads(query)
     if "aggs" not in query_obj:
         raise Exception("For elasticsearch, only queries with aggregations are supported.")
-   
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
 
     response = requests.post(
         url,
@@ -143,7 +145,10 @@ def select_db_elasticsearch (db_info: object, query: str, params: object = None)
     )
 
     res = response.json()
-    res_final = get_result_elasticsearch(query_obj, res)
+    res_final = get_elasticsearch_result(res)
+    if sys.platform == 'darwin':
+        print(json.dumps(res, indent=4, ensure_ascii=False))
+        print(json.dumps(res_final, indent=4, ensure_ascii=False))
 
     return res_final
 
@@ -226,7 +231,6 @@ def execute_db_mysql (db_info: object, sqls: object, params: object = None, comm
 
 
 def get_result_mysql ( columns, data ) :
-    
     result = []
     for row in data:
         tmp = {}
@@ -246,31 +250,42 @@ def get_result_mysql ( columns, data ) :
     return result
 
 
-def get_result_elasticsearch(query, res):
-    if "aggs" not in query:
+def get_elasticsearch_values(res_obj, bucket, prefix):
+    for item, val in bucket.items():
+        if item == 'key_as_string':
+            res_obj[f"{prefix}.key"] = val
+        elif item == 'key':
+            pass
+        elif isinstance (val, dict):
+            if 'buckets' in val:
+                get_elasticsearch_values(res_obj, val['buckets'], f"{prefix}.{item}")
+            else:
+                if 'value' in val:
+                    res_obj[f"{prefix}.{item}"] = val['value']
+                else:
+                    for item1, val1 in val.items():
+                        if isinstance (val1, dict):
+                            res_obj[f"{prefix}.{item}.{item1}"] = val1['value']
+                        else:
+                            res_obj[f"{prefix}.{item}.{item1}"] = val1
+        else:
+            res_obj[f"{prefix}.{item}"] = val
+
+
+def get_elasticsearch_result(data):
+    if 'aggregations' in data:
+        for data_name in list(data['aggregations'].keys()):
+            buckets = data['aggregations'][data_name]['buckets']
+            res_raw = []
+            for bucket in buckets:
+                tmp = {}
+                get_elasticsearch_values(tmp, bucket, data_name)
+                tmp = {k.lstrip('.'): v for k, v in tmp.items()}
+                res_raw.append(tmp)
+        return res_raw
+    else:
         raise Exception("For elasticsearch, only queries with aggregations are supported.")
     
-    init_obj = {}
-    for k, v in query["aggs"].items():
-        init_obj[f"{k}._x"] = None
-        init_obj[f"{k}._count"] = None
-        for k1, v1 in v["aggs"].items():
-            init_obj[f"{k}.{k1}"] = None
-
-    res_obj = {}
-    for k, v in res["aggregations"].items():
-        data=v["buckets"]
-        for row in data:
-            if row["key_as_string"] not in res_obj: res_obj[row["key_as_string"]] = copy.deepcopy(init_obj)
-            tmp = res_obj[row["key_as_string"]]
-            for k1, v1 in row.items():
-                if k1 == "key_as_string": tmp[f"{k}._x"] = v1
-                elif k1 == "doc_count": tmp[f"{k}._count"] = v1
-                elif k1 == "key": pass
-                else: tmp[f"{k}.{k1}"] = v1["value"]
-
-    return list(res_obj.values())
-
 
 def get_mysql_field_type(code):
     if code == mysql.connector.FieldType.TINY:
@@ -324,7 +339,7 @@ def type_db_mysql (i: int, sql: str, params: object = None) :
 
     return res
 
-def get_parsed_query (query: str, params: object = None) :
+def get_parsed_query (query: str, params: object = None, is_es: bool = False) :
 
     if params is None : params = {}
 
@@ -341,8 +356,10 @@ def get_parsed_query (query: str, params: object = None) :
         if len(match_arr2) > 0 :
             replace_cnt2 = 0 
             for match_str2 in match_arr2 :
-                if match_str2 in params : 
-                    match_str = match_str.replace(f"${{{match_str2}}}", get_trans_value(params[match_str2]))
+                if match_str2 in params :
+                    tmp_str = params[match_str2]
+                    if is_es == False: tmp_str = get_trans_value(tmp_str)
+                    match_str = match_str.replace(f"${{{match_str2}}}", tmp_str)
                     replace_cnt2 += 1
 
             if  len(match_arr2) == replace_cnt2 :
@@ -369,8 +386,10 @@ def get_parsed_query (query: str, params: object = None) :
     ptrn_final = r"\$\{(.*?)\}"
     match_final = re.findall(ptrn_final, query)
     for match_str in match_final :
-        if match_str in params : 
-            query = query.replace(f"${{{match_str}}}", get_trans_value(params[match_str]))
+        if match_str in params :
+            tmp_str = params[match_str]
+            if is_es == False: tmp_str = get_trans_value(tmp_str)
+            query = query.replace(f"${{{match_str}}}", tmp_str)
 
     ptrn_final = r"\#\{(.*?)\}"
     match_final = re.findall(ptrn_final, query)

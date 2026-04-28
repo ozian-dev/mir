@@ -1,3 +1,6 @@
+### [1.5.9] 2026.04.28
+- [changed] improved ES data parsing.
+
 ### [1.5.8] 2026.03.26
 - [added] added Elasticsearch functionality.
 
