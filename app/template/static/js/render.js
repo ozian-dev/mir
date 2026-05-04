@@ -460,6 +460,16 @@ function renderPop3 (data, mode="sql", info) {
                 .attr("data-info", JSON.stringify(info))
                 .val(data) ;
         $("#pop3 .space").html(textarea);
+
+    } else if ( mode == "json" ) {
+        jsonStr = getHtmlEntity(data);
+        $("#pop3 .space").html(
+            $("<div>")
+            .attr("id", "editjsonsimple")
+            .attr("data-info", JSON.stringify(info))
+            .html(jsonStr)
+        );
+        callJsonEditorSimple("editjsonsimple");
     }
 
     $("#pop3").toggle("slide", {direction:"right"}, 350);

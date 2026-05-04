@@ -1,5 +1,9 @@
+### [1.5.10] 2026.05.04
+- [added] added an Elasticsearch query JSON editor.
+- [fixed] fixed bugs related to Elasticsearch.
+
 ### [1.5.9] 2026.04.28
-- [changed] improved ES data parsing.
+- [changed] improved Elasticsearch data parsing.
 
 ### [1.5.8] 2026.03.26
 - [added] added Elasticsearch functionality.

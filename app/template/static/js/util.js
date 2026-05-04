@@ -259,6 +259,16 @@ function isNumeric(value) {
     return /^-?\d+(\.\d+)?$/.test(value);
 }
 
+function isValidJson(str) {
+    if (typeof str !== "string") return false;
+    try {
+        const result = JSON.parse(str);
+        return (typeof result === "object" && result !== null);
+    } catch (e) {
+        return false;
+    }
+}
+
 function getFormatTime() {
     var now = new Date(); // 현재 날짜 및 시간 객체 생성
     var hours = now.getHours(); // 시 추출
@@ -552,6 +562,7 @@ function findObjWithKeyExt(jsonObj, targetKey = "sql") {
 /* ----------------------------------------------- */
 
 var editorJson;
+var editorJsonSimple;
 var editorSql;
 var editorHtml;
 var editorText;
@@ -587,6 +598,21 @@ function cleanConfEditorObj(target) {
 
 }
 
+function callJsonEditorSimple(target) {
+    editorJsonSimple = ace.edit(target);
+    editorJsonSimple.getSession().setMode("ace/mode/json");
+    editorJsonSimple.setTheme("ace/theme/tomorrow");
+    editorJsonSimple.getSession().setTabSize(2);
+    editorJsonSimple.getSession().setUseWrapMode(true);
+    try {
+        var jsonData = editorJsonSimple.getValue();
+        var format = JSON.stringify(JSON.parse(jsonData), null, 2);
+        editorJsonSimple.setValue(format+"\n\n\n");
+    } catch (e) { modal("invalid json:<br/>" + e, false); return; }
+
+    editorJsonSimple.gotoLine(1, 0, true);
+}
+
 function callJsonEditor(target) {
 
     if ( target == "editjsonconf" ) {
@@ -598,12 +624,12 @@ function callJsonEditor(target) {
     editorJson = ace.edit(target);
     editorJson.getSession().setMode("ace/mode/json");
     editorJson.setTheme("ace/theme/tomorrow");
-    editorJson.getSession().setTabSize(4);
+    editorJson.getSession().setTabSize(2);
     editorJson.getSession().setUseWrapMode(true);
 
     try {
         var jsonData = editorJson.getValue();
-        var format = JSON.stringify(JSON.parse(jsonData), null, 4);
+        var format = JSON.stringify(JSON.parse(jsonData), null, 2);
         editorJson.setValue(format+"\n\n\n");
     } catch (e) { modal("invalid json:<br/>" + e, false); return; }
 
@@ -628,7 +654,6 @@ function callJsonEditor(target) {
                 candidate = jsonObj[Object.keys(jsonObj)[0]];
             } catch (e2) {}
         }
-
         if( jsonObj && "info" in jsonObj ) {
             var info = { "pos": pos, "line": line };
             renderPop3(jsonObj["info"], "markdown", info);
@@ -639,6 +664,10 @@ function callJsonEditor(target) {
             if (!prompt) prompt = jsonObj["user"];
             renderPop3(prompt, "prompt", info);
             return ;  
+        } else if (candidate != "" && isValidJson(candidate)) {
+            var info = { "pos": pos, "line": line };
+            renderPop3(candidate, "json", info);
+            return ;
         }
         
         if ( candidate != "" ) {
@@ -694,7 +723,7 @@ function callJsonEditor(target) {
                     }
                 } else {
                     sqlEditLineNum = -1;
-                    sqlEditQueryOrg = "";       
+                    sqlEditQueryOrg = "";
                 }
             } catch (e3) {
                 console.log(e3);

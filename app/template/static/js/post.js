@@ -486,7 +486,7 @@ var postFnc = {
         callAjax(url, function(resObj){
 
             modal("ok");
-            jsonStr = JSON.stringify(JSON.parse(resObj["json"]), null, 4);
+            jsonStr = JSON.stringify(JSON.parse(resObj["json"]), null, 2);
 
             $("#pop5 .space .json .context").html(jsonStr)
 
@@ -498,7 +498,7 @@ var postFnc = {
     directTeditT: function(obj){
         
         var jsonData = editorJson.getValue();
-        var text = JSON.stringify(JSON.parse(jsonData), null, 4);
+        var text = JSON.stringify(JSON.parse(jsonData), null, 2);
      
         var postData = {
             "entity": $(obj).attr("data-entity"),

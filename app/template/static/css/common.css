@@ -560,6 +560,9 @@ input[type="file"]::file-selector-button {display:inline-block;width:80px;height
 #editjson {height:100%;border-top:1px solid lightgray;}
 #editjson * {font-size:12px;line-height:normal;font-style:normal;font-family:Monaco;}
 
+#editjsonsimple {height:100%;border-top:1px solid lightgray;}
+#editjsonsimple * {font-size:12px;line-height:normal;font-style:normal;font-family:Monaco;}
+
 #editsql {height:100%;border-top:1px solid lightgray;}
 #editsql * {font-size:12px;line-height:normal;font-style:normal;font-family:Monaco;}
 

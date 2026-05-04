@@ -890,7 +890,7 @@ var playFnc = {
     pop2Talign: function(obj){
         try {
             var jsonStr = editorJson.getValue();
-            var format = JSON.stringify(JSON.parse(jsonStr), null, 4);
+            var format = JSON.stringify(JSON.parse(jsonStr), null, 2);
         } catch (e) { modal("invalid json:<br/>" + e, false); return; }
         editorJson.setValue(format+"\n\n\n");
         var firstLine = editorJson.getSession().getDocument().getLine(0);
@@ -900,7 +900,7 @@ var playFnc = {
     },  
     pop2Tcopy: function(obj){
         var jsonStr = editorJson.getValue();
-        jsonStr = JSON.stringify(JSON.parse(jsonStr), null, 4);
+        jsonStr = JSON.stringify(JSON.parse(jsonStr), null, 2);
         copyText(jsonStr);
     },  
     pop2Tapply: function(obj){
@@ -1011,23 +1011,38 @@ var playFnc = {
             }
         }
     },
-
-
     pop3Talign: function(obj){
-        try {
-            var sql = editorSql.getValue();
-            editorSql.setValue( getFormattedSql (sql, $("#pop3").attr("data-type")) );
-        } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
+        var mode = $("#pop3").attr("data-mode");
+        if (mode == "json") {
+            try {
+                var jsonStr = editorJsonSimple.getValue();
+                var format = JSON.stringify(JSON.parse(jsonStr), null, 2);
+            } catch (e) { modal("invalid json:<br/>" + e, false); return; }
+            editorJsonSimple.setValue(format+"\n\n\n");
+            var firstLine = editorJsonSimple.getSession().getDocument().getLine(0);
+            editorJsonSimple.gotoLine(1, 0, true);
 
-        var firstLine = editorSql.getSession().getDocument().getLine(0);
-        editorSql.gotoLine(1, 0, true);
+        } else { 
+            try {
+                var sql = editorSql.getValue();
+                editorSql.setValue( getFormattedSql (sql, $("#pop3").attr("data-type")) );
+            } catch (e) { modal("invalid sql:<br/>" + e, false); return; }
+
+            var firstLine = editorSql.getSession().getDocument().getLine(0);
+            editorSql.gotoLine(1, 0, true);
+        }
 
         modal(_m[_l]["align"]);
     },  
-    pop3Tcopy: function(obj){
+    pop3Tcopy: function(obj) {
+        var mode = $("#pop3").attr("data-mode");
         var copyStr;
         try {
-            copyStr = editorSql.getValue();
+            if (mode == "json") {
+                copyStr = editorJsonSimple.getValue()
+            } else {
+                copyStr = editorSql.getValue();
+            }
         } catch (e) {
             copyStr = $('#pop3 .space .att-input-textarea').val();
         }
@@ -1078,6 +1093,21 @@ var playFnc = {
             editorJson.session.replace(
                 new ace.Range(lineNumber, start, lineNumber, length),
                 text.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
+            );
+
+        } else if ( mode == "json" ) {
+            var jsonStr = JSON.stringify(JSON.parse(editorJsonSimple.getValue()))
+            jsonStr = jsonStr.replaceAll("\"", "\\\"")
+            var info = JSON.parse($("#editjsonsimple").attr("data-info"));
+            
+            var lineNumber = info["pos"]["row"];
+            var lineText = editorJson.session.getLine(lineNumber);
+            var start = lineText.indexOf("\"") + 1;
+            var length = lineText.lastIndexOf("\"");
+
+            editorJson.session.replace(
+                new ace.Range(lineNumber, start, lineNumber, length),
+                jsonStr
             );
         }
 
@@ -1166,7 +1196,7 @@ var playFnc = {
             var fncName = "editor" + type.charAt(0).toUpperCase() + type.slice(1) + ".getValue()";
             var context = eval(fncName);
 
-            if (type == "json") context = JSON.stringify(JSON.parse(context), null, 4);
+            if (type == "json") context = JSON.stringify(JSON.parse(context), null, 2);
 
 
             var postData = getPostData (panelObj, obj, obj);
@@ -1195,7 +1225,7 @@ var playFnc = {
             if (fileType == "json"){
                 try {
                     var jsonData = editorJson.getValue();
-                    var format = JSON.stringify(JSON.parse(jsonData), null, 4);
+                    var format = JSON.stringify(JSON.parse(jsonData), null, 2);
                     editorJson.setValue(format+"\n\n\n");
                     editorJson.gotoLine(1, 0, true);
 

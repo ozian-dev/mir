@@ -125,10 +125,11 @@ def select_db_bigquery (db_info: object, sql: str, params: object = None, is_raw
 
 def select_db_elasticsearch (db_info: object, query: str, params: object = None) :
 
-    index = quote(db_info['database'])
+    index = quote(db_info['database'].replace(" ", ""))
     url = f"http://{db_info['host']}:{db_info['port']}/{index}/_search"
     query = get_parsed_query(query, params)
     query_obj = json.loads(query)
+    
     if "aggs" not in query_obj:
         raise Exception("For elasticsearch, only queries with aggregations are supported.")
 
@@ -141,14 +142,11 @@ def select_db_elasticsearch (db_info: object, query: str, params: object = None)
         url,
         auth=(db_info['user'], db_info['password']),
         headers=headers,
-        json=query
+        json=query_obj
     )
 
     res = response.json()
     res_final = get_elasticsearch_result(res)
-    if sys.platform == 'darwin':
-        print(json.dumps(res, indent=4, ensure_ascii=False))
-        print(json.dumps(res_final, indent=4, ensure_ascii=False))
 
     return res_final
 
@@ -273,6 +271,9 @@ def get_elasticsearch_values(res_obj, bucket, prefix):
 
 
 def get_elasticsearch_result(data):
+
+    if 'error' in data: raise Exception(f"{json.dumps(data)}")
+
     if 'aggregations' in data:
         for data_name in list(data['aggregations'].keys()):
             buckets = data['aggregations'][data_name]['buckets']
@@ -283,8 +284,9 @@ def get_elasticsearch_result(data):
                 tmp = {k.lstrip('.'): v for k, v in tmp.items()}
                 res_raw.append(tmp)
         return res_raw
+
     else:
-        raise Exception("For elasticsearch, only queries with aggregations are supported.")
+        raise Exception("For the elasticsearch results, only queries with aggregations are supported.")
     
 
 def get_mysql_field_type(code):
