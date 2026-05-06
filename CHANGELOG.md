@@ -1,3 +1,6 @@
+### [1.5.11] 2026.05.06
+- [added] added cascading dropdowns to conditions
+
 ### [1.5.10] 2026.05.04
 - [added] added an Elasticsearch query JSON editor.
 - [fixed] fixed bugs related to Elasticsearch.

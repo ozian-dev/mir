@@ -837,7 +837,6 @@ function renderPanel(obj) {
         $(customObj).html("");
 
         if (pinfo["chart"] && pinfo["chart"]["conditions"]) {
-
             var dateItem ;
             $.each(pinfo["chart"]["conditions"], function(k,v) {
 
@@ -856,7 +855,6 @@ function renderPanel(obj) {
                 if (v["alias"]) label = v["alias"];
 
                 if (k == "@date") {
-
                     dateItem = item;
                     $(dateItem).find(".label").addClass("date");
                     $(dateItem).find(".value").append( $("<a>").addClass("fnc-date-pick")
@@ -869,22 +867,41 @@ function renderPanel(obj) {
                 } else if (v["values"] && v["values"]["data"]) {
 
                     $(item).find(".label").html(label);
+                    var values = v["values"]["data"];
+                    var selectMode = "cascade";
+                    if (!Array.isArray(values)) {
+                        values = [v["values"]["data"]]
+                        selectMode = "map";
+                    }
+                    $(item).find(".value")
+                        .attr("data-key", k)
+                        .attr("data-mode", selectMode)
+                        .attr("data-size", v["values"]["length"]);
 
-                    var select  = $("<select>").addClass("att-input att-input-select")
-                                               .attr("data-name", k)
-                                               .attr("data-value", initValue)
-                                               .append($("<option>").attr("value", "").html("none"));
+                    for ( i=0; i< v["values"]["length"]; i++ ) {
+                        var value = values[i]
+                        var keyName = k;
+                        if ( selectMode == "cascade" ) {
+                            keyName = `${k}_${i}`;
+                            initValue = getHashParamValue(panelId, keyName);
+                            if (initValue == "" && v["default"]) initValue = v["default"] ;
+                        }
+                        var select = $("<select>").addClass("att-input att-input-select")
+                                                .attr("data-name", keyName)
+                                                .attr("data-value", initValue)
+                                                .attr("data-seq", i)
+                                                .append($("<option>").attr("value", "").html("none"));
+                        $(item).find(".value").append(select);
 
-                    $(item).find(".value").append(select);
+                        $.each(value, function(kk,vv) {
+                            var tmpObj = $("<option>").attr("value",vv).html(kk)
+                            $(item).find(".value .att-input-select").eq(i).append(tmpObj);
+                        });
 
-                    $.each(v["values"]["data"], function(kk,vv) {
-                        var tmpObj = $("<option>").attr("value",vv).html(kk)
-                        $(item).find(".value select").append(tmpObj);
-                    });
-                    $(select).find('option[value="' + initValue + '"]').prop("selected", true);
+                        $(select).find('option[value="' + initValue + '"]').prop("selected", true);
+                        $(customObj).append(item);
+                    }
 
-
-                    $(customObj).append(item);
                 } else {
                     $(item).find(".label").html(label);
                     $(item).find(".value").append( $("<input>").addClass("att-input att-input-text")

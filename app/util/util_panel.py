@@ -247,13 +247,15 @@ def get_panel_chart (panel_json:object, params:object) :
             if "case" in v : del v["case"]
 
     if "conditions" in res :
-
         for key in res["conditions"] : 
-
             val = res["conditions"][key]
+            if "values" in val:
+                if "query" in val["values"]:
+                    if type(val["values"]["query"]) is str:
+                        set_query_values (panel_json, val["values"], params)
+                    elif type(val["values"]["query"]) is list:
+                        set_cascade_values (panel_json, key, val["values"], params)
 
-            if "values" in val and "query" in val["values"]:
-                set_query_values (panel_json, val["values"], params)
 
             if "default" in val and isinstance(val["default"], str) and len(val["default"]) > 0 and val["default"][0] == "@" :
 
@@ -665,7 +667,24 @@ def set_query_values (panel_obj:object, values_obj:object, params:object) :
     values_obj["data"] = util_library.get_obj(values_res["data"]["data"])
     values_obj["length"] = len(values_res["data"]["cols"]) - 1
 
-    del values_obj["query"] 
+    del values_obj["query"]
+
+def set_cascade_values (panel_obj:object, key:str, values_obj:object, params:object) :
+    db_idx = get_db_idx (panel_obj, values_obj)
+    values_obj["length"] = 0
+    values_obj["data"] = []
+    for idx, cascade in enumerate(values_obj["query"]):
+        if idx == 0:
+            values_res = util_db.select_db(db_idx, cascade, params, 0, True)
+            values_obj["data"].append(util_library.get_obj(values_res["data"]["data"]))
+        else:
+            k = f"{key}_{idx-1}"
+            if k in params:
+                values_res = util_db.select_db(db_idx, cascade, params, 0, True)
+                values_obj["data"].append(util_library.get_obj(values_res["data"]["data"]))      
+        values_obj["length"] += 1
+
+    del values_obj["query"]
 
 def json_adjust_type(info, data):
     trans_arr = []

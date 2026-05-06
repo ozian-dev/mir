@@ -694,7 +694,6 @@ $("body")
 
 
 .on ("change", ".formbox .body .row .edit .att-input-select", function() {
-
     if($(this).next().is("select")) {
 
         var pid = $("#pop1").attr("data-i");
@@ -726,6 +725,11 @@ $("body")
         }
     }
 })
+
+.on ("change", ".gw .panel .search .custom .item .value .att-input-select", function() {
+    cascade_call($(this));
+})
+
 
 // download function
 ////////////////////////////////////////////////////////////////////
@@ -888,7 +892,7 @@ $("body")
     }
 })
 
-// direcct function
+// direct function
 ////////////////////////////////////////////////////////////////////
 
 .on ("change", ".panel .work .tools .right .att-input-select", function(e) {
@@ -978,3 +982,62 @@ $("body")
     copyText(copyStr);
 })
 ;
+
+
+function cascade_call(obj) {
+
+    var selectParent = $(obj).parent();
+
+    if( $(selectParent).attr("data-mode") == "cascade" ) {
+        selectSize = parseInt($(selectParent).attr("data-size"));
+        selectCur = parseInt($(obj).attr("data-seq"));
+        selectNext = selectCur + 1;
+
+        var isNone = $(obj).find('option:first').is(':selected');
+        if (isNone) {
+            for(var i=selectNext; i<selectSize; i++) {
+                var tObj = $(selectParent).find(".att-input-select").eq(i);
+                $(tObj).html($("<option>").attr("value", "").html("none"));
+                $(tObj).removeAttr('data-value');
+            }
+            return;
+        }
+
+        if( selectCur != (selectSize-1) ) {
+            var panelObj = getPanelObj(selectParent);
+            var panelId = $(panelObj).attr("data-i");
+
+            pObjs = {}
+            for ( i=0; i<=selectCur; i++ ) {
+                var sObj = $(selectParent).find(".att-input-select").eq(i);
+                pObjs[$(sObj).attr("data-name")] = $(sObj).attr("data-value");
+            }
+            pMap = new URLSearchParams(pObjs); 
+            paramsStr = pMap.toString();
+
+            var url = _p["const"]["cascade"] 
+                    + "?.g=" + _p["group"] 
+                    + "&.i=" + panelId 
+                    + "&target=conditions"
+                    + "&key=" + $(selectParent).attr("data-key") 
+                    + "&seq=" + selectNext
+                    + "&" + paramsStr;
+
+            callAjax(url, function(resObj){
+                var tObj = $(selectParent).find(".att-input-select").eq(selectNext);
+                $(tObj).html($("<option>").attr("value", "").html("none"));
+                $.each (resObj["data"], function(k,v) {
+                    $(tObj).append($("<option>").attr("value", v).html(k));
+                });
+                $(selectParent).find(".att-input-select").eq(selectNext).removeAttr('data-value');
+                
+                for(var i=selectNext+1; i<selectSize; i++) {
+                    var tObj = $(selectParent).find(".att-input-select").eq(i);
+                    $(tObj).html($("<option>").attr("value", "").html("none"));
+                    $(tObj).removeAttr('data-value');
+                }
+                
+            }, 'GET');
+        }
+    }
+}

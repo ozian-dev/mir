@@ -125,6 +125,26 @@ async def execute (request: Request) :
     else:
         return await util_panel.execute_panel (panel_json, params)
 
+@router.get("/cascade")
+async def panel (request: Request) :
+
+    _, panel_json, params = util_param.get_init_info(request)
+    cascade_target = params["target"]
+    if cascade_target == "conditions":
+        cascade_obj = panel_json["chart"]["conditions"][params["key"]]
+        cascade_sql = cascade_obj["values"]["query"][int(params["seq"])]
+        
+        datasource = cascade_obj["datasource"] if "datasource" in cascade_obj["values"] else panel_json["datasource"]
+        res_db = util_db.select_db (datasource, cascade_sql, params)
+        res = {list(item.values())[0]: list(item.values())[1] for item in res_db["data"]}
+
+    final_res = {}
+    final_res["status"] = "ok"
+    final_res["msg"] = "success"
+    final_res["data"] =res
+
+    return final_res
+
 @router.get("/search")
 async def panel (request: Request) :
 
@@ -144,8 +164,6 @@ async def panel (request: Request) :
     final_res["data"] = res_db["data"]
 
     return final_res
-
-
 
 @router.post("/direct")
 async def direct (request: Request) :

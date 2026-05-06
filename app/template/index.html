@@ -149,6 +149,7 @@ var _p = {
         "chat": "/rest/chat",
         "search": "/rest/search",
         "direct": "/rest/direct",
+        "cascade": "/rest/cascade",
         "uploadExcel": "/file/excel",
         "uploadFile": "/file/upload",
         "downloadFile": "/file/download?.g=",
@@ -269,8 +270,7 @@ function putHistory(url) {
 }
 
 function getQueryParams(url="") {
-    // URL에서 쿼리 파라미터 부분을 추출합니다.
-
+    // Extract the query parameters from the URL.
     if (url=="") url = document.URL;
 
     var queryString = url.split('?')[1];
