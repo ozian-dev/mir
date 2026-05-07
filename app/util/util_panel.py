@@ -255,6 +255,9 @@ def get_panel_chart (panel_json:object, params:object) :
                         set_query_values (panel_json, val["values"], params)
                     elif type(val["values"]["query"]) is list:
                         set_cascade_values (panel_json, key, val["values"], params)
+                else:
+                    if "data" in val["values"]:
+                        val["values"]["length"] = 1
 
 
             if "default" in val and isinstance(val["default"], str) and len(val["default"]) > 0 and val["default"][0] == "@" :
